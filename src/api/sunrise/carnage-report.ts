@@ -19,7 +19,14 @@ const CarnageReportPlayerSchema = z.object({
     background_emblem: z.number(),
   });
   
-  const CarnageReportSchema = z.object({
+const CarnageReportKill = z.object({
+    killer: z.string(),
+    killed: z.string(),
+    kill_type: z.number(),
+    time: z.string(),
+});
+
+const CarnageReportSchema = z.object({
     start_time: z.string(), // ISO 8601 format validation
     finish_time: z.string(),
     game_variant_name: z.string().nullable(),
@@ -30,7 +37,10 @@ const CarnageReportPlayerSchema = z.object({
     file_type: z.number(),
     duration: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, "Must be in HH:MM:SS format"),
     players: z.array(CarnageReportPlayerSchema),
-  });
+    kills: z.array(CarnageReportKill),
+});
+
+
 
 export const getCarnageReport = publicProcedure.input(
     z.object({ id: z.string().uuid() })
