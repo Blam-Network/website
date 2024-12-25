@@ -190,7 +190,7 @@ const CampaignBadge = ({campaignBadge}: {campaignBadge: number}) => {
     );
 }
 
-const RankBadge = ({rank, grade, size}: {rank: number, grade: number, size: number}) => {
+export const RankBadge = ({rank, grade, size}: {rank: number, grade: number, size: number}) => {
     // return svg from public folder
     return (
         <Box sx={{width: size, height: size, display: 'flex', justifyContent: 'center'}}>

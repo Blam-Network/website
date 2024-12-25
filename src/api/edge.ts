@@ -1,8 +1,10 @@
 
+import { sunrise2Router } from "./sunrise/sunrise2Router";
 import { sunriseRouter } from "./sunrise/sunriseRouter";
 import { createTRPCRouter } from "./trpc";
 
 // Deployed to /trpc/edge/**
 export const edgeRouter = createTRPCRouter({
   sunrise: sunriseRouter,
+  sunrise2: sunrise2Router
 });
