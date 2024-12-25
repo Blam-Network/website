@@ -24,7 +24,7 @@ const CarnageReportPlayerSchema = z.object({
     finish_time: z.string(),
     game_variant_name: z.string().nullable(),
     map_variant_name: z.string().nullable(),
-    map_id: z.number().nullable(),
+    map_id: z.number(),
     hopper_name: z.string().nullable(),
     game_engine: z.number(),
     file_type: z.number(),
