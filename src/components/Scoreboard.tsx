@@ -34,6 +34,9 @@ export type Scoreboard = {
 }
 
 
+const CELL_SPACING_SIZE = 2.5;
+const EMBLEM_SIZE = 24;
+
 export const Scoreboard = ({data}: {data: Scoreboard}) => {
     let winner = data.players.sort((a, b) => a.standing - b.standing)[0];
     let [selectedPlayer, setSelectedPlayer] = useState<Scoreboard['players'][0] | null>(null);
@@ -45,23 +48,22 @@ export const Scoreboard = ({data}: {data: Scoreboard}) => {
             [`& .${tableCellClasses.root}`]: {
                 borderBottom: "none",
                 borderTop: "none",
-                textShadow: '1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000',
+                textShadow: '1px 0 0 #0009, 0 -1px 0 #0009, 0 1px 0 #0009, -1px 0 0 #0009',
                 textAlign: 'center',
                 backdropFilter: 'blur(10px)',
-                fontSize: '1em',
+                fontSize: '1.1em',
               }
         }}>
           <colgroup>
             <col style={{ width: '1px', padding: 0 }} /> {/* First column thinner */}
             <col /> {/* Other columns take the remaining space */}
-            <col style={{ width: '4em', padding: 0 }} /> {/* First column thinner */}
-            <col style={{ width: '1px', padding: 0 }} /> {/* First column thinner */}
+            <col style={{ width: '3em', padding: 0 }} /> {/* Other columns take the remaining space */}
+            <col style={{ width: '5em', padding: 0 }} /> {/* First column thinner */}
           </colgroup>
           <TableHead>
             <TableRow sx={{
                 [`& .${tableCellClasses.root}`]: {
                     textAlign: 'left',
-                    fontWeight: 'bold', 
                     padding: 0.5,
                 }
             }}>
@@ -71,19 +73,25 @@ export const Scoreboard = ({data}: {data: Scoreboard}) => {
           </TableHead>
           <TableHead>
             <TableRow sx={{
-                [`& .${tableCellClasses.head}`]: {
-                    backgroundColor: '#000',
-                    textAlign: 'left',
-                    fontWeight: 'bold', 
-                    padding: 0.5,
-                    borderSpacing: 0,
-                    border: '0px 0px 2px 2px solid transparent',
-                }
-            }}>
-                <TableCell style={{borderLeftColor: 'transparent'}}>{/*Standing*/}</TableCell>
-                <TableCell>Players</TableCell>
-                <TableCell>{/*Tag*/}</TableCell>
-                <TableCell style={{borderRightColor: 'transparent'}}>Score</TableCell>
+                    [`& .${tableCellClasses.root}`]: {
+                        padding: 0,
+                        backgroundColor: `black`, 
+                        border: `${CELL_SPACING_SIZE}px solid black`,
+                    },
+                }}
+            >
+                <TableCell style={{borderLeftColor: 'transparent'}}></TableCell>
+                <TableCell colSpan={2} style={{
+                    borderRightWidth: 0,
+                }}>
+                    <Box flexDirection="row" display="flex" gap={1} alignItems="center" sx={{padding: 0.5}}>
+                    Players
+                    <Box sx={{width: EMBLEM_SIZE, height: EMBLEM_SIZE}}/>
+                    </Box>
+                </TableCell>
+                <TableCell sx={{
+                    borderRightColor: 'transparent',
+                }}>Score</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -103,13 +111,13 @@ export const Scoreboard = ({data}: {data: Scoreboard}) => {
                     [`& .${tableCellClasses.root}`]: {
                         padding: 0,
                         backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`, 
-                        border: '2px solid transparent',
+                        border: `${CELL_SPACING_SIZE}px solid transparent`,
                     },
                     "&:hover": {
                         [`& .${tableCellClasses.root}`]: {
-                            boxShadow: 'inset 0px 12px 3px -10px white, inset 0px -12px 3px -10px white',
+                            boxShadow: 'inset 0px 11px 2px -10px white, inset 0px -11px 2px -10px white',
                         },
-                        boxShadow: 'inset 0px 12px 3px -10px white, inset 0px -12px 3px -10px white',
+                        boxShadow: 'inset 0px 13px 2px -10px white, inset 0px -13px 2px -10px white',
                     }
               }}>
                 <TableCell>{row.standing}</TableCell>
@@ -127,7 +135,7 @@ export const Scoreboard = ({data}: {data: Scoreboard}) => {
                             backgroundColor: row.emblemBackgroundColor,
                             armourPrimaryColor: row.primaryColor,
                         }} 
-                        size={25} 
+                        size={EMBLEM_SIZE} 
                     />
                     {row.playerName}
                   </Box>
@@ -140,9 +148,9 @@ export const Scoreboard = ({data}: {data: Scoreboard}) => {
                 >
                     <Box 
                         textAlign='right'
-                        paddingRight={2}
+                        paddingRight={1}
                     >
-                    {row.serviceTag}
+                        {row.serviceTag}
                     </Box>
                 </TableCell>
                 <TableCell style={{
