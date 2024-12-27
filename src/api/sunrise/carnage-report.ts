@@ -17,6 +17,7 @@ const CarnageReportPlayerSchema = z.object({
     emblem_background_color: z.number(),
     foreground_emblem: z.number(),
     background_emblem: z.number(),
+    service_tag: z.string(),
   });
   
 const CarnageReportKill = z.object({

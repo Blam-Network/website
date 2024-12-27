@@ -1,3 +1,5 @@
+
+
 import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
@@ -9,6 +11,7 @@ import { FileShare } from "@/src/api/sunrise/fileShare";
 import Link from "next/link";
 import { Emblem } from "@/src/components/Emblem";
 import React from "react";
+import { Scoreboard } from "@/src/components/Scoreboard";
 
 export const MapImage = ({mapId, size}: {mapId: number, size: number}) => {
   // return svg from public folder
@@ -25,13 +28,23 @@ export const MapImage = ({mapId, size}: {mapId: number, size: number}) => {
 const get_kill_type_name = (kill_type: number) => {
   switch (kill_type) {
     case 0:
-      return "Unknown";
+      return "Guardians";
     case 1:
-      return "Headshot";
+      return "Falling Damage";
+    case 3:
+      return "Melee";
+    case 8: 
+      return "Mauler";
     case 11:
       return "Battle Rifle";
+    case 14:
+      return "Sniper Rifle";
+    case 27:
+      return "Frag Grenade";
+    case 28:
+      return "Plasma Grenade";
     default:
-      return "Unknown";
+      return kill_type;
   }
 }
 
@@ -82,6 +95,32 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
         </Paper>
       </Grid>
     </Grid>
+
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: "url(\"https://i.ytimg.com/vi/bhhWhWRy1Zs/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB_Gv3vONnSjwtX_01dXw6kig3DQw\")", justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
+      <Box sx={{ maxWidth: '28em', width: '100%' }}>
+    <Scoreboard data={{
+      players: players.map((player, idx) => ({
+        index: idx,
+        xuid: 0,
+        standing: player.place,
+        score: player.score,
+        playerName: player.player_name,
+        emblemPrimary: player.foreground_emblem,
+        emblemSecondary: true, // TODO: FIX
+        emblemBackground: player.background_emblem,
+        emblemPrimaryColor: player.emblem_primary_color,
+        emblemSecondaryColor: player.emblem_secondary_color,
+        emblemBackgroundColor: player.emblem_background_color,
+        primaryColor: player.primary_color,
+        secondaryColor: player.secondary_color,
+        tertiaryColor: player.tertiary_color,
+        serviceTag: player.service_tag,
+      }))
+    }}/>
+    </Box>
+
+    </Box>
+    
     <TableContainer component={Paper}>
       <Table size="small">
         <colgroup>
