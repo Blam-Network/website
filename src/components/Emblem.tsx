@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 
 
 export type Emblem = {
-    armourPrimaryColor: number;
+    armourPrimaryColor?: number;
     primary: number;
     secondary: boolean;
     background: number;
@@ -94,8 +94,10 @@ const drawEmblem = async (canvas: HTMLCanvasElement, emblem: Emblem, size: numbe
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
-        ctx.fillStyle = getCssColor(emblem.armourPrimaryColor);
-        ctx.fillRect(0, 0, size, size);
+        if (emblem.armourPrimaryColor) {
+            ctx.fillStyle = getCssColor(emblem.armourPrimaryColor);
+            ctx.fillRect(0, 0, size, size);
+        }
 
         ctx.drawImage(coloredBackground, 0, 0, size, size);
         if (emblem.secondary)
@@ -117,7 +119,7 @@ export const Emblem = ({emblem, size}: {emblem: Emblem, size?: number}) => {
     }, [emblem]);
 
     return (
-        <Box sx={{ background: getCssColor(emblem.armourPrimaryColor), height: size || 100, width: size || 100 }}>
+        <Box sx={{ height: size || 100, width: size || 100 }}>
             <canvas  ref={emblemCanvasRef} width={size || 100} height={size || 100} style={{ width: size || 100, height: size || 100}}/>
         </Box>
     );

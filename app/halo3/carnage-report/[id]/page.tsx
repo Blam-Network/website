@@ -33,12 +33,18 @@ const get_kill_type_name = (kill_type: number) => {
       return "Falling Damage";
     case 3:
       return "Melee";
+    case 5:
+      return "Magnum";
     case 8: 
       return "Mauler";
     case 11:
       return "Battle Rifle";
+    case 13:
+      return "Shotgun";
     case 14:
       return "Sniper Rifle";
+    case 25:
+      return "Energy Sword"
     case 27:
       return "Frag Grenade";
     case 28:
@@ -99,6 +105,12 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: "url(\"https://i.ytimg.com/vi/bhhWhWRy1Zs/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB_Gv3vONnSjwtX_01dXw6kig3DQw\")", justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
       <Box sx={{ maxWidth: '28em', width: '100%' }}>
     <Scoreboard data={{
+      teamGame: carnageReport.team_game,
+      teams: carnageReport.teams.map((team, idx) => ({
+        index: idx,
+        score: team.score,
+        standing: team.place,
+      })),
       players: players.map((player, idx) => ({
         index: idx,
         xuid: 0,
@@ -115,6 +127,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
         secondaryColor: player.secondary_color,
         tertiaryColor: player.tertiary_color,
         serviceTag: player.service_tag,
+        team: player.player_team,
       }))
     }}/>
     </Box>

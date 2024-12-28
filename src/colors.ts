@@ -134,6 +134,74 @@ export function getColor(name: string) {
     }
 }
 
+export function getTextColor(name: string) {
+    switch(name) {
+        case "Steel":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Silver":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "White":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Red":
+            return { "r": 255, "g": 244, "b": 244, "a": 255 }
+        case "Mauve":
+            return { "r": 255, "g": 244, "b": 244, "a": 255 }
+        case "Salmon":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Orange":
+            return { "r": 241, "g": 240, "b": 232, "a": 255 }
+        case "Coral":
+            return { "r": 241, "g": 240, "b": 232, "a": 255 }
+        case "Peach":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Gold":
+            return { "r": 255, "g": 248, "b": 235, "a": 255 }
+        case "Yellow":
+            return { "r": 255, "g": 248, "b": 235, "a": 255 }
+        case "Pale":
+            return { "r": 255, "g": 255, "b": 254, "a": 255 }
+        case "Sage":
+            return { "r": 233, "g": 241, "b": 216, "a": 255 }
+        case "Green":
+            return { "r": 233, "g": 241, "b": 216, "a": 255 }
+        case "Olive":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Teal":
+            return { "r": 241, "g": 255, "b": 255, "a": 255 }
+        case "Aqua":
+            return { "r": 241, "g": 255, "b": 255, "a": 255 }
+        case "Cyan":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Blue":
+            return { "r": 233, "g": 240, "b": 255, "a": 255 }
+        case "Cobalt":
+            return { "r": 233, "g": 240, "b": 255, "a": 255 }
+        case "Sapphire":
+            return { "r": 255, "g": 255, "b": 255, "a": 255 }
+        case "Violet":
+            return { "r": 243, "g": 239, "b": 255, "a": 255 }
+        case "Orchid":
+            return { "r": 243, "g": 239, "b": 255, "a": 255 }
+        case "Lavender":
+            return { "r": 255, "g": 239, "b": 255, "a": 255 }
+        case "Crimson":
+            return { "r": 255, "g": 239, "b": 245, "a": 255 }
+        case "Ruby Wine":
+            return { "r": 255, "g": 239, "b": 245, "a": 255 }
+        case "Pink":
+            return { "r": 255, "g": 239, "b": 245, "a": 255 }
+        case "Brown":
+            return { "r": 255, "g": 246, "b": 239, "a": 255 }
+        case "Tan":
+            return { "r": 255, "g": 246, "b": 239, "a": 255 }
+        case "Khaki":
+            return { "r": 255, "g": 246, "b": 239, "a": 255 }
+        default:
+        case "Transparent":
+            return { "r": 0.0, "g": 0.0, "b": 0.0, "a": 0.0 }
+    }
+}
+
 export function getCssColor (colorIndex: number) {
     console.log({colorIndex})
     const color = getColor(getColorName(colorIndex))

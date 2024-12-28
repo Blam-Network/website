@@ -18,7 +18,14 @@ const CarnageReportPlayerSchema = z.object({
     foreground_emblem: z.number(),
     background_emblem: z.number(),
     service_tag: z.string(),
+    player_team: z.number(),
   });
+
+const CarnageReportTeamschema = z.object({
+    team_index: z.number(),
+    place: z.number(),
+    score: z.number(),
+});
   
 const CarnageReportKill = z.object({
     killer: z.string(),
@@ -28,6 +35,7 @@ const CarnageReportKill = z.object({
 });
 
 const CarnageReportSchema = z.object({
+    team_game: z.boolean(),
     start_time: z.string(), // ISO 8601 format validation
     finish_time: z.string(),
     game_variant_name: z.string().nullable(),
@@ -39,6 +47,7 @@ const CarnageReportSchema = z.object({
     duration: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, "Must be in HH:MM:SS format"),
     players: z.array(CarnageReportPlayerSchema),
     kills: z.array(CarnageReportKill),
+    teams: z.array(CarnageReportTeamschema),
 });
 
 
