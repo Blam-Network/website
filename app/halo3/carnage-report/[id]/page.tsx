@@ -13,17 +13,14 @@ import { Emblem } from "@/src/components/Emblem";
 import React from "react";
 import { Scoreboard } from "@/src/components/Scoreboard";
 
-export const MapImage = ({mapId, size}: {mapId: number, size: number}) => {
-  // return svg from public folder
-  return (
-      <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
-          <img src={`/img/maps/film/${mapId}.png`} style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-          }} />
-      </Box>
-  );
-}
+const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
+    <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
+        <img src={`/img/maps/film/${mapId}.png`} style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+        }} />
+    </Box>
+)
 
 const get_kill_type_name = (kill_type: number) => {
   switch (kill_type) {
@@ -118,7 +115,7 @@ const get_kill_type_name = (kill_type: number) => {
     case 44:
       return "Unknown 44";
     case 45:
-      return "Hornet"; // Checked
+      return "Unknown 45"; // Checked
     case 46:
       return "Warthog"; // Checked
     case 47:
@@ -137,10 +134,18 @@ const get_kill_type_name = (kill_type: number) => {
       return "Hornet"; // Checked
     case 55:
       return "Prowler"; // Checked
+    case 56:
+      return "Unknown 56";
+    case 57:
+      return "Unknown 57";
+    case 58:
+      return "Unknown 58";
     case 59:
       return "Unknown 59";
     case 60:
-      return "Unknown 60";
+      return "Sandtrap Mine";
+    case 61:
+      return "Unknown 61";
     default:
       return kill_type;
   }
