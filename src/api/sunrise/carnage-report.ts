@@ -31,7 +31,7 @@ const CarnageReportKill = z.object({
     killer: z.string(),
     killed: z.string(),
     kill_type: z.number(),
-    time: z.string(),
+    time: z.coerce.number(),
 });
 
 const CarnageReportSchema = z.object({
