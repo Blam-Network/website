@@ -9,5 +9,5 @@ export const sunrise2Router = createTRPCRouter({
 });
 
 export const sunrise2Axios = new Axios({
-    baseURL: env.SUNRISE_API_BASE_URL,
+    baseURL: env.HALO3_API_BASE_URL,
 })
