@@ -192,6 +192,11 @@ const CampaignBadge = ({campaignBadge}: {campaignBadge: number}) => {
 
 export const RankBadge = ({rank, grade, size}: {rank: number, grade: number, size: number}) => {
     // return svg from public folder
+    if (rank == 0) {
+        return (
+            <Box sx={{width: size, height: size}}/>
+        );
+    }
     return (
         <Box sx={{width: size, height: size, display: 'flex', justifyContent: 'center'}}>
             <img src={`/img/rank/${rank.toString() + (grade > 1 ? `_${grade - 1}` : '')}.svg`} style={{

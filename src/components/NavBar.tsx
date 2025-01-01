@@ -27,7 +27,7 @@ export const NavBar = ({session}: {session: Session | null}) => {
                 flexGrow: 1,
             }}>
                 <Box>
-                    <Link href='/screenshots'>
+                    {/* <Link href='/screenshots'>
                         <Button>Screenshots</Button>
                     </Link>
                     <Link href='/playlists'>
@@ -40,15 +40,15 @@ export const NavBar = ({session}: {session: Session | null}) => {
                         <Link href={'/player/' + session.user.gamertag}>
                             <Button>Service Record</Button>
                         </Link>
-                    }
+                    } */}
                 </Box>
                 <Box>
-                    <form>
+                    {/* <form>
                         <input type="text" placeholder="Player Name" value={playerName} onChange={e => setPlayerName(e.target.value)} />
                         <Link href={'/player/' + playerName} >
                             <Button>Search</Button>
                         </Link>
-                    </form>
+                    </form> */}
                 </Box>
             </Box>
         </Box>

@@ -17,7 +17,7 @@ export const MapImage = ({mapId, size}: {mapId: number, size: number}) => {
   // return svg from public folder
   return (
       <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
-          <img src={`/img/maps/${mapId}.jpg`} style={{
+          <img src={`/img/maps/film/${mapId}.png`} style={{
               maxWidth: '100%',
               maxHeight: '100%',
           }} />
@@ -28,27 +28,119 @@ export const MapImage = ({mapId, size}: {mapId: number, size: number}) => {
 const get_kill_type_name = (kill_type: number) => {
   switch (kill_type) {
     case 0:
-      return "Guardians";
+      return "Guardians"; // Checked
     case 1:
-      return "Falling Damage";
+      return "Falling Damage"; // are you sure
+    case 2:
+      return "Collision"; // Checked
     case 3:
-      return "Melee";
+      return "Melee"; // Checked
+    case 4:
+      return "Explosion"; // Checked
     case 5:
-      return "Magnum";
+      return "Magnum"; // Checked
+    case 6:
+      return "Plasma Pistol"; // Checked
+    case 7:
+      return "Needler" // Checked
     case 8: 
-      return "Mauler";
+      return "Mauler"; // Checked
+    case 9:
+      return "SMG"; // Checked
+    case 10:
+      return "Plasma Rifle" // Checked
     case 11:
-      return "Battle Rifle";
+      return "Battle Rifle"; // Checked
+    case 12:
+      return "Carbine"; // Checked
     case 13:
-      return "Shotgun";
+      return "Shotgun"; // Checked
     case 14:
-      return "Sniper Rifle";
+      return "Sniper Rifle"; // Checked
+    case 15:
+      return "Beam Rifle"; // Checked
+    case 16:
+      return "Assault Rifle"; // Checked
+    case 17:
+      return "Spiker"; // Checked
+    case 18:
+      return "Fuel Rod Cannon"; // Checked
+    case 19:
+      return "Missile Pod"; // Checked
+    case 20:
+      return "Rocket Launcher"; // Checked
+    case 21:
+      return "Spartan Laser" // Checked
+    case 22:
+      return "Brute Shot" // Checked
+    case 23:
+      return "Flamethrower"; // Checked
+    case 24:
+      return "Sentinel Beam"; // Checked
     case 25:
-      return "Energy Sword"
+      return "Energy Sword" // Checked
+    case 26:
+      return "Gravity Hammer" // Checked
     case 27:
-      return "Frag Grenade";
+      return "Frag Grenade"; // Checked
     case 28:
-      return "Plasma Grenade";
+      return "Plasma Grenade"; // Checked
+    case 29:
+      return "Spike Grenade"; // Checked
+    case 30:
+      return "Firebomb Grenade"; // Checked
+    case 31:
+      return "Flag";
+    case 32:
+      return "Bomb";
+    case 33:
+      return "Bomb (Explosion)";
+    case 34:
+      return "Ball";
+    case 35:
+      return "Machine Gun Turret"; // Checked
+    case 36:
+      return "Plasma Cannon"; // Checked
+    case 37:
+      return "Unknown 37";
+    case 38:
+      return "Unknown 38";
+    case 39:
+      return "Banshee"; // Checked
+    case 40:
+      return "Ghost"; // Checked
+    case 41:
+      return "Mongoose"; // Checked
+    case 42:
+      return "Unknown 42";
+    case 43:
+      return "Scorpion (Turret)"; // Checked
+    case 44:
+      return "Unknown 44";
+    case 45:
+      return "Hornet"; // Checked
+    case 46:
+      return "Warthog"; // Checked
+    case 47:
+      return "Warthog Turret"; // Checked
+    case 48:
+      return "Warthog Turret (Gauss)"; // Checked
+    case 49:
+      return "Wraith"; // Checked
+    case 50:
+      return "Wraith Turret"; // Checked
+    case 51:
+      return "Scorpion"; // Checked
+    case 52:
+      return "Chopper"; // Checked
+    case 53:
+      return "Hornet"; // Checked
+    case 55:
+      return "Prowler"; // Checked
+    case 59:
+      return "Unknown 59";
+    case 60:
+      return "Unknown 60";
     default:
       return kill_type;
   }
@@ -102,7 +194,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
       </Grid>
     </Grid>
 
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: "url(\"https://i.ytimg.com/vi/bhhWhWRy1Zs/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB_Gv3vONnSjwtX_01dXw6kig3DQw\")", justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: `url("/img/maps/film/${carnageReport.map_id}.png")`, justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
       <Box sx={{ maxWidth: '28em', width: '100%' }}>
     <Scoreboard data={{
       teamGame: carnageReport.team_game,
@@ -170,7 +262,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
               </TableCell>
               <TableCell sx={{paddingLeft: 0}}>{row.player_name}</TableCell>
               <TableCell><RankBadge rank={row.rank} grade={row.grade} size={25}></RankBadge></TableCell>
-              <TableCell>{row.place}</TableCell>
+              <TableCell>{row.score}</TableCell>
               <TableCell>{row.score}</TableCell>
               <TableCell>{row.highest_skill}</TableCell>
             </TableRow>
@@ -182,7 +274,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
     <Paper elevation={3} sx={{ padding: 3 }}>
       <Typography variant="h6" gutterBottom>Kill Feed</Typography>
       <List>
-        {carnageReport.kills.map((kill, index) => (
+        {carnageReport.kills.sort((a, b) => a.time - b.time).map((kill, index) => (
           <React.Fragment key={index}>
             <ListItem>
               <Box display="flex" width="100%" gap={2}>
