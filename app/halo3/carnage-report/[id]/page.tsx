@@ -151,6 +151,18 @@ const get_kill_type_name = (kill_type: number) => {
   }
 }
 
+function formatSeconds(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
 export default async function CarnageReport({params}: {params: { id: string }}) {
   const session = await getServerSession(authOptions);
   const loggedIn = !!session?.user;
@@ -285,16 +297,13 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
               <Box display="flex" width="100%" gap={2}>
                 <Box>
                   <Typography variant="body2" fontWeight="bold" color="textPrimary">
-                    {kill.time}
+                    {formatSeconds(kill.time)}
                   </Typography>
                 </Box>
                 <Box>
                 <Typography variant="body1"  color="textPrimary">
                     {kill.killer} killed {kill.killed} using a {get_kill_type_name(kill.kill_type)}
                   </Typography>
-                  {/* <Typography variant="body2" color="textSecondary">
-                    Type: {kill.kill_type}
-                  </Typography> */}
                 </Box>
               </Box>
             </ListItem>
