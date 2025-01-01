@@ -2,7 +2,7 @@
 
 import { Stack, Box, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, tableCellClasses } from "@mui/material";
 import { getColor, getColorName, getCssColor, getTextColor } from "../colors";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { RankBadge, ServiceRecordPlaceholder } from "./ServiceRecordPlaceholder";
 import { Emblem } from "./Emblem";
 import { text } from "stream/consumers";
@@ -158,7 +158,7 @@ const PlayerRow = ({player, teamGame}: {player: Scoreboard['players'][0], teamGa
     }
 
     return (
-        <TableRow key={'player'+player.index} sx={{
+        <TableRow sx={{
                 [`& .${tableCellClasses.root}`]: {
                     padding: 0,
                     backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`, 
@@ -238,7 +238,7 @@ const FFAScoreboard = ({data}: {data: Scoreboard}) => {
           <ScoreboardStatus text={`${winner.playerName} wins!`}/>
           <ScoreboardHeader/>
           <TableBody>
-            {data.players.map((row, index) => <PlayerRow player={row} teamGame={data.teamGame} />)}
+            {data.players.map((row, index) => <PlayerRow key={'player'+ row.index} player={row} teamGame={data.teamGame} />)}
           </TableBody>
         </Table>
 
@@ -270,12 +270,12 @@ export const TeamScoreboard = ({data}: {data: Scoreboard}) => {
           <ScoreboardHeader />
           <TableBody>
             {data.teams.sort((a, b) => a.standing - b.standing).map((team) => {
-                return <>
+                return <Fragment key={'team'+ team.index}>
                     <TeamRow team={team}/>
                     {data.players.filter(player => player.team == team.index).map((row) => 
-                        <PlayerRow player={row} teamGame={data.teamGame} />
+                        <PlayerRow player={row} key={'player'+ row.index} teamGame={data.teamGame} />
                     )}
-                </>
+                </Fragment>
             })}
           </TableBody>
         </Table>
