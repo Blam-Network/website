@@ -169,7 +169,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
 
   const carnageReport = (await api.sunrise2.getCarnageReport.query({ id: params.id }));
   const players = carnageReport.players.sort((a, b) => a.place - b.place);
-  const columns = ["", "Player Name", "", "Place", "Score", "Highest Skill"];
+  const columns = ["", "Player Name", "", "Place", "Score", "Kills", "Deaths", "Assists", "Betrayals"];
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -279,9 +279,14 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
               </TableCell>
               <TableCell sx={{paddingLeft: 0}}>{row.player_name}</TableCell>
               <TableCell><RankBadge rank={row.rank} grade={row.grade} size={25}></RankBadge></TableCell>
+              <TableCell>{row.place}</TableCell>
               <TableCell>{row.score}</TableCell>
-              <TableCell>{row.score}</TableCell>
-              <TableCell>{row.highest_skill}</TableCell>
+              <TableCell>{row.kills}</TableCell>
+              <TableCell>{row.deaths}</TableCell>
+              <TableCell>{row.assists}</TableCell>
+              <TableCell>{row.betrayals}</TableCell>
+
+              {/* <TableCell>{row.highest_skill}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>
