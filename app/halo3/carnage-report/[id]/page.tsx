@@ -160,7 +160,11 @@ function formatSeconds(seconds: number): string {
   const formattedMinutes = minutes.toString().padStart(2, '0');
   const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
 
-  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  if (hours > 0) {
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  return `${formattedMinutes}:${formattedSeconds}`;
 }
 
 export default async function CarnageReport({params}: {params: { id: string }}) {
@@ -168,8 +172,15 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
   const loggedIn = !!session?.user;
 
   const carnageReport = (await api.sunrise2.getCarnageReport.query({ id: params.id }));
-  const players = carnageReport.players.sort((a, b) => a.place - b.place);
+  const players = carnageReport.players.sort((a, b) => a.standing - b.standing);
   const columns = ["", "Player Name", "", "Place", "Score", "Kills", "Deaths", "Assists", "Betrayals"];
+
+  const playerNames = players.reduce((acc, player) => {
+    acc[player.player_index] = player.player_name;
+    return acc;
+  }, {} as Record<number, string>);
+
+  const durationInSeconds = (new Date(carnageReport.finish_time).getTime() - new Date(carnageReport.start_time).getTime()) / 1000;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -183,7 +194,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
       <Grid item xs={12} sm={8}>
         <Paper elevation={3} sx={{ padding: 3 }}>
           <Typography variant="h6" component="div" gutterBottom>
-            {carnageReport.game_variant_name} on {carnageReport.map_variant_name}
+            {carnageReport.game_variant.name} on {carnageReport.map_variant_name}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -198,12 +209,12 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1">
-                <strong>Hopper Name:</strong> {carnageReport.hopper_name || 'N/A'}
+                <strong>Matchmaking Playlist:</strong> {carnageReport.matchmaking_options?.hopper_name || 'N/A'}
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="body1">
-                <strong>Duration:</strong> {carnageReport.duration}
+                <strong>Duration:</strong> {formatSeconds(durationInSeconds)}
               </Typography>
             </Grid>
           </Grid>
@@ -218,16 +229,16 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
       teams: carnageReport.teams.map((team, idx) => ({
         index: idx,
         score: team.score,
-        standing: team.place,
+        standing: team.standing,
       })),
       players: players.map((player, idx) => ({
         index: idx,
-        xuid: 0,
-        standing: player.place,
+        xuid: player.player_xuid,
+        standing: player.standing,
         score: player.score,
         playerName: player.player_name,
         emblemPrimary: player.foreground_emblem,
-        emblemSecondary: true, // TODO: FIX
+        emblemSecondary: player.emblem_flags === 0,
         emblemBackground: player.background_emblem,
         emblemPrimaryColor: player.emblem_primary_color,
         emblemSecondaryColor: player.emblem_secondary_color,
@@ -261,13 +272,13 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
           </TableRow>
         </TableHead>
         <TableBody>
-          {players.map((row, index) => (
+          {players.sort((a, b) => a.standing - b.standing).map((row, index) => (
             <TableRow key={index}>
               <TableCell sx={{paddingLeft: 1, paddingRight: 1}}>
                 <Emblem 
                   emblem={{
                     primary: row.foreground_emblem,
-                    secondary: true,
+                    secondary: row.emblem_flags === 0,
                     background: row.background_emblem,
                     primaryColor: row.emblem_primary_color,
                     secondaryColor: row.emblem_secondary_color,
@@ -278,13 +289,13 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                 />
               </TableCell>
               <TableCell sx={{paddingLeft: 0}}>{row.player_name}</TableCell>
-              <TableCell><RankBadge rank={row.rank} grade={row.grade} size={25}></RankBadge></TableCell>
-              <TableCell>{row.place}</TableCell>
+              <TableCell><RankBadge rank={row.host_stats_global_rank} grade={row.host_stats_global_grade} size={25}></RankBadge></TableCell>
+              <TableCell>{row.standing}</TableCell>
               <TableCell>{row.score}</TableCell>
-              <TableCell>{row.kills}</TableCell>
-              <TableCell>{row.deaths}</TableCell>
-              <TableCell>{row.assists}</TableCell>
-              <TableCell>{row.betrayals}</TableCell>
+              <TableCell>{row.statistics.kills}</TableCell>
+              <TableCell>{row.statistics.deaths}</TableCell>
+              <TableCell>{row.statistics.assists}</TableCell>
+              <TableCell>{row.statistics.betrayals}</TableCell>
 
               {/* <TableCell>{row.highest_skill}</TableCell> */}
             </TableRow>
@@ -296,7 +307,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
     <Paper elevation={3} sx={{ padding: 3 }}>
       <Typography variant="h6" gutterBottom>Kill Feed</Typography>
       <List>
-        {carnageReport.kills.sort((a, b) => a.time - b.time).map((kill, index) => (
+        {carnageReport.events.kill_events.sort((a, b) => a.time - b.time).map((kill, index) => (
           <React.Fragment key={index}>
             <ListItem>
               <Box display="flex" width="100%" gap={2}>
@@ -307,7 +318,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                 </Box>
                 <Box>
                 <Typography variant="body1"  color="textPrimary">
-                    {kill.killer} killed {kill.killed} using a {get_kill_type_name(kill.kill_type)}
+                    {playerNames[kill.killer_player_index]} killed {playerNames[kill.dead_player_index]} using a {get_kill_type_name(kill.kill_type)}
                   </Typography>
                 </Box>
               </Box>

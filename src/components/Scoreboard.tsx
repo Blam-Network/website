@@ -18,7 +18,7 @@ export type Scoreboard = {
     }[];
     players: {
         index: number;
-        xuid: number;
+        xuid: string;
         standing: number;
         score: number;
         team: number;
@@ -272,7 +272,7 @@ export const TeamScoreboard = ({data}: {data: Scoreboard}) => {
             {data.teams.sort((a, b) => a.standing - b.standing).map((team) => {
                 return <Fragment key={'team'+ team.index}>
                     <TeamRow team={team}/>
-                    {data.players.filter(player => player.team == team.index).map((row) => 
+                    {data.players.filter(player => player.team == team.index).sort((a, b) => a.standing - b.standing).map((row) => 
                         <PlayerRow player={row} key={'player'+ row.index} teamGame={data.teamGame} />
                     )}
                 </Fragment>
