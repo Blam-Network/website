@@ -7,17 +7,15 @@ import { RankBadge, ServiceRecordPlaceholder } from "./ServiceRecordPlaceholder"
 import { Emblem } from "./Emblem";
 import { text } from "stream/consumers";
 import { getTeamColor, getTeamName, getTeamTextColor } from "../utils/teams";
-import { CarnageReport } from "../api/sunrise/carnage-report/schema";
 import { formatSeconds, getGametypeName } from "../utils/gametype";
 import { getDamageSourceCategory, getDamageSourceName } from "../api/sunrise/carnage-report/players";
+import { RouterOutputs } from "../api/router";
+
+type CarnageReport = RouterOutputs['sunrise2']['getCarnageReport'];
 
 
 export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
     const [value, setValue] = useState("CARNAGE");
-
-    let foo = Object.fromEntries(
-        report.players.map((player, index) => [index, [player.statistics.kills]])
-    );
 
     return (
         <>
