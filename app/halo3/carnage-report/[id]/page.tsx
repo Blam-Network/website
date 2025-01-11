@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
 import { RankBadge, ServiceRecordPlaceholder } from "@/src/components/ServiceRecordPlaceholder";
-import { Stack, Box, Typography, Divider, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid, List, ListItem, ListItemText } from "@mui/material";
+import { Stack, Box, Typography, Divider, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid, List, ListItem, ListItemText, Tabs, Tab } from "@mui/material";
 import { Screenshots } from "@/src/api/sunrise/screenshots";
 import { authOptions } from "@/src/api/auth";
 import { FileShare } from "@/src/api/sunrise/fileShare";
@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Emblem } from "@/src/components/Emblem";
 import React from "react";
 import { Scoreboard } from "@/src/components/Scoreboard";
+import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
 
 const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
     <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
@@ -184,7 +185,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-<Grid container  alignItems="flex-start">
+      <Grid container  alignItems="flex-start">
       {/* Map Image Section */}
       <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'center' }}>
         <MapImage mapId={carnageReport.map_id} size={210} />
@@ -254,55 +255,17 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
 
     </Box>
     
-    <TableContainer component={Paper}>
-      <Table size="small">
-        <colgroup>
-          <col style={{ width: '1px', paddingLeft: 0 }} /> {/* First column thinner */}
-          <col /> {/* Other columns take the remaining space */}
-          <col />
-          <col />
-          <col />
-          <col />
-        </colgroup>
-        <TableHead>
-          <TableRow>
-            {columns.map((column) => (
-              <TableCell sx={{fontWeight: 'bold'}} key={column}>{column}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {players.sort((a, b) => a.standing - b.standing).map((row, index) => (
-            <TableRow key={index}>
-              <TableCell sx={{paddingLeft: 1, paddingRight: 1}}>
-                <Emblem 
-                  emblem={{
-                    primary: row.foreground_emblem,
-                    secondary: row.emblem_flags === 0,
-                    background: row.background_emblem,
-                    primaryColor: row.emblem_primary_color,
-                    secondaryColor: row.emblem_secondary_color,
-                    backgroundColor: row.emblem_background_color,
-                    armourPrimaryColor: row.primary_color,
-                  }} 
-                  size={25} 
-                />
-              </TableCell>
-              <TableCell sx={{paddingLeft: 0}}>{row.player_name}</TableCell>
-              <TableCell><RankBadge rank={row.host_stats_global_rank} grade={row.host_stats_global_grade} size={25}></RankBadge></TableCell>
-              <TableCell>{row.standing}</TableCell>
-              <TableCell>{row.score}</TableCell>
-              <TableCell>{row.statistics.kills}</TableCell>
-              <TableCell>{row.statistics.deaths}</TableCell>
-              <TableCell>{row.statistics.assists}</TableCell>
-              <TableCell>{row.statistics.betrayals}</TableCell>
+    <h2>Carnage Report</h2>
 
-              {/* <TableCell>{row.highest_skill}</TableCell> */}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <PGCRBreakdown report={carnageReport} />
+
+    {/* <h2>Player Breakdown</h2>
+    <Tabs orientation="vertical" value={0} sx={{ width: '16em'}}>
+      {carnageReport.players.map((player, index) => (<Tab key={index} label={player.player_name} value={index}/>))}
+    </Tabs> */}
+
+    <h2>Kill Feed</h2>
+
 
     <Paper elevation={3} sx={{ padding: 3 }}>
       <Typography variant="h6" gutterBottom>Kill Feed</Typography>

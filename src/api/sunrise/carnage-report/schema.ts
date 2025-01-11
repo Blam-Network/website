@@ -60,3 +60,5 @@ export const CarnageReportSchema = z.object({
     migrated_to_group: z.boolean(),
     simulation_aborted: z.boolean(),
 });
+
+export type CarnageReport = z.infer<typeof CarnageReportSchema>;

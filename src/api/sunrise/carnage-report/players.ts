@@ -181,6 +181,193 @@ export const DamageSourceEnum = z.enum([
     'unknown_61',
 ]);
 
+export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourceEnum>): "WEAPON" | "GRENADE" | "MELEE" | "OTHER" | 'VEHICLE' => {
+  switch (damageSource) {
+    case 'magnum_pistol':
+    case 'plasma_pistol':
+    case 'needler':
+    case 'excavator':
+    case 'smg':
+    case 'plasma_rifle':
+    case 'battle_rifle':
+    case 'carbine':
+    case 'shotgun':
+    case 'sniper_rifle':
+    case 'beam_rifle':
+    case 'assault_rifle':
+    case 'spike_rifle':
+    case 'flak_cannon':
+    case 'missile_launcher':
+    case 'rocket_launcher':
+    case 'spartan_laser':
+    case 'brute_shot':
+    case 'flame_thrower':
+    case 'sentinal_gun':
+    case 'energy_sword':
+    case 'gravity_hammer':
+    case 'human_turret':
+    case 'plasma_cannon':
+    case 'mauler':
+      return 'WEAPON';
+    case 'frag_grenade':
+    case 'plasma_grenade':
+    case 'claymore_grenade':
+    case 'firebomb_grenade':
+      return 'GRENADE';
+    case 'generic_melee_damage':
+    case 'flag_melee_damage':
+    case 'bomb_melee_damage':
+      return 'MELEE';
+    case 'bomb_explosion_damage':
+    case 'ball_melee_damage':
+    case 'bomb_melee_damage':
+      return 'OTHER';
+    case 'banshee':
+    case 'ghost':
+    case 'mongoose':
+    case 'scorpion_gunner':
+    case 'warthog_driver':
+    case 'warthog_gunner':
+    case 'warthog_gunner_gauss':
+    case 'wraith':
+    case 'wraith_anti_infantry':
+    case 'scorpion':
+    case 'chopper':
+    case 'hornet':
+    case 'prox_mine':
+      return 'VEHICLE';
+    default:
+      return 'OTHER';
+  }
+};
+
+export const getDamageSourceName = (damageSource: z.infer<typeof DamageSourceEnum>): string => {
+  switch (damageSource) {
+    case 'guardians':
+      return 'Guardians';
+    case 'falling_damage':
+      return 'Falling Damage';
+    case 'generic_collision_damage':
+      return 'Collision';
+    case 'generic_melee_damage':
+      return 'Melee';
+    case 'generic_explosion':
+      return 'Explosion';
+    case 'magnum_pistol':
+      return 'Magnum Pistol';
+    case 'plasma_pistol':
+      return 'Plasma Pistol';
+    case 'needler':
+      return 'Needler';
+    case 'excavator':
+      return 'Excavator';
+    case 'smg':
+      return 'SMG';
+    case 'plasma_rifle':
+      return 'Plasma Rifle';
+    case 'battle_rifle':
+      return 'Battle Rifle';
+    case 'carbine':
+      return 'Carbine';
+    case 'shotgun':
+      return 'Shotgun';
+    case 'sniper_rifle':
+      return 'Sniper Rifle';
+    case 'beam_rifle':
+      return 'Beam Rifle';
+    case 'assault_rifle':
+      return 'Assault Rifle';
+    case 'spike_rifle':
+      return 'Spike Rifle';
+    case 'flak_cannon':
+      return 'Flak Cannon';
+    case 'missile_launcher':
+      return 'Missile Pod';
+    case 'rocket_launcher':
+      return 'Rocket Launcher';
+    case 'spartan_laser':
+      return 'Spartan Laser';
+    case 'brute_shot':
+      return 'Brute Shot';
+    case 'flame_thrower':
+      return 'Flame Thrower';
+    case 'sentinal_gun':
+      return 'Sentinal Gun';
+    case 'energy_sword':
+      return 'Energy Sword';
+    case 'gravity_hammer':
+      return 'Gravity Hammer';
+    case 'frag_grenade':
+      return 'Frag Grenade';
+    case 'plasma_grenade':
+      return 'Plasma Grenade';
+    case 'claymore_grenade':
+      return 'Spike Grenade';
+    case 'firebomb_grenade':
+      return 'Firebomb Grenade';
+    case 'flag_melee_damage':
+      return 'Flag Melee Damage';
+    case 'bomb_melee_damage':
+      return 'Bomb Melee Damage';
+    case 'ball_melee_damage':
+      return 'Ball Melee Damage';
+    case 'human_turret':
+      return 'Human Turret';
+    case 'plasma_cannon':
+      return 'Plasma Cannon';
+    case 'unknown_37':
+      return 'Unknown 37';
+    case 'unknown_38':
+      return 'Unknown 38';
+    case 'banshee':
+      return 'Banshee';
+    case 'ghost':
+      return 'Ghost';
+    case 'mongoose':
+      return 'Mongoose';
+    case 'unknown_42':
+      return 'Unknown 42';
+    case 'scorpion_gunner':
+      return 'Scorpion Gunner';
+    case 'unknown_44':
+      return 'Unknown 44';
+    case 'unknown_45':
+      return 'Unknown 45';
+    case 'warthog_driver':
+      return 'Warthog Driver';
+    case 'warthog_gunner':
+      return 'Warthog Gunner';
+    case 'warthog_gunner_gauss':
+      return 'Warthog Gunner Gauss';
+    case 'wraith':
+      return 'Wraith';
+    case 'wraith_anti_infantry':
+      return 'Wraith Anti Infantry';
+    case 'scorpion':
+      return 'Scorpion';
+    case 'chopper':
+      return 'Chopper';
+    case 'hornet':
+      return 'Hornet';
+    case 'mauler':
+      return 'Mauler';
+    case 'unknown_56':
+      return 'Unknown 56';
+    case 'unknown_57':
+      return 'Unknown 57';
+    case 'unknown_58':
+      return 'Unknown 58';
+    case 'unknown_59':
+      return 'Unknown 59';
+    case 'prox_mine':
+      return 'Prox Mine';
+    case 'unknown_61':
+      return 'Unknown 61';
+    default:
+      return damageSource;
+  }
+}
+
 export const DamageStatisticSchema = z.object({
     kills: z.number(),
     deaths: z.number(),

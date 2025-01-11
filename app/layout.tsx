@@ -31,7 +31,7 @@ export default async function RootLayout({
           <CssBaseline />
             <Header session={session} />
             <NavBar session={session}/>
-            <Container maxWidth="md">              
+            <Container maxWidth="lg">              
               {children}
             </Container>
           </ThemeProvider>
