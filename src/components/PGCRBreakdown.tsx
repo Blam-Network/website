@@ -97,7 +97,7 @@ const Carnage = ({report}: {report: CarnageReport}) => {
                 "Score"
             ]}
             players={Object.fromEntries(
-                report.players.map((player, index) => [index, [
+                report.players.map((player) => [player.player_index, [
                     player.statistics.kills,
                     player.statistics.assists,
                     player.statistics.deaths,
@@ -124,14 +124,14 @@ const KillBreakdown = ({report}: {report: CarnageReport}) => {
                 "Tool of Destruction"
             ]}
             players={Object.fromEntries(
-                report.players.map((player, index) => {
+                report.players.map((player) => {
                     let sortedDamageStats = player.damage_statistics.sort((a, b) => b.kills - a.kills);
                     let toolOfDestruction = '-';
                     if (sortedDamageStats.length > 0) {
                         toolOfDestruction = getDamageSourceName(sortedDamageStats[0].damage_source);
                     }
 
-                    return [index, [
+                    return [player.player_index, [
                         player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'WEAPON').reduce((acc, stat) => acc + stat.kills, 0),
                         player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'MELEE').reduce((acc, stat) => acc + stat.kills, 0),
                         player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'GRENADE').reduce((acc, stat) => acc + stat.kills, 0),
@@ -158,7 +158,7 @@ const FieldStats = ({report}: {report: CarnageReport}) => {
                 "Most Killed By"
             ]}
             players={Object.fromEntries(
-                report.players.map((player, index) => {
+                report.players.map((player) => {
                     const totalMedals = Object.values(player.medals).reduce((acc, val) => acc + val, 0);
                     let sorted_kills = report.player_interactions
                         .filter(interaction => interaction.left_player_index === player.player_index)
@@ -172,7 +172,7 @@ const FieldStats = ({report}: {report: CarnageReport}) => {
                     let most_killed = sorted_kills.length > 0 ? report.players.filter(player => player.player_index === sorted_kills[0].right_player_index)[0].player_name : '-';
                     let most_killed_by = sorted_killed_by.length > 0 ? report.players.filter(player => player.player_index === sorted_killed_by[0].right_player_index)[0].player_name : '-';
 
-                    return [index, [
+                    return [player.player_index, [
                         player.medals.sniper_kill,
                         player.statistics.most_kills_in_a_row,
                         formatSeconds(player.statistics.seconds_alive / (player.statistics.deaths + 1)),
@@ -220,7 +220,7 @@ const KOTH = ({report}: {report: CarnageReport}) => {
                 "Score"
             ]}
             players={Object.fromEntries(
-                report.players.map((player, index) => [index, [
+                report.players.map((player) => [player.player_index, [
                     formatSeconds(player.statistics.king_time_on_hill), 
                     formatSeconds(player.statistics.king_total_control_time), 
                     player.score
