@@ -199,7 +199,7 @@ export const RankBadge = ({rank, grade, size}: {rank: number, grade: number, siz
     }
     return (
         <Box sx={{width: size, height: size, display: 'flex', justifyContent: 'center'}}>
-            <img src={`/img/rank/${rank.toString() + (grade > 1 ? `_${grade - 1}` : '')}.svg`} style={{
+            <img src={`/img/rank/${rank.toString() + (grade > 0 ? `_${grade}` : '')}.svg`} style={{
                 maxWidth: '100%',
                 maxHeight: '100%',
             }} />
