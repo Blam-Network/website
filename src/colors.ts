@@ -62,7 +62,7 @@ export function getColorName(index: number) {
             return "Khaki"
         default:
         case 30:
-            return "Transparent"
+            return "White" // Modders
     }
 }
 
@@ -73,6 +73,7 @@ export function getColor(name: string) {
         case "Silver":
             return { "r": 178, "g": 178, "b": 178, "a": 255 }
         case "White":
+        default:
             return { "r": 200, "g": 200, "b": 200, "a": 255 }
         case "Red":
             return { "r": 167, "g": 59, "b": 59, "a": 255 }
@@ -128,7 +129,6 @@ export function getColor(name: string) {
             return { "r": 182, "g": 150, "b": 121, "a": 255 }
         case "Khaki":
             return { "r": 228, "g": 198, "b": 172, "a": 255 }
-        default:
         case "Transparent":
             return { "r": 0.0, "g": 0.0, "b": 0.0, "a": 0.0 }
     }
@@ -141,6 +141,7 @@ export function getTextColor(name: string) {
         case "Silver":
             return { "r": 255, "g": 255, "b": 255, "a": 255 }
         case "White":
+        default:
             return { "r": 255, "g": 255, "b": 255, "a": 255 }
         case "Red":
             return { "r": 255, "g": 244, "b": 244, "a": 255 }
@@ -196,7 +197,6 @@ export function getTextColor(name: string) {
             return { "r": 255, "g": 246, "b": 239, "a": 255 }
         case "Khaki":
             return { "r": 255, "g": 246, "b": 239, "a": 255 }
-        default:
         case "Transparent":
             return { "r": 0.0, "g": 0.0, "b": 0.0, "a": 0.0 }
     }
