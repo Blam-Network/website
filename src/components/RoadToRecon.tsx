@@ -41,17 +41,16 @@ export const RoadToRecon = ({session}: {session: Session | null}) => {
             }}
             flexDirection={'column'}
         >
-            Road to recon.
-            {isFetching && <Typography>Loading...</Typography>}
-            {!isFetching && data && <Stack direction={'row'} gap={1}>
-                <img src="/img/vidmasters/7on7.png" width={40} height={40} style={!data.sevenOnSeven ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/annual.png" width={40} height={40} style={!data.annual ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/brainpan.png" width={40} height={40} style={!data.brainpan ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/deja_vu.png" width={40} height={40} style={!data.dejaVu ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/endure.png" width={40} height={40} style={!data.endure ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/lightswitch.png" width={40} height={40} style={!data.lightswitch ? {filter: 'saturate(0.1)'} : undefined} />
-                <img src="/img/vidmasters/classic.png" width={40} height={40} style={!data.classic ? {filter: 'saturate(0.1)'} : undefined} />
-            </Stack>}
+            Road to recon (Coming Soon)
+            <Stack direction={'row'} gap={1}>
+                <img src="/img/vidmasters/7on7.png" width={40} height={40} style={!data || !data.sevenOnSeven ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/annual.png" width={40} height={40} style={!data || !data.annual ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/brainpan.png" width={40} height={40} style={!data || !data.brainpan ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/deja_vu.png" width={40} height={40} style={!data || !data.dejaVu ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/endure.png" width={40} height={40} style={!data || !data.endure ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/lightswitch.png" width={40} height={40} style={!data || !data.lightswitch ? {filter: 'saturate(0)'} : undefined} />
+                <img src="/img/vidmasters/classic.png" width={40} height={40} style={!data || !data.classic ? {filter: 'saturate(0)'} : undefined} />
+            </Stack>
         </Box>
     );
 }

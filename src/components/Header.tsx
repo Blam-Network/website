@@ -24,7 +24,7 @@ export const Header = ({session}: {session: Session | null}) => {
             }}
         >
             <Stack sx={{flexDirection: 'row',  justifyContent: 'space-between', maxWidth: 'md', flexGrow: 1}}>
-                <h1>BlamNet</h1>
+                <h1>Blam Network</h1>
                 <Box sx={{backgroundColor: '#333', margin: 1, border: '1px solid white', padding: 1}}>
                     {loggedIn 
                         ? <>
