@@ -25,6 +25,7 @@ export const getParsedToken = async (
   ): Promise<SunriseJWT | undefined> => {
     const token = await getToken(...params);
     const parsed = JWTSchema.safeParse(token);
+    if (!parsed.success) throw new Error(JSON.stringify(parsed.error));
     if (!parsed.success) return undefined;
     return parsed.data;
   };
