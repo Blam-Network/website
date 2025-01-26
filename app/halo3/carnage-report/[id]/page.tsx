@@ -16,7 +16,7 @@ import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
 
 const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
     <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
-        <img src={`/img/maps/film/${mapId}.png`} style={{
+        <img src={`/img/largemaps/${mapId}.jpg`} style={{
             maxWidth: '100%',
             maxHeight: '100%',
         }} />
@@ -187,12 +187,12 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Grid container  alignItems="flex-start">
       {/* Map Image Section */}
-      <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'center' }}>
-        <MapImage mapId={carnageReport.map_id} size={210} />
+      <Grid item xs={12} sm={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+        <MapImage mapId={carnageReport.map_id} size={150} />
       </Grid>
 
       {/* Details Section */}
-      <Grid item xs={12} sm={8}>
+      <Grid item xs={12} sm={10}>
         <Paper elevation={3} sx={{ padding: 3 }}>
           <Typography variant="h6" component="div" gutterBottom>
             {carnageReport.game_variant.name} on {carnageReport.map_variant_name}
@@ -210,10 +210,10 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1">
-                <strong>Matchmaking Playlist:</strong> {carnageReport.matchmaking_options?.hopper_name || 'N/A'}
+                {carnageReport.matchmaking_options ? carnageReport.matchmaking_options?.hopper_name : 'Custom Games'}
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Typography variant="body1">
                 <strong>Duration:</strong> {formatSeconds(durationInSeconds)}
               </Typography>
@@ -223,7 +223,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
       </Grid>
     </Grid>
 
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: `url("/img/maps/film/${carnageReport.map_id}.png")`, justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: `url("/img/largemaps/${carnageReport.map_id}.jpg")`, justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
       <Box sx={{ maxWidth: '28em', width: '100%' }}>
     <Scoreboard data={{
       teamGame: carnageReport.team_game,
