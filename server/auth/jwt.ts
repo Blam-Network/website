@@ -6,7 +6,7 @@ const JWTSchema = z.object({
         xuid: z.string(),
         gamertag: z.string(),
         xboxUserHash: z.string(),
-        email: z.coerce.string(),
+        email: z.string(),
         role: z.union([z.literal("user"), z.literal('admin')]).default("user"),
     }),
     tokens: z.object({
