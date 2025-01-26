@@ -45,9 +45,9 @@ export const getVidmasters = protectedProcedure.query(async (opts) => {
         sevenOnSeven: halo3Achievements.filter((a) => a.id == 92 && a.unlockedOnline).length > 0,
         annual: halo3Achievements.filter((a) => a.id == 63 && a.unlockedOnline).length > 0,
         brainpan: halo3Achievements.filter((a) => a.id == 90).length > 0,
-        endure: halo3ODSTAchievements.filter((a) => a.id == 95 && a.unlockedOnline).length > 0,
-        dejaVu: halo3ODSTAchievements.filter((a) => a.id == 96 && a.unlockedOnline).length > 0,
-        classic: halo3ODSTAchievements.filter((a) => a.id == 97 && a.unlockedOnline).length > 0,
+        endure: halo3ODSTAchievements.filter((a) => a.id == 108 && a.unlockedOnline).length > 0,
+        dejaVu: halo3ODSTAchievements.filter((a) => a.id == 109 && a.unlockedOnline).length > 0,
+        classic: halo3ODSTAchievements.filter((a) => a.id == 107 && a.unlockedOnline).length > 0,
         halo3ODSTAchievements,
     }
 });
