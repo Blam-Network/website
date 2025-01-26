@@ -111,8 +111,7 @@ export const publicProcedure = t.procedure;
  */
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.auth?.user.xuid) {
-    console.error("Unauthorized request", ctx.auth);
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: 'auth ' + JSON.stringify(ctx.auth) });
   }
   return next({
     ctx: {
