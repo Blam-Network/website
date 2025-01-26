@@ -8,6 +8,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { getServerSession } from "next-auth";
 import { NavBar } from "@/src/components/NavBar";
 import { authOptions } from "@/src/api/auth";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { Providers } from "@/src/components/Providers";
 
 
 export const metadata: Metadata = {
@@ -29,11 +34,13 @@ export default async function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
           <CssBaseline />
-            <Header session={session} />
-            <NavBar session={session}/>
-            <Container maxWidth="lg">              
-              {children}
-            </Container>
+            <Providers>
+              <Header session={session} />
+              <NavBar session={session}/>
+              <Container maxWidth="lg">        
+                {children}
+              </Container>
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

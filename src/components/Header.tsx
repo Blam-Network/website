@@ -4,9 +4,14 @@ import { Stack, Box, Typography } from "@mui/material";
 import { Session } from "next-auth";
 import { getSession, signIn, signOut } from "next-auth/react";
 import { NavBar } from "./NavBar";
+import { RoadToRecon } from "./RoadToRecon";
 
 export const Header = ({session}: {session: Session | null}) => {
     const loggedIn = !!session?.user?.xuid;
+
+    if (loggedIn) {
+        console.log(session?.user);
+    }
     
     return (
         <Box
@@ -24,6 +29,7 @@ export const Header = ({session}: {session: Session | null}) => {
                     {loggedIn 
                         ? <>
                             <Typography component='p'>Logged in as {session?.user?.gamertag}</Typography>
+                            <RoadToRecon session={session} />
                             <button onClick={() => signOut()}>Sign Out</button>
                         </>
                         : <button onClick={() => signIn('xbl')}>Sign in with Xbox LIVE</button>}

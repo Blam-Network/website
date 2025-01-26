@@ -122,9 +122,14 @@ export default function XboxLive<P extends XboxProfile>(
 
               const xhtsResponse = XHTSResponseSchema.parse(await xhts.json())
   
+              console.log({xboxResponse: JSON.stringify(xboxResponse.DisplayClaims), xhtsResponse: JSON.stringify(xhtsResponse.DisplayClaims)})
+
               return {
                 gamertag: xhtsResponse.DisplayClaims.xui[0].gtg,
                 xuid: xhtsResponse.DisplayClaims.xui[0].xid,
+                userHash: xboxResponse.DisplayClaims.xui[0].uhs,
+                xboxToken,
+                xstsToken: xhtsResponse.Token,
                 email: decoded.email,
               }
             }

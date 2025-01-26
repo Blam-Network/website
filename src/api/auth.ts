@@ -19,7 +19,13 @@ export const authOptions: AuthOptions = {
             user: {
               xuid: user.xuid,
               gamertag: user.gamertag,
+              xboxUserHash: user.userHash,
               email: user.email,
+            },
+            tokens: {
+              microsoft: account.access_token,
+              xbox: user.xboxToken,
+              xsts: user.xstsToken,
             },
             accessToken: account.access_token,
             refreshToken: account.refresh_token,
@@ -33,7 +39,13 @@ export const authOptions: AuthOptions = {
         return {
         // TODO: clean this up
           user: (token as SunriseJWT).user,
+          accessToken: (token as SunriseJWT).accessToken,
           expires: 0,
+          tokens: {
+            microsoft: (token as SunriseJWT).tokens.microsoft,
+            xbox: (token as SunriseJWT).tokens.xbox,
+            xsts: (token as SunriseJWT).tokens.xsts,
+          }
         }
       },
     },
