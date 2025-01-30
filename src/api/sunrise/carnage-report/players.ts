@@ -358,8 +358,8 @@ export const getDamageSourceName = (damageSource: z.infer<typeof DamageSourceEnu
       return 'Unknown 58';
     case 'unknown_59':
       return 'Unknown 59';
-    case 'prox_mine':
-      return 'Prox Mine';
+    case 'unknown_60':
+      return 'Unknown 60';
     case 'unknown_61':
       return 'Unknown 61';
     default:
