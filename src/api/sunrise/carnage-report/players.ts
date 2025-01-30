@@ -177,7 +177,7 @@ export const DamageSourceEnum = z.enum([
     'unknown_57',
     'unknown_58',
     'unknown_59',
-    'prox_mine',
+    'unknown_60',
     'unknown_61',
 ]);
 
@@ -234,7 +234,6 @@ export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourc
     case 'scorpion':
     case 'chopper':
     case 'hornet':
-    case 'prox_mine':
       return 'VEHICLE';
     default:
       return 'OTHER';
