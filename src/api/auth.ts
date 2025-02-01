@@ -36,10 +36,10 @@ export const authOptions: AuthOptions = {
         else {
           // if the tokens have expired, logout
           const sunriseJWT = token as SunriseJWT;
-          if (sunriseJWT.tokens.xbox && Date.now() > sunriseJWT.tokens.xboxTokenExpiresAt) {
+          if (sunriseJWT.tokens.xbox && sunriseJWT.tokens.xboxTokenExpiresAt && Date.now() > sunriseJWT.tokens.xboxTokenExpiresAt) {
             return {};
           }
-          if (sunriseJWT.tokens.xsts && Date.now() > sunriseJWT.tokens.xstsTokenExpiresAt) {
+          if (sunriseJWT.tokens.xsts && sunriseJWT.tokens.xstsTokenExpiresAt && Date.now() > sunriseJWT.tokens.xstsTokenExpiresAt) {
             return {};
           }
           
