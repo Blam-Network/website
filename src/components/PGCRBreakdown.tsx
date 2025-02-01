@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack, Box, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, tableCellClasses, Tabs, Tab } from "@mui/material";
+import { Stack, Box, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, tableCellClasses, Tabs, Tab, Link } from "@mui/material";
 import { getColor, getColorName, getCssColor, getTextColor } from "../colors";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { RankBadge, ServiceRecordPlaceholder } from "./ServiceRecordPlaceholder";
@@ -67,7 +67,9 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                     }} 
                                     size={25} 
                                 />
-                                {player.player_name}
+                                <Link href={`https://www.xbox.com/en-GB/play/user/${player.player_name}`}>
+                                    {player.player_name}
+                                </Link>
                             </Box>
                             <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
                                 {player.global_statistics_highest_skill}
