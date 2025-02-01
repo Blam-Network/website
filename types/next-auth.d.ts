@@ -31,6 +31,8 @@ declare module "next-auth" {
     expiresIn: number;
     refreshToken: string;
     xboxToken: string;
+    xboxTokenExpiresAt: number;
     xstsToken: string;
+    xstsTokenExpiresAt: number;
   }
 }

@@ -9,12 +9,23 @@ export interface XboxProfile extends Record<string, any> {
   email: string
 }
 
+const XboxResponseSchema = z.object({
+  IssueInstant: z.coerce.date(),
+  NotAfter: z.coerce.date(),
+  Token: z.string(),
+  DisplayClaims: z.object({
+      xui: z.array(z.object({ uhs: z.string() })).min(1),
+  }),
+}).passthrough()
+
 const XHTSResponseSchema = z.object({
-    Token: z.string(),
-    DisplayClaims: z.object({
-        xui: z.array(z.object({ gtg: z.string().optional(), xid: z.string().optional() })).length(1),
-    }),
-})
+  IssueInstant: z.coerce.date(),
+  NotAfter: z.coerce.date(),
+  Token: z.string(),
+  DisplayClaims: z.object({
+      xui: z.array(z.object({ gtg: z.string().optional(), xid: z.string().optional() })).length(1),
+  }),
+}).passthrough()
 
 export default function XboxLive<P extends XboxProfile>(
     options: OAuthUserConfig<P> & {
@@ -97,11 +108,7 @@ export default function XboxLive<P extends XboxProfile>(
             )
   
             if (xbox.ok) {
-              const xboxResponse = (await xbox.json()) as {
-                DisplayClaims: { xui: { uhs: string | undefined }[] }
-                Token: string | undefined
-              }
-  
+              const xboxResponse = XboxResponseSchema.parse(await xbox.json())
               const xboxToken = xboxResponse?.Token
 
               const xhts = await fetch(
@@ -122,14 +129,16 @@ export default function XboxLive<P extends XboxProfile>(
 
               const xhtsResponse = XHTSResponseSchema.parse(await xhts.json())
   
-              console.log({xboxResponse: JSON.stringify(xboxResponse.DisplayClaims), xhtsResponse: JSON.stringify(xhtsResponse.DisplayClaims)})
+              console.log({xboxResponse: JSON.stringify(xboxResponse), xhtsResponse: JSON.stringify(xhtsResponse)})
 
               return {
                 gamertag: xhtsResponse.DisplayClaims.xui[0].gtg,
                 xuid: xhtsResponse.DisplayClaims.xui[0].xid,
                 userHash: xboxResponse.DisplayClaims.xui[0].uhs,
                 xboxToken,
+                xboxTokenExpiresAt: xboxResponse.NotAfter.getTime(),
                 xstsToken: xhtsResponse.Token,
+                xstsTokenExpiresAt: xhtsResponse.NotAfter.getTime(),
                 email: decoded.email,
               }
             }

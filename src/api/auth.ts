@@ -25,13 +25,24 @@ export const authOptions: AuthOptions = {
             tokens: {
               microsoft: account.access_token,
               xbox: user.xboxToken,
+              xboxTokenExpiresAt: user.xboxTokenExpiresAt,
               xsts: user.xstsToken,
+              xstsTokenExpiresAt: user.xstsTokenExpiresAt,
             },
             accessToken: account.access_token,
             refreshToken: account.refresh_token,
           };
         }
         else {
+          // if the tokens have expired, logout
+          const sunriseJWT = token as SunriseJWT;
+          if (sunriseJWT.tokens.xbox && Date.now() > sunriseJWT.tokens.xboxTokenExpiresAt) {
+            return {};
+          }
+          if (sunriseJWT.tokens.xsts && Date.now() > sunriseJWT.tokens.xstsTokenExpiresAt) {
+            return {};
+          }
+          
           return token as JWT;
         }
       },
