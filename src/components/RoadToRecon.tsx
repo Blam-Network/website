@@ -23,12 +23,14 @@ export const RoadToRecon = ({session}: {session: Session | null}) => {
         enabled: loggedIn,
       })
 
-    if (!loggedIn) return null;
-
     const unlockMutation = useMutation({
         mutationFn: () =>
-          api.sunrise2.unlockRecon.mutate(),
+            api.sunrise2.unlockRecon.mutate(),
     })
+
+    if (!loggedIn) return null;
+
+
 
     console.log({isFetching, data});
 
@@ -49,7 +51,7 @@ export const RoadToRecon = ({session}: {session: Session | null}) => {
                 <Alert severity="success">
                     <AlertTitle>Recon Available</AlertTitle>
                     <Stack direction={'column'} gap={1}>
-                        You've unlocked all of the Vidmaster achievements! <br />
+                        You&apos;ve unlocked all of the Vidmaster achievements! <br />
                         Click the button below to unlock your Recon armor.
                         <Button size='small' disabled={unlockMutation.isPending} variant='contained' color='success' onClick={() => unlockMutation.mutate()}>Unlock Recon</Button>
                     </Stack>
