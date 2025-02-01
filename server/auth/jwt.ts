@@ -12,9 +12,9 @@ const JWTSchema = z.object({
     tokens: z.object({
         microsoft: z.string(),
         xbox: z.string(),
-        xboxTokenExpiresAt: z.number(),
+        xboxTokenExpiresAt: z.number().optional(),
         xsts: z.string(),
-        xstsTokenExpiresAt: z.number(),
+        xstsTokenExpiresAt: z.number().optional(),
     }),
     accessToken: z.string(),
     refreshToken: z.string().optional(),
