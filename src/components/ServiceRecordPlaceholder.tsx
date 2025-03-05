@@ -4,6 +4,7 @@ import { getColor, getColorName, getCssColor } from "../colors";
 import { Emblem } from "./Emblem";
 
 export const rankStrings = [
+    'No Rank',
     'Recruit',
     'Apprentice',
     'Private',
@@ -31,7 +32,7 @@ export const campaignBadges = [
 ]
 
 const getNextRank = (rank: number, grade: number, highestSkill: number) => {
-    if (rank == 12 && grade == 4) return undefined;
+    if (rank == 13 && grade == 4) return undefined;
 
     const nextSkill = getNextRankSkill(rank, grade, highestSkill);
     const nextEXP = getNextRankEXP(rank, grade);
