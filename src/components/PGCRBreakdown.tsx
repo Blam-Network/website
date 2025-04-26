@@ -8,9 +8,9 @@ import { Emblem } from "./Emblem";
 import { text } from "stream/consumers";
 import { getTeamColor, getTeamName, getTeamTextColor } from "../utils/teams";
 import { formatSeconds, getGametypeName } from "../utils/gametype";
-import { getDamageSourceCategory, getDamageSourceName, Medals } from "../api/sunrise/carnage-report/players";
+import { getDamageSourceCategory, getDamageSourceName } from "../api/sunrise/carnage-report/players";
 import { RouterOutputs } from "../api/router";
-import { Medal } from "./Medal";
+import type { Medal } from "./Medal";
 
 type CarnageReport = RouterOutputs['sunrise2']['getCarnageReport'];
 
