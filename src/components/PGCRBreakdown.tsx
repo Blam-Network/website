@@ -2,14 +2,15 @@
 
 import { Stack, Box, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, tableCellClasses, Tabs, Tab, Link } from "@mui/material";
 import { getColor, getColorName, getCssColor, getTextColor } from "../colors";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { RankBadge, ServiceRecordPlaceholder } from "./ServiceRecordPlaceholder";
 import { Emblem } from "./Emblem";
 import { text } from "stream/consumers";
 import { getTeamColor, getTeamName, getTeamTextColor } from "../utils/teams";
 import { formatSeconds, getGametypeName } from "../utils/gametype";
-import { getDamageSourceCategory, getDamageSourceName } from "../api/sunrise/carnage-report/players";
+import { getDamageSourceCategory, getDamageSourceName, Medals } from "../api/sunrise/carnage-report/players";
 import { RouterOutputs } from "../api/router";
+import { Medal } from "./Medal";
 
 type CarnageReport = RouterOutputs['sunrise2']['getCarnageReport'];
 
@@ -25,16 +26,18 @@ export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
             {/* <Tab label={getGametypeName(report.game_variant.game_engine)} value="GAMETYPE" /> */}
             <Tab label="Kill Breakdown" value="KILL_BREAKDOWN" />
             <Tab label="Field Stats" value="FIELD_STATS" />
+            <Tab label="Medals" value="MEDALS" />
             </Tabs>
             {value === "CARNAGE" && <Carnage report={report} />}
             {value === "GAMETYPE" && <KOTH report={report} />}
             {value === "FIELD_STATS" && <FieldStats report={report} />}
             {value === "KILL_BREAKDOWN" && <KillBreakdown report={report} />}
+            {value === "MEDALS" && <Medals report={report} />}
         </>
     )
 }
 
-const BreakdownTable = ({report, headings, players}: {report: CarnageReport, headings: string[], players: Record<number, (string | number)[]>}) => (
+const BreakdownTable = ({report, headings, players}: {report: CarnageReport, headings: string[], players: Record<number, (string | number | ReactNode)[]>}) => (
     <TableContainer component={Paper}>
         <Table size="small">
           <colgroup>
@@ -77,7 +80,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                             </Box>
                         </Box>
                     </TableCell>
-                    {players[player.player_index].map((cell, index) => <TableCell key={index}>{cell}</TableCell>)}
+                    {players[player.player_index].map((cell, index) => <TableCell sx={{padding: 0}} key={index}>{cell}</TableCell>)}
                 </TableRow>
             ))}
           </TableBody>
@@ -188,30 +191,6 @@ const FieldStats = ({report}: {report: CarnageReport}) => {
     )
 }
 
-const PlayerCells = ({player}: {player: CarnageReport['players'][0]}) => <>
-    <TableCell sx={{paddingLeft: 1, paddingRight: 1}}>
-        <Emblem 
-        emblem={{
-            primary: player.foreground_emblem,
-            secondary: player.emblem_flags === 0,
-            background: player.background_emblem,
-            primaryColor: player.emblem_primary_color,
-            secondaryColor: player.emblem_secondary_color,
-            backgroundColor: player.emblem_background_color,
-            armourPrimaryColor: player.primary_color,
-        }} 
-        size={25} 
-        />
-    </TableCell>
-    <TableCell sx={{paddingLeft: 0}}>{player.player_name}</TableCell>
-    <TableCell>
-        <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
-            {player.global_statistics_highest_skill}
-            <RankBadge rank={player.host_stats_global_rank} grade={player.host_stats_global_grade} size={25}/>
-        </Box>
-    </TableCell>
-</>
-
 const KOTH = ({report}: {report: CarnageReport}) => {
     return (
         <BreakdownTable 
@@ -227,6 +206,31 @@ const KOTH = ({report}: {report: CarnageReport}) => {
                     formatSeconds(player.statistics.king_total_control_time), 
                     player.score
                 ]])
+            )} 
+        />
+    )
+}
+
+const getMedals = (player: CarnageReport['players'][0]) => Object.entries(player.medals)
+    .flatMap(([type, count]) =>
+        Array.from({ length: count }, (_, i) => (
+          <span key={`${type}-${i}`} style={{position: 'relative', top: 2, marginLeft: 5}}>
+            <Medal type={type as keyof Medals} size={32} />
+           </span>
+        ))
+    )
+
+
+const Medals = ({report}: {report: CarnageReport}) => {
+    return (
+        <BreakdownTable 
+            report={report} 
+            headings={[
+                "Medals", 
+            ]}
+            players={Object.fromEntries(
+                report.players.map((player) => [player.player_index, [getMedals(player)]], 
+                )
             )} 
         />
     )

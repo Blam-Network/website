@@ -13,6 +13,7 @@ import { Emblem } from "@/src/components/Emblem";
 import React from "react";
 import { Scoreboard } from "@/src/components/Scoreboard";
 import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
+import { Medal } from "@/src/components/Medal";
 
 const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
     <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>
@@ -222,7 +223,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
         </Paper>
       </Grid>
     </Grid>
-
+    
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', backgroundImage: `url("/img/largemaps/${carnageReport.map_id}.jpg")`, justifyContent: 'center', padding: 5, backgroundSize: 'cover' }}>
       <Box sx={{ maxWidth: '28em', width: '100%' }}>
     <Scoreboard data={{

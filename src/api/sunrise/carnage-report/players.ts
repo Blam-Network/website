@@ -3,20 +3,20 @@ import { z } from "zod";
 import { StatisticsSchema } from "./statistics";
 
 export const MedalsSchema = z.object({
-  avenger: z.number(),
-  nemesis: z.number(),
-  unused3: z.number(),
+  // avenger: z.number(),
+  // nemesis: z.number(),
+  // unused3: z.number(),
   bash_kill: z.number(),
   flame_kill: z.number(),
   perfection: z.number(),
   koth_kill_5: z.number(),
   sniper_kill: z.number(),
-  human_kill_5: z.number(),
-  player_index: z.number(),
+  // human_kill_5: z.number(),
+  // player_index: z.number(),
   sword_kill_5: z.number(),
   extermination: z.number(),
-  human_kill_10: z.number(),
-  human_kill_15: z.number(),
+  // human_kill_10: z.number(),
+  // human_kill_15: z.number(),
   sniper_kill_5: z.number(),
   sword_kill_10: z.number(),
   zombie_kill_5: z.number(),
@@ -63,6 +63,8 @@ export const MedalsSchema = z.object({
   ctf_flag_player_kill_carrier: z.number(),
   juggernaut_player_kill_juggernaut: z.number(),
 });
+
+export type Medals = z.infer<typeof MedalsSchema>;
 
 export const AchievementsSchema = z.object({
   fog: z.number(),
