@@ -214,11 +214,11 @@ const KOTH = ({report}: {report: CarnageReport}) => {
 
 const getMedals = (player: CarnageReport['players'][0]) => Object.entries(player.medals)
     .flatMap(([type, count]) =>
-        Array.from({ length: count }, (_, i) => (
-          <span key={`${type}-${i}`} style={{position: 'relative', top: 2, marginLeft:}}>
-            <Medal type={type as keyof Medals} size={32} />
-           </span>
-        ))
+        Array.from({ length: count }, (_, i) => 
+            <span key={`${type}-${i}`} style={{position: 'relative', top: 2}}>
+                <Medal type={type as keyof Medals} size={32} />
+            </span>
+        )
     )
 
 
