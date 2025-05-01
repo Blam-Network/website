@@ -13,6 +13,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { Providers } from "@/src/components/Providers";
+import { DebugMenu } from "@/src/components/DebugMenu/DebugMenu";
 
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default async function RootLayout({
           <ThemeProvider theme={theme}>
           <CssBaseline />
             <Providers>
+            <DebugMenu/>
               <Header session={session} />
               <NavBar session={session}/>
               <Container maxWidth="lg">        
