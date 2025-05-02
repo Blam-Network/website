@@ -15,9 +15,6 @@ export type DebugMenuProps = {
 }
 
 export const DebugMenu = () => {
-    // 2. save open menus
-    // 3. refactor
-
     const {imguiVisible, setImguiVisible, theme, applyTheme, setTheme} = useDebugMenuSettings();
     const { renderOpenWindows, openMenu, isMenuOpen, registerWindow, unregisterWindow } = useDebugWindows();
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();

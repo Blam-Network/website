@@ -12,7 +12,7 @@ export const AuthDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps
             ImGui.Begin(
                 "Authentication", 
                 undefined, 
-                ImGui.WindowFlags.NoResize
+                ImGui.WindowFlags.NoResize | ImGui.WindowFlags.AlwaysAutoResize
             );
 
             if (!session) {
