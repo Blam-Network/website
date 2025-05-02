@@ -7,7 +7,7 @@ export const DebugWindowEnum = z.enum([
 
     'Authentication',
     'Vidmasters',
-    'Config',
+    'Preferences',
 ])
 
 export type DebugWindow = z.infer<typeof DebugWindowEnum>;
@@ -18,7 +18,6 @@ export const useDebugWindows = () => {
     const registeredWindowsRef = useRef<{[name: string]: WindowRenderer}>({});
     const openWindowsRef = useRef<DebugWindow[]>();
     const registerWindow = useCallback((name: DebugWindow, renderer: (gl: WebGL2RenderingContext) => void) => {
-        console.log('registering renderer for ' + name)
         registeredWindowsRef.current[name] = renderer;
     }, [registeredWindowsRef])
     const unregisterWindow = useCallback((name: string) => {

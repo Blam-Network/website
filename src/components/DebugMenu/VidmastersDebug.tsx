@@ -35,14 +35,62 @@ export const VidmastersDebug = ({registerRenderer, unregisterRenderer}: DebugMen
                 ImGui.End();
                 return;
             }
-            
-            ImGui.Text(`Annual: ${data.annual}`)
-            ImGui.Text(`Brianpan: ${data.brainpan}`)
-            ImGui.Text(`Classic: ${data.classic}`)
-            ImGui.Text(`Deja-Vu: ${data.dejaVu}`)
-            ImGui.Text(`Endure: ${data.endure}`)
-            ImGui.Text(`Lightswitch: ${data.lightswitch}`)
-            ImGui.Text(`7 on the 7th: ${data.sevenOnSeven}`)
+
+            if (ImGui.BeginTable('Achievements', 2)) {
+                ImGui.TableSetupColumn('Name')
+                ImGui.TableSetupColumn('Unlocked')
+                ImGui.TableHeadersRow()
+                
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text(`Annual`)
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.annual))
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('Brianpan')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.brainpan))
+
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('Classic')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.classic))
+
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('Deja-Vu')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.dejaVu))
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('Endure')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.endure))
+
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('Lightswitch')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.lightswitch))
+
+
+                ImGui.TableNextRow()
+                ImGui.TableNextColumn()
+                ImGui.Text('7 on the 7th')
+                ImGui.TableNextColumn()
+                ImGui.Text(String(data.sevenOnSeven))
+
+                ImGui.EndTable();
+            }
+
+
             ImGui.End();
         }
     }, [isFetching, data, session])

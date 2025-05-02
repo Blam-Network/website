@@ -3,32 +3,27 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ImGui, ImGuiImplWeb, ImVec2, ImVec4 } from "@mori2003/jsimgui";
 import { AuthDebug } from "./AuthDebug";
 import { VidmastersDebug } from "./VidmastersDebug";
-import { ImguiThemeContext, useDebugMenuSettings } from "./useDebugMenuSettings";
 import { DebugWindow, useDebugWindows, WindowRenderer } from "./useDebugWindows";
-import { ConfigDebug } from "./ConfigMenu";
-
-let cursorOverMenu: boolean | undefined;
+import { PreferencesDebug } from "./PreferencesMenu";
+import { TransparentOverlayCanvas } from "./TransparentOverlayCanvas";
+import { ImguiPreferencesProvider, useImguiPreferences } from "./useImguiPreferences";
 
 export type DebugMenuProps = {
     registerRenderer: (name: DebugWindow, renderer: WindowRenderer) => void;
     unregisterRenderer: (name: DebugWindow) => void;
 }
 
-export const DebugMenu = () => {
-    const {imguiVisible, setImguiVisible, theme, applyTheme, setTheme} = useDebugMenuSettings();
+const DebugMenuWithoutContext = () => {
+    const { themeRef, opacityRef, scaleRef, showOverlayRef, setShowOverlay } = useImguiPreferences();
     const { renderOpenWindows, openMenu, isMenuOpen, registerWindow, unregisterWindow } = useDebugWindows();
-    const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
-    const xRef = useRef<number>(0);
-    const yRef = useRef<number>(0);
-    const glRef = useRef<WebGL2RenderingContext | null>(null);
 
     const toggleImguiVisible = useCallback(
         (event: KeyboardEvent) => {
-          if (event.key === "F6")
-            setImguiVisible(!imguiVisible);
+            if (event.key === "F6")
+                setShowOverlay(!showOverlayRef.current);
         },
-        [imguiVisible, setImguiVisible]
-      );
+        [showOverlayRef, setShowOverlay]
+    );
 
     useEffect(() => {
         const htmlElement = document.getElementsByTagName('html').item(0);
@@ -37,68 +32,58 @@ export const DebugMenu = () => {
         }
 
         htmlElement.addEventListener('keydown', toggleImguiVisible);
-        return () => { 
+        return () => {
             htmlElement.removeEventListener('keydown', toggleImguiVisible)
         }
-    }, [toggleImguiVisible, canvas])
+    }, [toggleImguiVisible])
 
 
-    const setCanvasRef = useCallback((newCanvas: HTMLCanvasElement | null) => {
-        if (newCanvas) {
-            setCanvas(newCanvas);
+    const setCanvasRef = useCallback((canvas: HTMLCanvasElement | null) => {
+        if (canvas) {
+            ImGuiImplWeb.InitWebGL(canvas).catch((e) => {
+                // There's no exposed API to tell if ImGUI has been initialized,
+                // So we just try to initialize it whenever the canvas changes,
+                // and catch any errors.
+                console.warn('Error initializing ImGui: ' + String(e))
+            });
         }
-    }, [setCanvas]);
+    }, []);
 
-    const mouseMoveEventHandler = useCallback((e: MouseEvent) => {
-        xRef.current = e.clientX;
-        yRef.current = e.clientY;
-    }, [xRef, yRef])
-    const keypressEventHandler = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'F6') setImguiVisible(!imguiVisible);
-    }, [setImguiVisible, imguiVisible])
-    const wheelEventHandler = (e: WheelEvent) => e.preventDefault();
-    useEffect(() => {
-        if (!canvas) return;
-        
-        const htmlElement = document.getElementsByTagName('html').item(0);
-        if (!htmlElement) {
-            throw new Error("UNREACHABLE: HTML element not found.")
+
+    const renderLoop = useCallback((gl: WebGL2RenderingContext) => {
+        if (!showOverlayRef.current) {
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+            // Set the clear color to darkish green.
+            gl.clearColor(0.0, 0.0, 0.0, 0.0);
+            // Clear the context with the newly set color. This is
+            // the function call that actually does the drawing.
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            return;
         }
 
-        // We disable imgui's events when the mouse isn't over it
-        // but we need to keep tracking the mouse to know when it returns.
-        htmlElement.addEventListener('mousemove', mouseMoveEventHandler, {capture: true});
-        // Track F6 down for toggling the menu.
-        htmlElement.addEventListener('keypress', keypressEventHandler)
-        // Without this, scrolling on a widget scrolls both the widget and the underlying page.
-        canvas.addEventListener('wheel', wheelEventHandler, {capture: true});
-
-        return () => {
-            htmlElement.removeEventListener('mousemove', mouseMoveEventHandler);
-            htmlElement.removeEventListener('keypress', keypressEventHandler);
-            canvas.removeEventListener('wheel', wheelEventHandler);
-        }
-    }, [canvas])
-
-    const renderLoop = useCallback(() => {
-        if (!glRef.current) {
-            throw new Error("renderLoop: gl is null");
-        }
-        const gl = glRef.current;
-        if (gl.canvas instanceof OffscreenCanvas) {
-            throw new Error("Can't render debug menu to an offscreen canvas.");
-        }
         const canvasHeight = gl.canvas.height;
         const canvasWidth = gl.canvas.width;
         const scale = window.devicePixelRatio || 1;
-    
-        ImGuiImplWeb.BeginRenderWebGL();
 
-        applyTheme();
-    
+        try {
+            ImGuiImplWeb.BeginRenderWebGL();
+        } catch (e) {
+            // We're probably not initialized yet, abort.
+            return;
+        }
+
+        ImGui.PushStyleVar(ImGui.StyleVar.Alpha, opacityRef.current || 1)
+        ImGui.GetIO().FontGlobalScale = scaleRef.current || 1
+        // ImGui.ShowIDStackToolWindow()
+        // ImGui.ShowDemoWindow();
+
+
+        // ImGui.StyleColorsDark();
         ImGui.SetNextWindowPos(new ImVec2(0, 0))
-        ImGui.Begin('Watermark', undefined, 
-            ImGui.WindowFlags.NoBackground |
+        ImGui.PushStyleVarX(ImGui.StyleVar.WindowPadding, 2)
+        ImGui.PushStyleVarY(ImGui.StyleVar.WindowPadding, 2)
+        ImGui.Begin('Watermark', undefined,
+            // ImGui.WindowFlags.NoBackground |
             ImGui.WindowFlags.NoTitleBar |
             ImGui.WindowFlags.NoBringToFrontOnFocus |
             ImGui.WindowFlags.NoDecoration |
@@ -109,103 +94,80 @@ export const DebugMenu = () => {
             ImGui.WindowFlags.NoCollapse |
             ImGui.WindowFlags.NoResize |
             ImGui.WindowFlags.NoInputs |
-            ImGui.WindowFlags.NoMouseInputs 
+            ImGui.WindowFlags.NoMouseInputs |
+            ImGui.WindowFlags.AlwaysAutoResize
         )
-        ImGui.Text('Blam Network | Untracked Version | Local Environemnt');
+        ImGui.Text(`Blam Network | ${process.env.NODE_ENV} Environment`);
         ImGui.End();
-    
+        ImGui.PopStyleVar(2);
+
+        switch (themeRef.current) {
+            case 'Dark': {
+                ImGui.StyleColorsDark();
+                break;
+            }
+            case 'Light': {
+                ImGui.StyleColorsLight();
+                break;
+            }
+            case 'Classic': {
+                ImGui.StyleColorsClassic();
+                break;
+            }
+            default: break;
+        }
+
         renderOpenWindows(gl);
-    
+
+        ImGui.StyleColorsDark();
+
         if (!isMenuOpen()) {
             ImGui.SetNextWindowPos(
                 new ImVec2(canvasWidth * (1 / scale) - 10, canvasHeight * (1 / scale) - 10),
                 undefined,
                 new ImVec2(1, 1)
             )
-            ImGui.Begin('Menu##buttoncontainer', undefined,         
+            ImGui.Begin('Menu##buttoncontainer', undefined,
                 ImGui.WindowFlags.NoBackground |
                 ImGui.WindowFlags.NoTitleBar |
-                ImGui.WindowFlags.NoResize 
+                ImGui.WindowFlags.NoResize
             )
-            
-    
+
+
             if (ImGui.Button("Menus##button")) {
                 openMenu();
             }
             ImGui.End();
         }
-    
-        ImGuiImplWeb.EndRenderWebGL();
-    
-        const pixel = new Uint8Array(4);
 
-        const scaledX = xRef.current * scale;
-        const scaledY = yRef.current * scale;
-        gl.readPixels(
-            scaledX,
-            canvasHeight - scaledY,
-            1,
-            1,
-            gl.RGBA,
-            gl.UNSIGNED_BYTE,
-            pixel
-        );
-    
-        cursorOverMenu = pixel[3] != 0;
-        if (cursorOverMenu) {
-            gl.canvas.style.pointerEvents = 'auto';
-        } else {
-            gl.canvas.style.pointerEvents = 'none';
-        }
-        
-    
-        requestAnimationFrame(renderLoop);
-    }, [xRef, yRef, renderOpenWindows, openMenu, isMenuOpen, theme, applyTheme])
-    
-    useEffect(() => {
-        if (canvas) {
-            (async () => {
-                {
-                    if (!glRef.current) {
-                        glRef.current = canvas.getContext('webgl2');
-                        await ImGuiImplWeb.InitWebGL(canvas);
-                    }
-                    requestAnimationFrame(renderLoop);
-                }
-            })();
-        }
-    }, [canvas])
+        ImGui.PopStyleVar()
+
+        ImGuiImplWeb.EndRenderWebGL();
+    }, [renderOpenWindows, openMenu, isMenuOpen, showOverlayRef])
 
     return <>
-        <canvas 
-            ref={setCanvasRef}
-            style={{
-                pointerEvents: 'none',
-                display: imguiVisible ? 'block' : 'none',
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                zIndex: 9999,
-            }}
+        <TransparentOverlayCanvas
+            canvasRef={setCanvasRef}
+            context="webgl2"
+            render={renderLoop}
         />
-        <ImguiThemeContext.Provider value={{
-            theme,
-            setTheme,
-        }}>
-            <AuthDebug 
-                registerRenderer={registerWindow}
-                unregisterRenderer={unregisterWindow}
-            />
-            <VidmastersDebug 
-                registerRenderer={registerWindow}
-                unregisterRenderer={unregisterWindow}
-            />
-            <ConfigDebug
-                registerRenderer={registerWindow}
-                unregisterRenderer={unregisterWindow}
-            />
-        </ImguiThemeContext.Provider>
+        <AuthDebug
+            registerRenderer={registerWindow}
+            unregisterRenderer={unregisterWindow}
+        />
+        <VidmastersDebug
+            registerRenderer={registerWindow}
+            unregisterRenderer={unregisterWindow}
+        />
+        <PreferencesDebug
+            registerRenderer={registerWindow}
+            unregisterRenderer={unregisterWindow}
+        />
     </>
+}
+
+export const DebugMenu = () => {
+    return <ImguiPreferencesProvider>
+        <DebugMenuWithoutContext />
+    </ImguiPreferencesProvider>
 }
