@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { z } from "zod";
 import { DebugWindow, DebugWindowEnum } from "./useDebugWindows";
 import { ImGui } from "@mori2003/jsimgui";
@@ -15,7 +15,7 @@ export const useDebugMenuSettings = () => {
     const [imguiVisible, setImguiVisible] = useState<boolean | undefined>(
       undefined
     );
-    const [theme, setTheme] = useState<Theme>();
+    const themeRef = useRef<Theme>();
   
     if (imguiVisible === undefined) {
         if (localStorage.getItem("debugMenu.visible") == "true") {
@@ -26,20 +26,20 @@ export const useDebugMenuSettings = () => {
         }
     }
 
-    if (theme === undefined) {
+    if (themeRef.current === undefined) {
         if (localStorage.getItem("debugMenu.theme")) {
             const parsedTheme = ThemeSchema.safeParse(
                 localStorage.getItem("debugMenu.theme")
             );
             if (parsedTheme.success) {
-                setTheme(parsedTheme.data)
+                themeRef.current = parsedTheme.data
             }
             else {
-                setTheme('Dark');
+                themeRef.current = 'Dark';
             }
         } 
         else { 
-            setTheme('Dark'); 
+            themeRef.current = 'Dark'; 
         }
     }
   
@@ -54,13 +54,13 @@ export const useDebugMenuSettings = () => {
     const setThemeAndStore = useCallback(
         (theme: Theme) => {
             localStorage.setItem("debugMenu.theme", theme.toString());
-            setTheme(theme);
+            themeRef.current = theme;
         },
-        [setTheme]
+        [themeRef]
     )
 
     const applyTheme = useCallback(() => {
-        switch(theme) {
+        switch(themeRef.current) {
             case 'Dark': {
                 ImGui.StyleColorsDark();
                 break;
@@ -75,12 +75,12 @@ export const useDebugMenuSettings = () => {
             }
             default: break;
         }
-    }, [theme])
+    }, [themeRef])
   
     return { 
-        imguiVisible: theme && imguiVisible || false, 
+        imguiVisible: themeRef.current && imguiVisible || false, 
         setImguiVisible: setImguiVisibleAndStore,
-        theme: theme || 'Dark',
+        theme: themeRef.current || 'Dark',
         setTheme: setThemeAndStore,
         applyTheme,
     } as const;

@@ -163,7 +163,7 @@ export const DebugMenu = () => {
     }, [xRef, yRef, renderOpenWindows, openMenu, isMenuOpen, theme, applyTheme])
     
     useEffect(() => {
-        if (canvas && imguiVisible) {
+        if (canvas) {
             (async () => {
                 {
                     if (!glRef.current) {
@@ -174,7 +174,7 @@ export const DebugMenu = () => {
                 }
             })();
         }
-    }, [canvas, imguiVisible, theme])
+    }, [canvas])
 
     return <>
         <canvas 
