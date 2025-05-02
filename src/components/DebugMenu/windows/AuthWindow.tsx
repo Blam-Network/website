@@ -1,11 +1,11 @@
 import { ImGui } from "@mori2003/jsimgui"
-import { Session } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
 import { z } from "zod";
-import { DebugMenuProps } from "./DebugMenu";
 import { useEffect, useMemo } from "react";
+import { useDebugWindows } from "./useDebugWindows";
 
-export const AuthDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps) => {
+export const AuthWindow = () => {
+    const { registerWindow, unregisterWindow } = useDebugWindows();
     const session = useSession().data;
     const renderAuthDebug = useMemo(() => {
         return () => {
@@ -64,14 +64,10 @@ export const AuthDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps
     }, [session])
 
     useEffect(() => {
-        if (renderAuthDebug) {
-            registerRenderer('Authentication', renderAuthDebug);
-        } else {
-            unregisterRenderer('Authentication');
-        }
+        registerWindow('Authentication', renderAuthDebug);
 
         return () => {
-            unregisterRenderer('Authentication');
+            unregisterWindow('Authentication');
         }
     }, [renderAuthDebug])
 

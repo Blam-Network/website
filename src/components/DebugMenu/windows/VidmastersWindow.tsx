@@ -1,13 +1,12 @@
 import { ImGui, ImVec2 } from "@mori2003/jsimgui"
-import { Session } from "next-auth";
-import { signOut, useSession } from "next-auth/react";
-import { z } from "zod";
-import { DebugMenuProps } from "./DebugMenu";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { api } from "@/src/trpc/client";
 import { useQuery } from "@tanstack/react-query";
+import { useDebugWindows } from "./useDebugWindows";
 
-export const VidmastersDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps) => {
+export const VidmastersWindow = () => {
+    const { registerWindow, unregisterWindow } = useDebugWindows();
     const session = useSession().data;
     const { isFetching, data } = useQuery({
         queryKey: ['cheevos'],
@@ -96,10 +95,10 @@ export const VidmastersDebug = ({registerRenderer, unregisterRenderer}: DebugMen
     }, [isFetching, data, session])
 
     useEffect(() => {
-        registerRenderer('Vidmasters', renderVidmasterDebug);
+        registerWindow('Vidmasters', renderVidmasterDebug);
 
         return () => {
-            unregisterRenderer('Vidmasters');
+            unregisterWindow('Vidmasters');
         }
     }, [renderVidmasterDebug])
 

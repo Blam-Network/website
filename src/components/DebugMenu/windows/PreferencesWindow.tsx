@@ -1,12 +1,7 @@
-import { ImGui, ImVec2 } from "@mori2003/jsimgui"
-import { Session } from "next-auth";
-import { signOut, useSession } from "next-auth/react";
-import { z } from "zod";
-import { DebugMenuProps } from "./DebugMenu";
-import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { api } from "@/src/trpc/client";
-import { useQuery } from "@tanstack/react-query";
-import { DEFAULT_OPACITY, DEFAULT_SCALE, DEFAULT_THEME, Theme, useImguiPreferences } from "./useImguiPreferences";
+import { ImGui } from "@mori2003/jsimgui"
+import { useEffect, useMemo } from "react";
+import { DEFAULT_OPACITY, DEFAULT_SCALE, DEFAULT_THEME, Theme, useImguiPreferences } from "../useImguiPreferences";
+import { useDebugWindows } from "./useDebugWindows";
 
 const MIN_OPACITY = 0.1;
 const MAX_OPACITY = 1;
@@ -14,8 +9,10 @@ const MIN_SCALE = 0.5;
 const MAX_SCALE = 5;
 const THEMES: Theme[] = ['Dark', 'Light', 'Classic']
 
-export const PreferencesDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps) => {
+export const PreferencesWindow = () => {
     const {themeRef, setTheme, opacityRef, setOpacity, scaleRef, setScale} = useImguiPreferences()
+    const { registerWindow, unregisterWindow } = useDebugWindows();
+    
 
     const renderPreferencesDebug = useMemo(() => {
         return () => {   
@@ -41,10 +38,10 @@ export const PreferencesDebug = ({registerRenderer, unregisterRenderer}: DebugMe
     }, [themeRef, setTheme, opacityRef, setOpacity, scaleRef, setScale])
 
     useEffect(() => {
-        registerRenderer('Preferences', renderPreferencesDebug);
+        registerWindow('Preferences', renderPreferencesDebug);
 
         return () => {
-            unregisterRenderer('Preferences');
+            unregisterWindow('Preferences');
         }
     }, [renderPreferencesDebug])
 

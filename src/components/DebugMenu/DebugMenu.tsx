@@ -1,21 +1,16 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { ImGui, ImGuiImplWeb, ImVec2, ImVec4 } from "@mori2003/jsimgui";
-import { AuthDebug } from "./AuthDebug";
-import { VidmastersDebug } from "./VidmastersDebug";
-import { DebugWindow, useDebugWindows, WindowRenderer } from "./useDebugWindows";
-import { PreferencesDebug } from "./PreferencesMenu";
+import { DebugWindowsProvider, useDebugWindows } from "./windows/useDebugWindows";
 import { TransparentOverlayCanvas } from "./TransparentOverlayCanvas";
 import { ImguiPreferencesProvider, useImguiPreferences } from "./useImguiPreferences";
-
-export type DebugMenuProps = {
-    registerRenderer: (name: DebugWindow, renderer: WindowRenderer) => void;
-    unregisterRenderer: (name: DebugWindow) => void;
-}
+import { AuthWindow } from "./windows/AuthWindow";
+import { VidmastersWindow } from "./windows/VidmastersWindow";
+import { PreferencesWindow } from "./windows/PreferencesWindow";
 
 const DebugMenuWithoutContext = () => {
     const { themeRef, opacityRef, scaleRef, showOverlayRef, setShowOverlay } = useImguiPreferences();
-    const { renderOpenWindows, openMenu, isMenuOpen, registerWindow, unregisterWindow } = useDebugWindows();
+    const { renderOpenWindows, openMenu, isMenuOpen } = useDebugWindows();
 
     const toggleImguiVisible = useCallback(
         (event: KeyboardEvent) => {
@@ -53,10 +48,7 @@ const DebugMenuWithoutContext = () => {
     const renderLoop = useCallback((gl: WebGL2RenderingContext) => {
         if (!showOverlayRef.current) {
             gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-            // Set the clear color to darkish green.
             gl.clearColor(0.0, 0.0, 0.0, 0.0);
-            // Clear the context with the newly set color. This is
-            // the function call that actually does the drawing.
             gl.clear(gl.COLOR_BUFFER_BIT);
             return;
         }
@@ -130,7 +122,8 @@ const DebugMenuWithoutContext = () => {
             ImGui.Begin('Menu##buttoncontainer', undefined,
                 ImGui.WindowFlags.NoBackground |
                 ImGui.WindowFlags.NoTitleBar |
-                ImGui.WindowFlags.NoResize
+                ImGui.WindowFlags.NoResize |
+                ImGui.WindowFlags.AlwaysAutoResize
             )
 
 
@@ -151,23 +144,18 @@ const DebugMenuWithoutContext = () => {
             context="webgl2"
             render={renderLoop}
         />
-        <AuthDebug
-            registerRenderer={registerWindow}
-            unregisterRenderer={unregisterWindow}
-        />
-        <VidmastersDebug
-            registerRenderer={registerWindow}
-            unregisterRenderer={unregisterWindow}
-        />
-        <PreferencesDebug
-            registerRenderer={registerWindow}
-            unregisterRenderer={unregisterWindow}
-        />
+        <AuthWindow />
+        <VidmastersWindow />
+        <PreferencesWindow />
     </>
 }
 
 export const DebugMenu = () => {
-    return <ImguiPreferencesProvider>
-        <DebugMenuWithoutContext />
-    </ImguiPreferencesProvider>
+    return (
+        <ImguiPreferencesProvider>
+            <DebugWindowsProvider>
+                <DebugMenuWithoutContext />
+            </DebugWindowsProvider>
+        </ImguiPreferencesProvider>
+    )
 }
