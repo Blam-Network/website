@@ -8,15 +8,21 @@ import { useEffect, useMemo } from "react";
 export const AuthDebug = ({registerRenderer, unregisterRenderer}: DebugMenuProps) => {
     const session = useSession().data;
     const renderAuthDebug = useMemo(() => {
-        if (!session) return undefined;
         return () => {
-            const xuid = z.coerce.number().transform(xuid => xuid.toString(16).toUpperCase().padStart(16, '0')).parse(session.user.xuid);
-            
             ImGui.Begin(
                 "Authentication", 
                 undefined, 
                 ImGui.WindowFlags.NoResize
             );
+
+            if (!session) {
+                ImGui.Text('Not logged in.')
+                ImGui.End();
+                return;
+            }
+
+            const xuid = z.coerce.number().transform(xuid => xuid.toString(16).toUpperCase().padStart(16, '0')).parse(session.user.xuid);
+
             ImGui.Text(`gametag: ${session.user.gamertag}`)
             ImGui.SameLine();
             if (ImGui.TextLink("copy##1")) {

@@ -3,8 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ImGui, ImGuiImplWeb, ImVec2, ImVec4 } from "@mori2003/jsimgui";
 import { AuthDebug } from "./AuthDebug";
 import { VidmastersDebug } from "./VidmastersDebug";
-import { useDebugMenuSettings } from "./useDebugMenuSettings";
+import { ImguiThemeContext, useDebugMenuSettings } from "./useDebugMenuSettings";
 import { DebugWindow, useDebugWindows, WindowRenderer } from "./useDebugWindows";
+import { ConfigDebug } from "./ConfigMenu";
 
 let cursorOverMenu: boolean | undefined;
 
@@ -13,13 +14,11 @@ export type DebugMenuProps = {
     unregisterRenderer: (name: DebugWindow) => void;
 }
 
-
-
 export const DebugMenu = () => {
     // 2. save open menus
     // 3. refactor
 
-    const {imguiVisible, setImguiVisible} = useDebugMenuSettings();
+    const {imguiVisible, setImguiVisible, theme, applyTheme, setTheme} = useDebugMenuSettings();
     const { renderOpenWindows, openMenu, isMenuOpen, registerWindow, unregisterWindow } = useDebugWindows();
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
     const xRef = useRef<number>(0);
@@ -97,6 +96,8 @@ export const DebugMenu = () => {
         const scale = window.devicePixelRatio || 1;
     
         ImGuiImplWeb.BeginRenderWebGL();
+
+        applyTheme();
     
         ImGui.SetNextWindowPos(new ImVec2(0, 0))
         ImGui.Begin('Watermark', undefined, 
@@ -162,7 +163,7 @@ export const DebugMenu = () => {
         
     
         requestAnimationFrame(renderLoop);
-    }, [xRef, yRef, renderOpenWindows, openMenu, isMenuOpen])
+    }, [xRef, yRef, renderOpenWindows, openMenu, isMenuOpen, theme, applyTheme])
     
     useEffect(() => {
         if (canvas && imguiVisible) {
@@ -176,7 +177,7 @@ export const DebugMenu = () => {
                 }
             })();
         }
-    }, [canvas, imguiVisible])
+    }, [canvas, imguiVisible, theme])
 
     return <>
         <canvas 
@@ -192,13 +193,22 @@ export const DebugMenu = () => {
                 zIndex: 9999,
             }}
         />
-        <AuthDebug 
-            registerRenderer={registerWindow}
-            unregisterRenderer={unregisterWindow}
-        />
-        <VidmastersDebug 
-            registerRenderer={registerWindow}
-            unregisterRenderer={unregisterWindow}
-        />
+        <ImguiThemeContext.Provider value={{
+            theme,
+            setTheme,
+        }}>
+            <AuthDebug 
+                registerRenderer={registerWindow}
+                unregisterRenderer={unregisterWindow}
+            />
+            <VidmastersDebug 
+                registerRenderer={registerWindow}
+                unregisterRenderer={unregisterWindow}
+            />
+            <ConfigDebug
+                registerRenderer={registerWindow}
+                unregisterRenderer={unregisterWindow}
+            />
+        </ImguiThemeContext.Provider>
     </>
 }

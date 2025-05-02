@@ -3,9 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
 export const DebugWindowEnum = z.enum([
+    'Menu',
+
     'Authentication',
     'Vidmasters',
-    'Menu'
+    'Config',
 ])
 
 export type DebugWindow = z.infer<typeof DebugWindowEnum>;
@@ -118,7 +120,5 @@ export const useDebugWindows = () => {
         }
     }
   
-    console.log({openWindows: JSON.stringify(openWindowsRef.current)})
-
     return { openMenu, isMenuOpen, renderOpenWindows, registerWindow, unregisterWindow } as const;
   };
