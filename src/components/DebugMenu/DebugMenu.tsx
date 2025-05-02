@@ -1,6 +1,6 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { ImGui, ImGuiImplWeb, ImVec2, ImVec4 } from "@mori2003/jsimgui";
+import { ImGui, ImGuiImplWeb, ImGuiIO, ImVec2, ImVec4 } from "@mori2003/jsimgui";
 import { DebugWindowsProvider, useDebugWindows } from "./windows/useDebugWindows";
 import { TransparentOverlayCanvas } from "./TransparentOverlayCanvas";
 import { ImguiPreferencesProvider, useImguiPreferences } from "./useImguiPreferences";
@@ -11,6 +11,7 @@ import { PreferencesWindow } from "./windows/PreferencesWindow";
 const DebugMenuWithoutContext = () => {
     const { themeRef, opacityRef, scaleRef, showOverlayRef, setShowOverlay } = useImguiPreferences();
     const { renderOpenWindows, openMenu, isMenuOpen } = useDebugWindows();
+    const imguiIo = useRef<ImGuiIO>()
 
     const toggleImguiVisible = useCallback(
         (event: KeyboardEvent) => {
@@ -35,12 +36,16 @@ const DebugMenuWithoutContext = () => {
 
     const setCanvasRef = useCallback((canvas: HTMLCanvasElement | null) => {
         if (canvas) {
-            ImGuiImplWeb.InitWebGL(canvas).catch((e) => {
-                // There's no exposed API to tell if ImGUI has been initialized,
-                // So we just try to initialize it whenever the canvas changes,
-                // and catch any errors.
-                console.warn('Error initializing ImGui: ' + String(e))
-            });
+            ImGuiImplWeb.InitWebGL(canvas)
+                .then(() => {
+                    imguiIo.current = ImGui.GetIO();
+                })
+                .catch((e) => {
+                    // There's no exposed API to tell if ImGUI has been initialized,
+                    // So we just try to initialize it whenever the canvas changes,
+                    // and catch any errors.
+                    console.warn('Error initializing ImGui: ' + String(e))
+                });
         }
     }, []);
 
@@ -65,7 +70,8 @@ const DebugMenuWithoutContext = () => {
         }
 
         ImGui.PushStyleVar(ImGui.StyleVar.Alpha, opacityRef.current || 1)
-        ImGui.GetIO().FontGlobalScale = scaleRef.current || 1
+        if (imguiIo.current)
+            imguiIo.current.FontGlobalScale = scaleRef.current || 1
         // ImGui.ShowIDStackToolWindow()
         // ImGui.ShowDemoWindow();
 
@@ -126,7 +132,6 @@ const DebugMenuWithoutContext = () => {
                 ImGui.WindowFlags.AlwaysAutoResize
             )
 
-
             if (ImGui.Button("Menus##button")) {
                 openMenu();
             }
@@ -152,10 +157,10 @@ const DebugMenuWithoutContext = () => {
 
 export const DebugMenu = () => {
     return (
-        <ImguiPreferencesProvider>
-            <DebugWindowsProvider>
+        <DebugWindowsProvider>
+            <ImguiPreferencesProvider>
                 <DebugMenuWithoutContext />
-            </DebugWindowsProvider>
-        </ImguiPreferencesProvider>
+            </ImguiPreferencesProvider>
+        </DebugWindowsProvider>
     )
 }
