@@ -1,12 +1,12 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { ImGui, ImGuiImplWeb, ImGuiIO, ImVec2, ImVec4 } from "@mori2003/jsimgui";
-import { DebugWindowsProvider, useDebugWindows } from "./windows/useDebugWindows";
 import { TransparentOverlayCanvas } from "./TransparentOverlayCanvas";
 import { ImguiPreferencesProvider, useImguiPreferences } from "./useImguiPreferences";
 import { AuthWindow } from "./windows/AuthWindow";
 import { VidmastersWindow } from "./windows/VidmastersWindow";
 import { PreferencesWindow } from "./windows/PreferencesWindow";
+import { DebugWindowsProvider, useDebugWindows } from "./windows/useDebugWindows";
 
 const DebugMenuWithoutContext = () => {
     const { themeRef, opacityRef, scaleRef, showOverlayRef, setShowOverlay } = useImguiPreferences();
@@ -15,7 +15,7 @@ const DebugMenuWithoutContext = () => {
 
     const toggleImguiVisible = useCallback(
         (event: KeyboardEvent) => {
-            if (event.key === "F6")
+            if (event.key === "Backspace" && event.ctrlKey)
                 setShowOverlay(!showOverlayRef.current);
         },
         [showOverlayRef, setShowOverlay]

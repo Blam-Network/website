@@ -31,7 +31,6 @@ export const TransparentOverlayCanvas = (
             if (!glRef.current) {
                 glRef.current = canvas.getContext('webgl2');
             }
-            console.log('BEGINNING RENDER LOOP');
             requestAnimationFrame(renderLoop);
         }
     }, [setCanvas]);
