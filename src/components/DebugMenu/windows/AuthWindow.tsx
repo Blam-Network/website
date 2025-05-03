@@ -2,10 +2,10 @@ import { ImGui } from "@mori2003/jsimgui"
 import { signOut, useSession } from "next-auth/react";
 import { z } from "zod";
 import { useEffect, useMemo } from "react";
-import { useDebugWindows } from "./useDebugWindows";
+import { useImguiWindows } from "../ImguiWindowsOverlay/useImguiWindows";
 
 export const AuthWindow = () => {
-    const { registerWindow, unregisterWindow } = useDebugWindows();
+    const { registerWindow, unregisterWindow } = useImguiWindows();
     const session = useSession().data;
     const renderAuthDebug = useMemo(() => {
         return () => {

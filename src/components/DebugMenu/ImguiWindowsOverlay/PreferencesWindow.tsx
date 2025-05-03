@@ -1,7 +1,7 @@
 import { ImGui } from "@mori2003/jsimgui"
 import { useEffect, useMemo } from "react";
-import { DEFAULT_OPACITY, DEFAULT_SCALE, DEFAULT_THEME, Theme, useImguiPreferences } from "../useImguiPreferences";
-import { useDebugWindows } from "./useDebugWindows";
+import { DEFAULT_OPACITY, DEFAULT_SCALE, DEFAULT_THEME, Theme, useImguiPreferences } from "./useImguiPreferences";
+import { useImguiWindows } from "./useImguiWindows";
 
 const MIN_OPACITY = 0.1;
 const MAX_OPACITY = 1;
@@ -11,7 +11,7 @@ const THEMES: Theme[] = ['Dark', 'Light', 'Classic']
 
 export const PreferencesWindow = () => {
     const {themeRef, setTheme, opacityRef, setOpacity, scaleRef, setScale} = useImguiPreferences()
-    const { registerWindow, unregisterWindow } = useDebugWindows();
+    const { registerWindow, unregisterWindow } = useImguiWindows();
     
 
     const renderPreferencesDebug = useMemo(() => {

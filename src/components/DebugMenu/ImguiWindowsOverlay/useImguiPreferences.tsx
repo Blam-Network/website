@@ -8,27 +8,24 @@ import React, {
 
 export type Theme = 'Dark' | 'Light' | 'Classic';
 
+export const IMGUI_PREFERENCES_KEY = 'imgui_preferences';
 export const DEFAULT_THEME: Theme = 'Dark';
 export const DEFAULT_OPACITY = 0.9;
 export const DEFAULT_SCALE = 1;
-export const DEFAULT_SHOW_OVERLAY = false;
 
 export type ImguiPreferences = {
     setTheme: (theme: Theme) => void;
     setOpacity: (opacity: number) => void;
     setScale: (scale: number) => void;
-    setShowOverlay: (show: boolean) => void;
     themeRef: React.RefObject<Theme>;
     opacityRef: React.RefObject<number>;
     scaleRef: React.RefObject<number>;
-    showOverlayRef: React.RefObject<boolean>;
 };
 
 type StoredImguiPreferences = {
     theme: Theme,
     opacity: number,
     scale: number,
-    showOverlay: boolean,
 }
 
 const ImguiPreferencesContext = createContext<ImguiPreferences | undefined>(undefined);
@@ -39,7 +36,6 @@ export const ImguiPreferencesProvider = ({ children }: { children: ReactNode }) 
     const themeRef = useRef<Theme>(stored?.theme ?? DEFAULT_THEME);
     const opacityRef = useRef<number>(stored?.opacity ?? DEFAULT_OPACITY);
     const scaleRef = useRef<number>(stored?.scale ?? DEFAULT_SCALE);
-    const showOverlayRef = useRef<boolean>(stored?.showOverlay ?? DEFAULT_SHOW_OVERLAY);
 
     const setTheme = (value: Theme) => {
         themeRef.current = value;
@@ -56,20 +52,14 @@ export const ImguiPreferencesProvider = ({ children }: { children: ReactNode }) 
         savePreferences();
     };
 
-    const setShowOverlay = (value: boolean) => {
-        showOverlayRef.current = value;
-        savePreferences();
-    };
-
     const savePreferences = () => {
         try {
             localStorage.setItem(
-                'imgui_preferences',
+                IMGUI_PREFERENCES_KEY,
                 JSON.stringify({
                     theme: themeRef.current,
                     opacity: opacityRef.current,
                     scale: scaleRef.current,
-                    showOverlay: showOverlayRef.current,
                 })
             );
         } catch { }
@@ -85,11 +75,9 @@ export const ImguiPreferencesProvider = ({ children }: { children: ReactNode }) 
                 setTheme,
                 setOpacity,
                 setScale,
-                setShowOverlay,
                 themeRef,
                 opacityRef,
                 scaleRef,
-                showOverlayRef,
             }}
         >
             {children}
@@ -107,7 +95,7 @@ export const useImguiPreferences = (): ImguiPreferences => {
 
 const loadStoredPreferences = (): Partial<StoredImguiPreferences> | null => {
     try {
-        const json = localStorage.getItem('imgui_preferences');
+        const json = localStorage.getItem(IMGUI_PREFERENCES_KEY);
         if (!json) return null;
         return JSON.parse(json);
     } catch {

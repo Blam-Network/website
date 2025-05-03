@@ -3,10 +3,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { api } from "@/src/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { useDebugWindows } from "./useDebugWindows";
+import { useImguiWindows } from "../ImguiWindowsOverlay/useImguiWindows";
 
 export const VidmastersWindow = () => {
-    const { registerWindow, unregisterWindow } = useDebugWindows();
+    const { registerWindow, unregisterWindow } = useImguiWindows();
     const session = useSession().data;
     const { isFetching, data } = useQuery({
         queryKey: ['cheevos'],

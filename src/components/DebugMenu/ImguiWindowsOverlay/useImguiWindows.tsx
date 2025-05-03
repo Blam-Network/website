@@ -10,7 +10,7 @@ import { ImGui, ImVec2 } from "@mori2003/jsimgui";
 
 export type WindowRenderer = (gl: WebGL2RenderingContext) => void;
 
-type DebugWindowsContextType = {
+type ImguiWindowsContextType = {
     openMenu: () => void;
     closeMenu: () => void;
     isMenuOpen: () => boolean;
@@ -19,17 +19,17 @@ type DebugWindowsContextType = {
     unregisterWindow: (name: string) => void;
 };
 
-const DebugWindowsContext = createContext<DebugWindowsContextType | undefined>(undefined);
+const ImguiWindowsContext = createContext<ImguiWindowsContextType | undefined>(undefined);
 
-const STORAGE_KEY = "debugMenu.windows";
-const MENU_NAME = "Menu";
+const IMGUI_WINDOWS_KEY = "imgui_windows";
+const MENU_WINDOW_NAME = "Menu";
 
-export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
+export const ImguiWindowsProvider = ({ children }: { children: ReactNode }) => {
     const registeredWindowsRef = useRef<Record<string, WindowRenderer>>({});
     const openWindowsRef = useRef<string[]>([]);
 
     const saveOpenWindows = () => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(openWindowsRef.current));
+        localStorage.setItem(IMGUI_WINDOWS_KEY, JSON.stringify(openWindowsRef.current));
     };
 
     const setOpenWindows = (windows: string[]) => {
@@ -50,18 +50,18 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
     }, [isWindowOpen]);
 
     const openMenu = useCallback(() => {
-        if (!isWindowOpen(MENU_NAME)) {
-            toggleWindow(MENU_NAME);
+        if (!isWindowOpen(MENU_WINDOW_NAME)) {
+            toggleWindow(MENU_WINDOW_NAME);
         }
     }, [isWindowOpen, toggleWindow]);
 
     const closeMenu = useCallback(() => {
-        if (isWindowOpen(MENU_NAME)) {
-            toggleWindow(MENU_NAME);
+        if (isWindowOpen(MENU_WINDOW_NAME)) {
+            toggleWindow(MENU_WINDOW_NAME);
         }
     }, [isWindowOpen, toggleWindow]);
 
-    const isMenuOpen = useCallback(() => isWindowOpen(MENU_NAME), [isWindowOpen]);
+    const isMenuOpen = useCallback(() => isWindowOpen(MENU_WINDOW_NAME), [isWindowOpen]);
 
     const renderOpenWindows = useCallback((gl: WebGL2RenderingContext) => {
         openWindowsRef.current.forEach(name => {
@@ -72,7 +72,7 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
 
     const registerWindow = useCallback((name: string, renderer: WindowRenderer) => {
         if (!name) throw new Error("Window name must be a non-empty string.");
-        if (name === MENU_NAME) return; // "Menu" is reserved and handled internally
+        if (name === MENU_WINDOW_NAME) return; // "Menu" is reserved and handled internally
         registeredWindowsRef.current[name] = renderer;
     }, []);
 
@@ -81,7 +81,7 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        registeredWindowsRef.current[MENU_NAME] = (gl: WebGL2RenderingContext) => {
+        registeredWindowsRef.current[MENU_WINDOW_NAME] = (gl: WebGL2RenderingContext) => {
             const canvasHeight = gl.canvas.height;
             const canvasWidth = gl.canvas.width;
             const scale = window.devicePixelRatio || 1;
@@ -92,14 +92,14 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
                 new ImVec2(1, 1)
             );
 
-            ImGui.Begin(MENU_NAME, undefined,
+            ImGui.Begin(MENU_WINDOW_NAME, undefined,
                 ImGui.WindowFlags.NoResize |
                 ImGui.WindowFlags.AlwaysAutoResize |
                 ImGui.WindowFlags.NoCollapse |
                 ImGui.WindowFlags.NoTitleBar
             );
 
-            const allWindowNames = Object.keys(registeredWindowsRef.current).filter(n => n !== MENU_NAME);
+            const allWindowNames = Object.keys(registeredWindowsRef.current).filter(n => n !== MENU_WINDOW_NAME);
             if (ImGui.BeginMultiSelect(ImGui.MultiSelectFlags.None, undefined, allWindowNames.length)) {
                 for (const name of allWindowNames) {
                     if (ImGui.Selectable(name, isWindowOpen(name))) {
@@ -115,13 +115,13 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
         };
 
         return () => {
-            delete registeredWindowsRef.current[MENU_NAME];
+            delete registeredWindowsRef.current[MENU_WINDOW_NAME];
         };
     }, [toggleWindow, isWindowOpen, closeMenu]);
 
     useEffect(() => {
         try {
-            const stored = localStorage.getItem(STORAGE_KEY);
+            const stored = localStorage.getItem(IMGUI_WINDOWS_KEY);
             const parsed = stored ? JSON.parse(stored) : [];
             if (Array.isArray(parsed) && parsed.every(n => typeof n === "string")) {
                 openWindowsRef.current = parsed;
@@ -132,7 +132,7 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <DebugWindowsContext.Provider
+        <ImguiWindowsContext.Provider
             value={{
                 openMenu,
                 closeMenu,
@@ -143,12 +143,12 @@ export const DebugWindowsProvider = ({ children }: { children: ReactNode }) => {
             }}
         >
             {children}
-        </DebugWindowsContext.Provider>
+        </ImguiWindowsContext.Provider>
     );
 };
 
-export const useDebugWindows = (): DebugWindowsContextType => {
-    const ctx = useContext(DebugWindowsContext);
-    if (!ctx) throw new Error("useDebugWindows must be used within DebugWindowsProvider");
+export const useImguiWindows = (): ImguiWindowsContextType => {
+    const ctx = useContext(ImguiWindowsContext);
+    if (!ctx) throw new Error("useImguiWindows must be used within ImguiWindowsProvider");
     return ctx;
 };
