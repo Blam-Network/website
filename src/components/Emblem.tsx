@@ -36,6 +36,6 @@ export const Emblem = ({emblem, size}: {emblem: Emblem, size?: number}) => {
     let url = process.env.NEXT_PUBLIC_HALO3_API_BASE_URL + '/halo3/emblem?' + params.toString();
 
     return (
-        <img width={size} height={size} src={url} alt="Emblem" />
+        <img width={size} style={{imageRendering: 'pixelated'}} height={size} src={url} alt="Emblem" />
     );
 }
