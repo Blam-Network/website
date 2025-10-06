@@ -14,7 +14,7 @@ export const GameVariantSchema = z.object({
     unique_id: z.string(),
     description: z.string(),
     game_engine: z.number(),
-    size_in_bytes: z.number(),
+    size_in_bytes: z.coerce.number(),
     author_is_xuid_online: z.boolean(),
 });
 
@@ -44,7 +44,7 @@ export const CarnageReportSchema = z.object({
     matchmaking_options: MatchmakingOptionsSchema.nullable(),
     player_interactions: z.array(PlayerInteractionSchema).nullable().transform((element) => (element === null ? [] : element)),
     map_id: z.number(),
-    game_id: z.number(),
+    game_id: z.coerce.number(),
     started: z.boolean(),
     finished: z.boolean(),
     team_game: z.boolean(),

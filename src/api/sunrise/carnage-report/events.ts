@@ -3,7 +3,7 @@ import { z } from "zod";
 export const PositionSchema = z.array(z.number()).length(3);
 
 export const KillEventSchema = z.object({
-  time: z.number(),
+  time: z.coerce.number(),
   kill_type: z.number(),
   dead_position: PositionSchema,
   killer_position: PositionSchema,
@@ -12,7 +12,7 @@ export const KillEventSchema = z.object({
 });
 
 export const CarryEventSchema = z.object({
-    time: z.number(),
+    time: z.coerce.number(),
     position: PositionSchema,
     carry_type: z.number(),
     weapon_index: z.number(),
@@ -20,7 +20,7 @@ export const CarryEventSchema = z.object({
 });
 
 export const ScoreEventSchema = z.object({
-    time: z.number(),
+    time: z.coerce.number(),
     position: PositionSchema,
     score_type: z.number(),
     weapon_index: z.number(),

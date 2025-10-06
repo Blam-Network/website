@@ -14,6 +14,7 @@ import React from "react";
 import { Scoreboard } from "@/src/components/Scoreboard";
 import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
 import { Medal } from "@/src/components/Medal";
+import { DebugMenu } from "@/src/components/DebugMenu/DebugMenu";
 
 const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
     <Box sx={{height: size, display: 'flex', justifyContent: 'center', border: '1px solid white'}}>

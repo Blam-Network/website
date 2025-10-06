@@ -33,7 +33,7 @@ export const Emblem = ({emblem, size}: {emblem: Emblem, size?: number}) => {
         params.append('size', '100');
     }
 
-    let url = process.env.NEXT_PUBLIC_HALO3_API_BASE_URL + '/blamnet/halo3/emblem?' + params.toString();
+    let url = process.env.NEXT_PUBLIC_HALO3_API_BASE_URL + '/halo3/emblem?' + params.toString();
 
     return (
         <img width={size} height={size} src={url} alt="Emblem" />
