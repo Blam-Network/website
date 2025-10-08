@@ -178,8 +178,8 @@ export const DamageSourceEnum = z.enum([
     'unknown_56',
     'unknown_57',
     'unknown_58',
-    'unknown_59',
-    'unknown_60',
+    'tripmine',
+    'sandtrap_mine',
     'unknown_61',
 ]);
 
