@@ -41,7 +41,7 @@ export const CarnageReportSchema = z.object({
         score_events: z.array(ScoreEventSchema).nullable().transform((element) => (element === null ? [] : element)),
     }),
     game_variant: GameVariantSchema,
-    matchmaking_options: MatchmakingOptionsSchema.nullable(),
+    matchmaking_options: MatchmakingOptionsSchema.nullable().optional(),
     player_interactions: z.array(PlayerInteractionSchema).nullable().transform((element) => (element === null ? [] : element)),
     map_id: z.number(),
     game_id: z.coerce.number(),
