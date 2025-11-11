@@ -20,74 +20,147 @@ export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
     const [value, setValue] = useState("CARNAGE");
 
     return (
-        <>
-            <Tabs value={value} onChange={(e, v) => setValue(v)} aria-label="basic tabs example">
-            <Tab label="Carnage" value="CARNAGE" />
-            {/* <Tab label="Results" value="RESULTS" /> */}
-            {/* <Tab label={getGametypeName(report.game_variant.game_engine)} value="GAMETYPE" /> */}
-            <Tab label="Kill Breakdown" value="KILL_BREAKDOWN" />
-            <Tab label="Field Stats" value="FIELD_STATS" />
-            <Tab label="Medals" value="MEDALS" />
+        <Box>
+            <Tabs 
+                value={value} 
+                onChange={(e, v) => setValue(v)} 
+                sx={{
+                    mb: 3,
+                    '& .MuiTab-root': {
+                        color: '#B0B0B0',
+                        '&.Mui-selected': {
+                            color: '#7CB342',
+                        },
+                    },
+                    '& .MuiTabs-indicator': {
+                        backgroundColor: '#7CB342',
+                    },
+                }}
+            >
+                <Tab label="Carnage" value="CARNAGE" />
+                <Tab label="Kill Breakdown" value="KILL_BREAKDOWN" />
+                <Tab label="Field Stats" value="FIELD_STATS" />
+                <Tab label="Medals" value="MEDALS" />
             </Tabs>
-            {value === "CARNAGE" && <Carnage report={report} />}
-            {value === "GAMETYPE" && <KOTH report={report} />}
-            {value === "FIELD_STATS" && <FieldStats report={report} />}
-            {value === "KILL_BREAKDOWN" && <KillBreakdown report={report} />}
-            {value === "MEDALS" && <Medals report={report} />}
-        </>
+            <Box sx={{ minHeight: '200px' }}>
+                {value === "CARNAGE" && <Carnage report={report} />}
+                {value === "GAMETYPE" && <KOTH report={report} />}
+                {value === "FIELD_STATS" && <FieldStats report={report} />}
+                {value === "KILL_BREAKDOWN" && <KillBreakdown report={report} />}
+                {value === "MEDALS" && <Medals report={report} />}
+            </Box>
+        </Box>
     )
 }
 
-const BreakdownTable = ({report, headings, players}: {report: CarnageReport, headings: string[], players: Record<number, (string | number | ReactNode)[]>}) => (
-    <TableContainer component={Paper}>
-        <Table size="small">
-          <colgroup>
-            <col width="1"/>
-            {headings.map((_, index) => <col key={index} />)}
-          </colgroup>
-          <TableHead>
-            <TableRow>
-                <TableCell sx={{fontWeight: 'bold'}}>Player Name</TableCell>
-                {headings.map((headings) => (
-                    <TableCell sx={{fontWeight: 'bold'}} key={headings}>{headings}</TableCell>
-                ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {report.players.map((player, index) => (
-                <TableRow key={index}>
-                    <TableCell>
-                        <Box gap={1} sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <Emblem 
-                                    emblem={{
-                                        primary: player.foreground_emblem,
-                                        secondary: player.emblem_flags === 0,
-                                        background: player.background_emblem,
-                                        primaryColor: player.emblem_primary_color,
-                                        secondaryColor: player.emblem_secondary_color,
-                                        backgroundColor: player.emblem_background_color,
-                                        armourPrimaryColor: player.primary_color,
-                                    }} 
-                                    size={25} 
-                                />
-                                <Link href={`https://www.xbox.com/en-GB/play/user/${player.player_name}`}>
-                                    {player.player_name}
-                                </Link>
-                            </Box>
-                            <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
-                                {player.global_statistics_highest_skill}
-                                <RankBadge rank={player.host_stats_global_rank} grade={player.host_stats_global_grade} size={25}/>
-                            </Box>
-                        </Box>
-                    </TableCell>
-                    {players[player.player_index].map((cell, index) => <TableCell sx={{padding: 0}} key={index}>{cell}</TableCell>)}
+const BreakdownTable = ({report, headings, players}: {report: CarnageReport, headings: string[], players: Record<number, (string | number | ReactNode)[]>}) => {
+    const getPlayerRowColor = (player: CarnageReport['players'][0]) => {
+        let color;
+        let textColor;
+        
+        if (report.team_game) {
+            color = getTeamColor(player.player_team);
+            textColor = getTeamTextColor(player.player_team);
+        } else {
+            color = getColor(getColorName(player.primary_color));
+            textColor = getTextColor(getColorName(player.primary_color));
+        }
+        
+        return {
+            backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.4)`,
+            textColor: `rgb(${textColor.r}, ${textColor.g}, ${textColor.b})`,
+        };
+    };
+    
+    return (
+        <TableContainer>
+            <Table size="small" sx={{
+                '& .MuiTableCell-root': {
+                    borderColor: '#333',
+                },
+            }}>
+              <colgroup>
+                <col width="1"/>
+                {headings.map((_, index) => <col key={index} />)}
+              </colgroup>
+              <TableHead>
+                <TableRow sx={{
+                    '& .MuiTableCell-root': {
+                        backgroundColor: '#1A1A1A',
+                        color: '#7CB342',
+                        fontWeight: 700,
+                        borderBottom: '2px solid #7CB342',
+                    },
+                }}>
+                    <TableCell>Player Name</TableCell>
+                    {headings.map((headings) => (
+                        <TableCell key={headings}>{headings}</TableCell>
+                    ))}
                 </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-)
+              </TableHead>
+              <TableBody>
+                {report.players.map((player, index) => {
+                    const rowColor = getPlayerRowColor(player);
+                    return (
+                        <TableRow 
+                            key={index}
+                            sx={{
+                                backgroundColor: rowColor.backgroundColor,
+                                '& .MuiTableCell-root': {
+                                    color: rowColor.textColor,
+                                    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8), 1px -1px 2px rgba(0, 0, 0, 0.8), -1px 1px 2px rgba(0, 0, 0, 0.8)',
+                                },
+                                '&:hover': {
+                                    backgroundColor: `${rowColor.backgroundColor.replace('0.4', '0.6')}`,
+                                },
+                            }}
+                        >
+                            <TableCell>
+                                <Box gap={1} sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                                        <Emblem 
+                                            emblem={{
+                                                primary: player.foreground_emblem,
+                                                secondary: player.emblem_flags === 0,
+                                                background: player.background_emblem,
+                                                primaryColor: player.emblem_primary_color,
+                                                secondaryColor: player.emblem_secondary_color,
+                                                backgroundColor: player.emblem_background_color,
+                                                armourPrimaryColor: player.primary_color,
+                                            }} 
+                                            size={25} 
+                                        />
+                                        <Link 
+                                            href={`/player/${encodeURIComponent(player.player_name)}`}
+                                            style={{
+                                                color: rowColor.textColor,
+                                                textDecoration: 'none',
+                                                fontWeight: 600,
+                                                textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8), 1px -1px 2px rgba(0, 0, 0, 0.8), -1px 1px 2px rgba(0, 0, 0, 0.8)',
+                                            }}
+                                        >
+                                            {player.player_name}
+                                        </Link>
+                                    </Box>
+                                    <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
+                                        <Typography variant="body2" sx={{ color: rowColor.textColor, opacity: 0.8 }}>
+                                            {player.global_statistics_highest_skill}
+                                        </Typography>
+                                        <RankBadge rank={player.host_stats_global_rank} grade={player.host_stats_global_grade} size={25}/>
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            {players[player.player_index].map((cell, index) => (
+                                <TableCell key={index}>{cell}</TableCell>
+                            ))}
+                        </TableRow>
+                    );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+    );
+}
 
 const Carnage = ({report}: {report: CarnageReport}) => {
     return (

@@ -1,15 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { sunriseAxios } from "@/src/api/sunrise/sunriseRouter";
+import { sunrise2Axios } from "@/src/api/sunrise/sunrise2Router";
 
 const handler = async (req: NextRequest, {params}: {params: { id: string }}) => {
-    const screenshot = await sunriseAxios.get(`/sunrise/screenshot/` + params.id, {
-        responseType: 'stream',
-    });
+	const screenshot = await sunrise2Axios.get(`/halo3/screenshots/` + params.id + `/view`, {
+		responseType: 'arraybuffer',
+	});
 
-    const response = new NextResponse(screenshot.data);
-    response.headers.set('content-type', 'image/jpeg');
+	const response = new NextResponse(Buffer.from(screenshot.data), {
+		headers: {
+			'content-type': 'image/jpeg',
+			'cache-control': 'public, max-age=31536000, immutable',
+		},
+	});
 
-    return response;
+	return response;
 }
   
 

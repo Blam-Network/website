@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../trpc";
-import { sunriseAxios } from "./sunriseRouter";
+import { sunrise2Axios } from "./sunrise2Router";
 import { jsonStringifySchema } from "@/src/zod";
 
 const FileHeaderSchema = z.object({
@@ -46,9 +46,13 @@ const FileHeaderSchema = z.object({
 export type FileShare = z.infer<typeof FileShareSchema>;
 
 export const fileShare = publicProcedure.input(
-    z.object({ xuid: z.string().length(16) })
+    z.object({ gamertag: z.string().min(1) })
 ).query(async ({input}) => {
-    const response = await sunriseAxios.get(`/sunrise/player/${input.xuid}/fileshare`);
-    const data = FileShareSchema.parse(response.data);
-    return data;
+    const url = `/halo3/players/by-gamertag/${encodeURIComponent(input.gamertag)}/fileshare`;
+    const response = await sunrise2Axios.get(url);
+    const parsed = FileShareSchema.safeParse(response.data);
+    if (!parsed.success) {
+      throw new Error(`fileShare: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
+    }
+    return parsed.data;
 });

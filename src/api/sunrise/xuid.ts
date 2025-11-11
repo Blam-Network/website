@@ -2,7 +2,8 @@ import { z } from "zod";
 import { publicProcedure } from "../trpc";
 import { sunriseAxios } from "./sunriseRouter";
 
-const XuidSchema = z.string().length(16);
+// Accept decimal or hex; return DECIMAL string (what the backend expects for player endpoints)
+const XuidFlexibleSchema = z.string().min(1);
 
 export const getXuid = publicProcedure.input(
     z.object({ gamertag: z.string().min(1) })
@@ -10,6 +11,10 @@ export const getXuid = publicProcedure.input(
     const response = await sunriseAxios.get("/sunrise/xuid", {params: {
         gamertag: opts.input.gamertag,
     }});
-    const data = XuidSchema.parse(response.data);
-    return data;
+    const raw = XuidFlexibleSchema.parse(String(response.data).trim());
+    // If it's hex, convert to decimal. Otherwise assume decimal.
+    const cleaned = raw.replace(/\s+/g, '');
+    const isHex = /^[0-9A-Fa-f]{16}$/.test(cleaned) || /^0x[0-9A-Fa-f]+$/.test(cleaned);
+    const decimal = isHex ? BigInt(cleaned.startsWith('0x') ? cleaned : '0x' + cleaned).toString(10) : cleaned;
+    return decimal;
 });

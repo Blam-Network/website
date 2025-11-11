@@ -31,7 +31,7 @@ export const campaignBadges = [
     'legendary',
 ]
 
-const getNextRank = (rank: number, grade: number, highestSkill: number) => {
+export const getNextRank = (rank: number, grade: number, highestSkill: number) => {
     if (rank == 13 && grade == 4) return undefined;
 
     const nextSkill = getNextRankSkill(rank, grade, highestSkill);

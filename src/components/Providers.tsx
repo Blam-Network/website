@@ -5,7 +5,13 @@ import { getServerSession } from "next-auth";
 import { getSession, SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+})
 
 export const Providers = ({ children }: { children: ReactNode}) => {
     return (

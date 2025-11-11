@@ -203,8 +203,6 @@ export function getTextColor(name: string) {
 }
 
 export function getCssColor (colorIndex: number) {
-    console.log({colorIndex})
     const color = getColor(getColorName(colorIndex))
-    console.log({color})
     return `rgb(${color.r},${color.g},${color.b})`
 }
