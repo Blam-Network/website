@@ -59,32 +59,32 @@ export const ServiceRecordListItem = ({ serviceRecord }: ServiceRecordListItemPr
       {/* Player Info */}
       <Stack spacing={0.5} flex={1}>
         <Stack direction="row" spacing={1} alignItems="baseline" flexWrap="wrap">
-          <Typography variant="h6" sx={{ color: primaryColor, fontWeight: 700, fontFamily: '"Conduit ITC", sans-serif' }}>
+          <Typography variant="h6" sx={{ color: primaryColor, fontWeight: 700, fontFamily: 'sans-serif' }}>
             {serviceRecord.playerName}
           </Typography>
           {serviceRecord.serviceTag && (
             <>
-              <Typography variant="body1" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="body1" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
                 {serviceRecord.serviceTag}
               </Typography>
-              <Typography variant="body2" sx={{ color: primaryColor, fontWeight: 600, fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="body2" sx={{ color: primaryColor, fontWeight: 600, fontFamily: 'sans-serif' }}>
                 • {serviceRecord.model ? 'ELITE' : 'SPARTAN'}
               </Typography>
             </>
           )}
         </Stack>
         <Stack direction="row" spacing={2} flexWrap="wrap">
-          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
             {rankName} - Grade {serviceRecord.grade}
           </Typography>
-          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
             <strong style={{ color: primaryColor }}>Skill:</strong> {serviceRecord.highestSkill}
           </Typography>
-          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+          <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
             <strong style={{ color: primaryColor }}>EXP:</strong> {serviceRecord.totalEXP.toLocaleString()}
           </Typography>
           {serviceRecord.gamesCompleted !== undefined && (
-            <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+            <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
               <strong style={{ color: primaryColor }}>Games:</strong> {serviceRecord.gamesCompleted.toLocaleString()}
             </Typography>
           )}
@@ -92,12 +92,12 @@ export const ServiceRecordListItem = ({ serviceRecord }: ServiceRecordListItemPr
         {(serviceRecord.firstPlayed || serviceRecord.lastPlayed) && (
           <Stack direction="row" spacing={2} flexWrap="wrap">
             {serviceRecord.firstPlayed && (
-              <Typography variant="caption" sx={{ color: '#888', fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="caption" sx={{ color: '#888', fontFamily: 'sans-serif' }}>
                 First: {format(serviceRecord.firstPlayed, "MMM d, yyyy")}
               </Typography>
             )}
             {serviceRecord.lastPlayed && (
-              <Typography variant="caption" sx={{ color: '#888', fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="caption" sx={{ color: '#888', fontFamily: 'sans-serif' }}>
                 Last: {format(serviceRecord.lastPlayed, "MMM d, yyyy")}
               </Typography>
             )}

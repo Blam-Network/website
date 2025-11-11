@@ -189,10 +189,10 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
   const loggedIn = !!session?.user;
 
   const carnageReport = (await api.sunrise2.getCarnageReport.query({ id: params.id }));
-  const players = carnageReport.players.sort((a, b) => a.standing - b.standing);
+  const players = carnageReport.players.sort((a: typeof carnageReport.players[0], b: typeof carnageReport.players[0]) => a.standing - b.standing);
   const columns = ["", "Player Name", "", "Place", "Score", "Kills", "Deaths", "Assists", "Betrayals"];
 
-  const playerNames = players.reduce((acc, player) => {
+  const playerNames = players.reduce((acc: Record<number, string>, player: typeof players[0]) => {
     acc[player.player_index] = player.player_name;
     return acc;
   }, {} as Record<number, string>);
@@ -200,7 +200,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
   const durationInSeconds = (new Date(carnageReport.finish_time).getTime() - new Date(carnageReport.start_time).getTime()) / 1000;
   const winner = players[0];
   const winningTeam = carnageReport.team_game && carnageReport.teams.length > 0 
-    ? carnageReport.teams.sort((a, b) => a.standing - b.standing)[0]
+    ? carnageReport.teams.sort((a: typeof carnageReport.teams[0], b: typeof carnageReport.teams[0]) => a.standing - b.standing)[0]
     : null;
 
   const relatedFiles = await api.sunrise2.getRelatedFiles.query({ id: params.id });
@@ -311,7 +311,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                 File Share
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 2, width: '100%' }}>
-                {relatedFiles.fileshare.map((file) => (
+                {relatedFiles.fileshare.map((file: typeof relatedFiles.fileshare[0]) => (
                   <Paper
                     key={file.id}
                     elevation={4}
@@ -374,7 +374,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                 Screenshots
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 2, width: '100%' }}>
-                {relatedFiles.screenshots.map((screenshot) => (
+                {relatedFiles.screenshots.map((screenshot: typeof relatedFiles.screenshots[0]) => (
                   <ScreenshotCard
                     key={screenshot.id}
                     screenshotId={screenshot.id}

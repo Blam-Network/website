@@ -15,6 +15,7 @@ import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { getColor, getColorName, getCssColor } from "@/src/colors";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
+import { env } from "@/src/env";
 
 export default async function Home({params}: {params: { gamertag: string }}) {
   const session = await getServerSession(authOptions);
@@ -336,7 +337,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                 <ScreenshotCard
                     key={screenshot.id}
                   screenshotId={screenshot.id}
-                  screenshotUrl={`https://halo3.blam.network/halo3/screenshots/${screenshot.id}/view`}
+                  screenshotUrl={`${env.HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`}
                   filename={screenshot.header.filename}
                   description={screenshot.header.description}
                 />

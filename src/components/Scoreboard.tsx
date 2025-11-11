@@ -42,7 +42,7 @@ const CELL_SPACING_SIZE = 2.5;
 const EMBLEM_SIZE = 25;
 const OPACITY = 0.9;
 const FONT_SIZE = 1.5;
-const FONT_FAMILY = 'Conduit ITC Light, Arial';
+const FONT_FAMILY = 'Arial, sans-serif';
 const LINE_HEIGHT = 1.1;
 const DARKEN_FACTOR = 0.65;
 

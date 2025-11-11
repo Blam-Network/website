@@ -78,37 +78,37 @@ export const ServiceRecordComponent = ({ serviceRecord }: ServiceRecordProps) =>
               />
             </Box>
             <Stack spacing={1} flex={1}>
-              <Typography variant="h3" sx={{ color: primaryColor, fontWeight: 700, fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="h3" sx={{ color: primaryColor, fontWeight: 700, fontFamily: 'sans-serif' }}>
                 {serviceRecord.playerName}
                 {serviceRecord.serviceTag && (
                   <>
-                    <Typography component="span" variant="h5" sx={{ color: '#B0B0B0', ml: 1, fontFamily: '"Conduit ITC", sans-serif' }}>
+                    <Typography component="span" variant="h5" sx={{ color: '#B0B0B0', ml: 1, fontFamily: 'sans-serif' }}>
                       {serviceRecord.serviceTag}
                     </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: primaryColor, ml: 1, fontWeight: 600, fontFamily: '"Conduit ITC", sans-serif' }}>
+                    <Typography component="span" variant="body2" sx={{ color: primaryColor, ml: 1, fontWeight: 600, fontFamily: 'sans-serif' }}>
                       • {serviceRecord.model ? 'ELITE' : 'SPARTAN'}
                     </Typography>
                   </>
                 )}
               </Typography>
-              <Typography variant="h5" sx={{ color: '#E0E0E0', fontFamily: '"Conduit ITC", sans-serif' }}>
+              <Typography variant="h5" sx={{ color: '#E0E0E0', fontFamily: 'sans-serif' }}>
                 {rankName} - Grade {serviceRecord.grade}
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap">
-                <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+                <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
                   <strong style={{ color: primaryColor }}>Skill:</strong> {serviceRecord.highestSkill}
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+                <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
                   <strong style={{ color: primaryColor }}>EXP:</strong> {serviceRecord.totalEXP.toLocaleString()}
                 </Typography>
                 {serviceRecord.gamesCompleted !== undefined && (
-                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: '"Conduit ITC", sans-serif' }}>
+                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>
                     <strong style={{ color: primaryColor }}>Games:</strong> {serviceRecord.gamesCompleted.toLocaleString()}
                   </Typography>
                 )}
               </Stack>
               {nextRank && (
-                <Typography variant="body2" sx={{ color: primaryColor, fontStyle: 'italic', fontFamily: '"Conduit ITC", sans-serif' }}>
+                <Typography variant="body2" sx={{ color: primaryColor, fontStyle: 'italic', fontFamily: 'sans-serif' }}>
                   Next Rank: {nextRank}
                 </Typography>
               )}
@@ -120,20 +120,20 @@ export const ServiceRecordComponent = ({ serviceRecord }: ServiceRecordProps) =>
             <Stack spacing={1} sx={{ minWidth: { xs: '100%', md: 180 }, justifyContent: 'center' }}>
               {serviceRecord.firstPlayed && (
                 <Box>
-                  <Typography variant="caption" sx={{ color: primaryColor, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: '"Conduit ITC", sans-serif' }}>
+                  <Typography variant="caption" sx={{ color: primaryColor, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'sans-serif' }}>
                     First Played
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.75rem', fontFamily: '"Conduit ITC", sans-serif' }}>
+                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.75rem', fontFamily: 'sans-serif' }}>
                     {format(serviceRecord.firstPlayed, "MMM d, yyyy")}
                   </Typography>
                 </Box>
               )}
               {serviceRecord.lastPlayed && (
                 <Box>
-                  <Typography variant="caption" sx={{ color: primaryColor, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: '"Conduit ITC", sans-serif' }}>
+                  <Typography variant="caption" sx={{ color: primaryColor, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'sans-serif' }}>
                     Last Played
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.75rem', fontFamily: '"Conduit ITC", sans-serif' }}>
+                  <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.75rem', fontFamily: 'sans-serif' }}>
                     {format(serviceRecord.lastPlayed, "MMM d, yyyy")}
                   </Typography>
                 </Box>

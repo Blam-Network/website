@@ -5,6 +5,7 @@ import { RecentScreenshot } from "@/src/api/sunrise/recentScreenshots";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { Nightmap } from "@/src/components/Nightmap";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
+import { env } from "@/src/env";
 
 export default async function Home() {
   const recentGames = await api.sunrise2.recentGames.query();
@@ -58,7 +59,7 @@ export default async function Home() {
                 <ScreenshotCard
                   key={screenshot.id}
                   screenshotId={screenshot.id}
-                  screenshotUrl={`https://halo3.blam.network/halo3/screenshots/${screenshot.id}/view`}
+                  screenshotUrl={`${env.HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`}
                   filename={screenshot.header.filename}
                   description={screenshot.header.description}
                   author={screenshot.author}

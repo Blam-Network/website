@@ -3,6 +3,7 @@
 import { Box, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { ScreenshotModal } from "./ScreenshotModal";
+import { env } from "@/src/env";
 
 interface FileshareFiletypeIconProps {
   filetype: number;
@@ -82,7 +83,7 @@ export const FileshareFiletypeIcon = ({
   // Use the fileshare endpoint to load the image directly
   // Temporarily disabled due to screenshot file errors
   // const screenshotUrl = (filetype === 13 && hexShareId && slot !== undefined && slot !== null) 
-  //   ? `https://halo3.blam.network/halo3/fileshare/${hexShareId}/${slot}/view` 
+  //   ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view` 
   //   : null;
   const screenshotUrl: string | null = null;
   const showScreenshot = false; // filetype === 13 && screenshotUrl;

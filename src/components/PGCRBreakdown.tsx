@@ -99,7 +99,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                 </TableRow>
               </TableHead>
               <TableBody>
-                {report.players.map((player, index) => {
+                {report.players.map((player: typeof report.players[0], index: number) => {
                     const rowColor = getPlayerRowColor(player);
                     return (
                         <TableRow 
@@ -176,7 +176,7 @@ const Carnage = ({report}: {report: CarnageReport}) => {
                 "Score"
             ]}
             players={Object.fromEntries(
-                report.players.map((player) => [player.player_index, [
+                report.players.map((player: typeof report.players[0]) => [player.player_index, [
                     player.statistics.kills,
                     player.statistics.assists,
                     player.statistics.deaths,
@@ -203,19 +203,19 @@ const KillBreakdown = ({report}: {report: CarnageReport}) => {
                 "Tool of Destruction"
             ]}
             players={Object.fromEntries(
-                report.players.map((player) => {
-                    let sortedDamageStats = player.damage_statistics.sort((a, b) => b.kills - a.kills);
+                report.players.map((player: typeof report.players[0]) => {
+                    let sortedDamageStats = player.damage_statistics.sort((a: typeof player.damage_statistics[0], b: typeof player.damage_statistics[0]) => b.kills - a.kills);
                     let toolOfDestruction = '-';
                     if (sortedDamageStats.length > 0) {
                         toolOfDestruction = getDamageSourceName(sortedDamageStats[0].damage_source);
                     }
 
                     return [player.player_index, [
-                        player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'WEAPON').reduce((acc, stat) => acc + stat.kills, 0),
-                        player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'MELEE').reduce((acc, stat) => acc + stat.kills, 0),
-                        player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'GRENADE').reduce((acc, stat) => acc + stat.kills, 0),
-                        player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'VEHICLE').reduce((acc, stat) => acc + stat.kills, 0),
-                        player.damage_statistics.filter(stat => getDamageSourceCategory(stat.damage_source) === 'OTHER').reduce((acc, stat) => acc + stat.kills, 0),
+                        player.damage_statistics.filter((stat: typeof player.damage_statistics[0]) => getDamageSourceCategory(stat.damage_source) === 'WEAPON').reduce((acc: number, stat: typeof player.damage_statistics[0]) => acc + stat.kills, 0),
+                        player.damage_statistics.filter((stat: typeof player.damage_statistics[0]) => getDamageSourceCategory(stat.damage_source) === 'MELEE').reduce((acc: number, stat: typeof player.damage_statistics[0]) => acc + stat.kills, 0),
+                        player.damage_statistics.filter((stat: typeof player.damage_statistics[0]) => getDamageSourceCategory(stat.damage_source) === 'GRENADE').reduce((acc: number, stat: typeof player.damage_statistics[0]) => acc + stat.kills, 0),
+                        player.damage_statistics.filter((stat: typeof player.damage_statistics[0]) => getDamageSourceCategory(stat.damage_source) === 'VEHICLE').reduce((acc: number, stat: typeof player.damage_statistics[0]) => acc + stat.kills, 0),
+                        player.damage_statistics.filter((stat: typeof player.damage_statistics[0]) => getDamageSourceCategory(stat.damage_source) === 'OTHER').reduce((acc: number, stat: typeof player.damage_statistics[0]) => acc + stat.kills, 0),
                         toolOfDestruction
                     ]]
                 })
@@ -237,19 +237,19 @@ const FieldStats = ({report}: {report: CarnageReport}) => {
                 "Most Killed By"
             ]}
             players={Object.fromEntries(
-                report.players.map((player) => {
-                    const totalMedals = Object.values(player.medals).reduce((acc, val) => acc + val, 0);
+                report.players.map((player: typeof report.players[0]) => {
+                    const totalMedals = (Object.values(player.medals) as number[]).reduce((acc: number, val: number) => acc + val, 0);
                     let sorted_kills = report.player_interactions
-                        .filter(interaction => interaction.left_player_index === player.player_index)
-                        .filter(interaction => interaction.killed > 0)
-                        .sort((a, b) => b.killed - a.killed);
+                        .filter((interaction: typeof report.player_interactions[0]) => interaction.left_player_index === player.player_index)
+                        .filter((interaction: typeof report.player_interactions[0]) => interaction.killed > 0)
+                        .sort((a: typeof report.player_interactions[0], b: typeof report.player_interactions[0]) => b.killed - a.killed);
                     let sorted_killed_by = report.player_interactions
-                        .filter(interaction => interaction.left_player_index === player.player_index)
-                        .filter(interaction => interaction.killed_by > 0)
-                        .sort((a, b) => b.killed_by - a.killed_by);
+                        .filter((interaction: typeof report.player_interactions[0]) => interaction.left_player_index === player.player_index)
+                        .filter((interaction: typeof report.player_interactions[0]) => interaction.killed_by > 0)
+                        .sort((a: typeof report.player_interactions[0], b: typeof report.player_interactions[0]) => b.killed_by - a.killed_by);
                     
-                    let most_killed = sorted_kills.length > 0 ? report.players.filter(player => player.player_index === sorted_kills[0].right_player_index)[0].player_name : '-';
-                    let most_killed_by = sorted_killed_by.length > 0 ? report.players.filter(player => player.player_index === sorted_killed_by[0].right_player_index)[0].player_name : '-';
+                    let most_killed = sorted_kills.length > 0 ? report.players.filter((p: typeof report.players[0]) => p.player_index === sorted_kills[0].right_player_index)[0].player_name : '-';
+                    let most_killed_by = sorted_killed_by.length > 0 ? report.players.filter((p: typeof report.players[0]) => p.player_index === sorted_killed_by[0].right_player_index)[0].player_name : '-';
 
                     return [player.player_index, [
                         player.medals.sniper_kill,
@@ -275,7 +275,7 @@ const KOTH = ({report}: {report: CarnageReport}) => {
                 "Score"
             ]}
             players={Object.fromEntries(
-                report.players.map((player) => [player.player_index, [
+                report.players.map((player: typeof report.players[0]) => [player.player_index, [
                     formatSeconds(player.statistics.king_time_on_hill), 
                     formatSeconds(player.statistics.king_total_control_time), 
                     player.score
@@ -287,7 +287,7 @@ const KOTH = ({report}: {report: CarnageReport}) => {
 
 const getMedals = (player: CarnageReport['players'][0]) => Object.entries(player.medals)
     .flatMap(([type, count]) =>
-        Array.from({ length: count }, (_, i) => 
+        Array.from({ length: count as number }, (_: unknown, i: number) => 
             <span key={`${type}-${i}`} style={{position: 'relative', top: 2}}>
                 <Medal type={type as keyof Medals} size={32} />
             </span>
@@ -303,7 +303,7 @@ const Medals = ({report}: {report: CarnageReport}) => {
                 "Medals", 
             ]}
             players={Object.fromEntries(
-                report.players.map((player) => [player.player_index, [getMedals(player)]], 
+                report.players.map((player: typeof report.players[0]) => [player.player_index, [getMedals(player)]], 
                 )
             )} 
         />

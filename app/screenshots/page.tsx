@@ -7,6 +7,7 @@ import { Box, Typography, Container, Pagination, CircularProgress, TextField, Bu
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { useState, useEffect } from "react";
 import { Screenshot } from "@/src/api/sunrise/screenshots";
+import { env } from "@/src/env";
 
 export default function ScreenshotsPage() {
   const router = useRouter();
@@ -108,7 +109,7 @@ export default function ScreenshotsPage() {
               <ScreenshotCard
                 key={screenshot.id}
                 screenshotId={screenshot.id}
-                screenshotUrl={`https://halo3.blam.network/halo3/screenshots/${screenshot.id}/view`}
+                  screenshotUrl={`${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`}
                 filename={screenshot.header.filename}
                 description={screenshot.header.description || ""}
                 author={screenshot.author || undefined}
