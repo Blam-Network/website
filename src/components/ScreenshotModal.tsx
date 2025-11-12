@@ -51,6 +51,7 @@ export const ScreenshotModal = ({
       onClose={onClose}
       sx={{
         display: 'flex',
+        padding: '20px',
         alignItems: 'center',
         justifyContent: 'center',
         backdropFilter: 'blur(4px)',
@@ -78,7 +79,7 @@ export const ScreenshotModal = ({
           onClick={onClose}
           sx={{
             position: 'absolute',
-            top: -40,
+            top: 0,
             right: 0,
             color: '#fff',
             zIndex: 1,
