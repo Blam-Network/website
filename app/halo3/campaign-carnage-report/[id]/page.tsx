@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
 import { Box, Typography, Container, Paper } from "@mui/material";
 import { authOptions } from "@/src/api/auth";
-import { format } from "date-fns";
+import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { CampaignSkulls } from "@/src/components/CampaignSkulls";
 import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
 
@@ -85,7 +85,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                     {getMissionName(carnageReport.map_id)} on {getDifficultyName(carnageReport.campaign_difficulty)}
                     </Typography>
                     <Typography variant="body1" sx={{ color: '#B0B0B0' }}>
-                        {format(new Date(carnageReport.finish_time), "MMM d, yyyy 'at' h:mm a")}
+                        <DateTimeDisplay date={carnageReport.finish_time} />
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#9CCC65', mt: 1 }}>
                         Duration: {(() => {

@@ -2,7 +2,7 @@ import { ServiceRecord } from "../api/sunrise/serviceRecord";
 import { Stack, Box, Typography } from "@mui/material";
 import { getCssColor, getColorName } from "../colors";
 import { Emblem } from "./Emblem";
-import { format } from "date-fns";
+import { DateTimeDisplay } from "./DateTimeDisplay";
 import { rankStrings, RankBadge } from "./ServiceRecordPlaceholder";
 
 interface ServiceRecordListItemProps {
@@ -93,12 +93,12 @@ export const ServiceRecordListItem = ({ serviceRecord }: ServiceRecordListItemPr
           <Stack direction="row" spacing={2} flexWrap="wrap">
             {serviceRecord.firstPlayed && (
               <Typography variant="caption" sx={{ color: '#888', fontFamily: 'sans-serif' }}>
-                First: {format(serviceRecord.firstPlayed, "MMM d, yyyy")}
+                First: <DateTimeDisplay date={serviceRecord.firstPlayed} formatString="MMM d, yyyy" />
               </Typography>
             )}
             {serviceRecord.lastPlayed && (
               <Typography variant="caption" sx={{ color: '#888', fontFamily: 'sans-serif' }}>
-                Last: {format(serviceRecord.lastPlayed, "MMM d, yyyy")}
+                Last: <DateTimeDisplay date={serviceRecord.lastPlayed} formatString="MMM d, yyyy" />
               </Typography>
             )}
           </Stack>

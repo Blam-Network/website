@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
 import { Box, Typography, Container, Paper, Pagination, CircularProgress, Stack, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Link from "next/link";
-import { format } from "date-fns";
+import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { RecentGame } from "@/src/api/sunrise/recentGames";
 import { useState, useEffect } from "react";
 
@@ -137,9 +137,6 @@ export default function GamesPage() {
                     }
                   }
 
-                  // Format date in local time with a nicer format
-                  const finishTime = new Date(game.finish_time);
-                  const formattedDate = format(finishTime, "MMM d, yyyy 'at' h:mm a");
 
                   // Helper functions for campaign display
                   const getMissionName = (mapId: number): string => {
@@ -205,7 +202,7 @@ export default function GamesPage() {
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ color: '#B0B0B0' }}>
-                        {formattedDate}
+                        <DateTimeDisplay date={game.finish_time} />
                       </TableCell>
                     </TableRow>
                   );

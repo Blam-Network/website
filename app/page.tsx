@@ -9,13 +9,9 @@ import { RecentGame } from "@/src/api/sunrise/recentGames";
 import { env } from "@/src/env";
 
 export default async function Home() {
-  const recentGamesRaw = await api.sunrise2.recentGames.query();
-  // Convert dates from strings to Date objects if needed
-  const recentGames: RecentGame[] = recentGamesRaw.map(game => ({
-    ...game,
-    start_time: new Date(game.start_time as string),
-    finish_time: new Date(game.finish_time as string),
-  }));
+  // Keep dates as strings - they'll be converted to Date objects in the client component
+  // This ensures dates are formatted in the user's local timezone, not server timezone
+  const recentGames = await api.sunrise2.recentGames.query();
   const recentScreenshots = await api.sunrise2.recentScreenshots.query();
 
   return (

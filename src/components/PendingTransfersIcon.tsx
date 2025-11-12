@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/src/trpc/client";
-import { format } from "date-fns";
+import { DateTimeDisplay } from "./DateTimeDisplay";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
 import CloseIcon from "@mui/icons-material/Close";
@@ -206,7 +206,7 @@ export const PendingTransfersIcon = () => {
                                                 </Typography>
                                                 {transfer.fileDate && (
                                                     <Typography variant="caption" sx={{ color: '#888', display: 'block' }}>
-                                                        {format(transfer.fileDate, "MMM d, yyyy")}
+                                                        <DateTimeDisplay date={transfer.fileDate} formatString="MMM d, yyyy" />
                                                     </Typography>
                                                 )}
                                             </Box>

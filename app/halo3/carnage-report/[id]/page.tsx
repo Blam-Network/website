@@ -12,7 +12,7 @@ import React from "react";
 import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
 import { Medal } from "@/src/components/Medal";
 import { DebugMenu } from "@/src/components/DebugMenu/DebugMenu";
-import { format } from "date-fns";
+import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { getTeamName } from "@/src/utils/teams";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
@@ -263,7 +263,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     Start Time
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#B0B0B0' }}>
-                    {format(new Date(carnageReport.start_time), "MMM d, yyyy 'at' h:mm a")}
+                    <DateTimeDisplay date={carnageReport.start_time} />
                   </Typography>
                 </Box>
                 <Box>
@@ -271,7 +271,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     Finish Time
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#B0B0B0' }}>
-                    {format(new Date(carnageReport.finish_time), "MMM d, yyyy 'at' h:mm a")}
+                    <DateTimeDisplay date={carnageReport.finish_time} />
                   </Typography>
                 </Box>
               </Stack>
@@ -332,7 +332,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                           {file.header.filename}
                         </Typography>
                         <Typography variant='caption' color='text.secondary' sx={{ fontSize: '0.75rem' }}>
-                          Created {format(new Date(file.header.date), "MMM d, yyyy 'at' h:mm a")} by{' '}
+                          Created <DateTimeDisplay date={file.header.date} /> by{' '}
                           <Link href={"/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
                             {file.header.author}
                           </Link>

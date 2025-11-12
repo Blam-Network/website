@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import { format } from "date-fns";
 import { PreviousGame } from "@/src/api/sunrise/previousGames";
 import { RecentGame } from "@/src/api/sunrise/recentGames";
+import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 
 const getMissionName = (mapId: number): string => {
     switch (mapId) {
@@ -44,8 +44,14 @@ const getDifficultyName = (difficulty: number | undefined): string => {
     }
 };
 
+// Flexible game type that accepts dates as either Date objects or strings
+type FlexibleGame = Omit<PreviousGame | RecentGame, 'start_time' | 'finish_time'> & {
+    start_time: Date | string;
+    finish_time: Date | string;
+};
+
 interface RecentGamesTableProps {
-    games: (PreviousGame | RecentGame)[];
+    games: FlexibleGame[];
     stickyHeader?: boolean;
 }
 
@@ -83,9 +89,6 @@ export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTab
                             gameType = isForgeMap ? 'Forge' : 'Custom Games';
                         }
 
-                        // Format date in local time with a nicer format
-                        const finishTime = new Date(game.finish_time);
-                        const formattedDate = format(finishTime, "MMM d, yyyy 'at' h:mm a");
 
                         return (
                             <TableRow
@@ -115,7 +118,7 @@ export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTab
                                     </Typography>
                                 </TableCell>
                                 <TableCell sx={{ color: '#B0B0B0', fontSize: '0.8125rem' }}>
-                                    {formattedDate}
+                                    <DateTimeDisplay date={game.finish_time} />
                                 </TableCell>
                             </TableRow>
                         );
