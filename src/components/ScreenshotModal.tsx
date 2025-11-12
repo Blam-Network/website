@@ -106,7 +106,8 @@ export const ScreenshotModal = ({
             },
             transition: 'transform 0.3s ease',
             maxWidth: '1200px',
-            width: '90vw',
+            minWidth: '0px',
+            width: 'fit-content',
             position: 'relative',
             '&::before': {
               content: '""',
@@ -145,8 +146,9 @@ export const ScreenshotModal = ({
             sx={{
               mb: 3,
               position: 'relative',
-              display: 'block',
+              display: 'inline-block',
               overflow: 'hidden',
+              maxWidth: '100%',
               '&::after': {
                 content: '""',
                 position: 'absolute',
