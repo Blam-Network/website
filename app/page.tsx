@@ -5,10 +5,17 @@ import { RecentScreenshot } from "@/src/api/sunrise/recentScreenshots";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { Nightmap } from "@/src/components/Nightmap";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
+import { RecentGame } from "@/src/api/sunrise/recentGames";
 import { env } from "@/src/env";
 
 export default async function Home() {
-  const recentGames = await api.sunrise2.recentGames.query();
+  const recentGamesRaw = await api.sunrise2.recentGames.query();
+  // Convert dates from strings to Date objects if needed
+  const recentGames: RecentGame[] = recentGamesRaw.map(game => ({
+    ...game,
+    start_time: new Date(game.start_time as string),
+    finish_time: new Date(game.finish_time as string),
+  }));
   const recentScreenshots = await api.sunrise2.recentScreenshots.query();
 
   return (

@@ -31,22 +31,29 @@ const GamesResponseSchema = z.object({
 export type RecentGame = z.infer<typeof RecentGameSchema>;
 export type GamesResponse = z.infer<typeof GamesResponseSchema>;
 
-export const recentGames = publicProcedure.query(async () => {
-	const response = await sunrise2Axios.get(`/halo3/games?page=1&pageSize=25`);
-	
-	// Handle Axios response - data might be a string that needs parsing
-	let data = response.data;
-	if (typeof data === 'string') {
-		data = JSON.parse(data);
-	}
-	
-	const parsed = GamesResponseSchema.safeParse(data);
-	if (!parsed.success) {
-		console.error('[recentGames] Schema validation failed:', JSON.stringify(parsed.error.errors, null, 2));
-		throw new Error(`recentGames: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
-	}
-	return parsed.data.data;
-});
+export const recentGames = publicProcedure
+	.output(z.array(RecentGameSchema))
+	.query(async () => {
+		const response = await sunrise2Axios.get(`/halo3/games?page=1&pageSize=25`);
+		
+		// Handle Axios response - data might be a string that needs parsing
+		let data = response.data;
+		if (typeof data === 'string') {
+			data = JSON.parse(data);
+		}
+		
+		const parsed = GamesResponseSchema.safeParse(data);
+		if (!parsed.success) {
+			console.error('[recentGames] Schema validation failed:', JSON.stringify(parsed.error.errors, null, 2));
+			throw new Error(`recentGames: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
+		}
+		// Explicitly convert dates to ensure they're Date objects
+		// Parse each game through the schema to ensure dates are coerced
+		const games = parsed.data.data.map(game => {
+			return RecentGameSchema.parse(game);
+		}) satisfies z.infer<typeof RecentGameSchema>[];
+		return games;
+	});
 
 export const games = publicProcedure.input(
     z.object({
