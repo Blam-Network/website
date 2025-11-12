@@ -51,7 +51,6 @@ export const ScreenshotModal = ({
       onClose={onClose}
       sx={{
         display: 'flex',
-        padding: '20px',
         alignItems: 'center',
         justifyContent: 'center',
         backdropFilter: 'blur(4px)',
@@ -63,6 +62,7 @@ export const ScreenshotModal = ({
           maxWidth: '95vw',
           maxHeight: '95vh',
           outline: 'none',
+          padding: '20px',
           ...(!shouldShowModal && {
             display: 'flex',
             alignItems: 'center',
