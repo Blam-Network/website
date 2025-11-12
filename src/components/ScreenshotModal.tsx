@@ -144,6 +144,15 @@ export const ScreenshotModal = ({
           <Box
             sx={{
               mb: 3,
+                position: 'relative', // Required for absolute positioning of ::after
+                '&::after': {
+                  content: '',
+                  position: absolute,
+                  inset: 0,
+                  boxShadow: '0px 0px 15px 0px rgb(0 0 0 / 50%) inset',
+                  pointerEvents: none,
+                  zIndex: 1,
+                },
             }}
           >
             <img
