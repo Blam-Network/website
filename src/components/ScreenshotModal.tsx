@@ -117,18 +117,18 @@ export const ScreenshotModal = ({
               bottom: 0,
               background: `
                 repeating-linear-gradient(
-                  0deg,
+                  45deg,
                   transparent,
-                  transparent 1px,
-                  rgba(0, 0, 0, 0.02) 1px,
-                  rgba(0, 0, 0, 0.02) 2px
+                  transparent 5px,
+                  rgba(0, 0, 0, 0.02) 5px,
+                  rgba(0, 0, 0, 0.02) 6px
                 ),
                 repeating-linear-gradient(
-                  90deg,
+                  135deg,
                   transparent,
-                  transparent 1px,
-                  rgba(0, 0, 0, 0.02) 1px,
-                  rgba(0, 0, 0, 0.02) 2px
+                  transparent 5px,
+                  rgba(0, 0, 0, 0.02) 5px,
+                  rgba(0, 0, 0, 0.02) 6px
                 )
               `,
               pointerEvents: 'none',
@@ -147,10 +147,10 @@ export const ScreenshotModal = ({
                 position: 'relative', // Required for absolute positioning of ::after
                 '&::after': {
                   content: '',
-                  position: absolute,
+                  position: 'absolute',
                   inset: 0,
                   boxShadow: '0px 0px 15px 0px rgb(0 0 0 / 50%) inset',
-                  pointerEvents: none,
+                  pointerEvents: 'none',
                   zIndex: 1,
                 },
             }}
