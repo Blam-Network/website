@@ -18,12 +18,14 @@ export const NavBar = ({session}: {session: Session | null}) => {
         queryKey: ['onlinePlayers'],
         queryFn: () => api.sunrise2.onlinePlayers.query(),
         refetchInterval: 30000, // Refetch every 30 seconds
+        staleTime: 60000, // Consider data stale after 1 minute
     });
 
     const { data: onlinePlayers24h } = useQuery({
         queryKey: ['onlinePlayers24h'],
         queryFn: () => api.sunrise2.onlinePlayers24h.query(),
         refetchInterval: 30000, // Refetch every 30 seconds
+        staleTime: 60000, // Consider data stale after 1 minute
     });
 
     return (

@@ -1,12 +1,10 @@
 import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
-import { Stack, Box, Typography, Container, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Box, Typography, Container, Paper } from "@mui/material";
 import { authOptions } from "@/src/api/auth";
-import Link from "next/link";
-import { Emblem } from "@/src/components/Emblem";
 import { format } from "date-fns";
-import { getColor, getColorName } from "@/src/colors";
 import { CampaignSkulls } from "@/src/components/CampaignSkulls";
+import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
 
 const getMissionName = (mapId: number): string => {
     switch (mapId) {
@@ -55,6 +53,29 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
 
     const winner = carnageReport.players[0]; // Players are sorted by score
 
+    // Calculate aggregate stats
+    const totalKills = carnageReport.players.reduce((sum: number, player: typeof carnageReport.players[0]) => sum + player.kills_total, 0);
+    const totalDeaths = carnageReport.players.reduce((sum: number, player: typeof carnageReport.players[0]) => sum + player.deaths, 0);
+    const totalHeadshots = carnageReport.players.reduce((sum: number, player: typeof carnageReport.players[0]) => sum + player.headshot_kills, 0);
+    const totalAssassinations = carnageReport.players.reduce((sum: number, player: typeof carnageReport.players[0]) => sum + player.assassination_kills, 0);
+    const hasSkulls = carnageReport.campaign_active_primary_skulls > 0 || carnageReport.campaign_active_secondary_skulls > 0;
+    
+    // Get insertion point name
+    const getInsertionPointName = (insertionPoint: number): string => {
+        switch (insertionPoint) {
+            case 0:
+                return 'Mission Start';
+            case 1:
+                return 'Rally Point Alpha';
+            case 2:
+                return 'Rally Point Bravo';
+            case 3:
+                return 'Rally Point Charlie';
+            default:
+                return `Rally Point ${insertionPoint}`;
+        }
+    };
+
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             {/* Header */}
@@ -75,7 +96,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                         })()}
                     </Typography>
                 </Box>
-                {(carnageReport.campaign_active_primary_skulls > 0 || carnageReport.campaign_active_secondary_skulls > 0) && (
+                {hasSkulls && (
                     <Box>
                         <CampaignSkulls 
                             primarySkulls={carnageReport.campaign_active_primary_skulls}
@@ -85,98 +106,72 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                 )}
             </Box>
 
+            {/* General Stats */}
+            <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
+                <Typography variant="h5" sx={{ mb: 3, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
+                    Game Statistics
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Total Score
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#7CB342', fontWeight: 700 }}>
+                            {carnageReport.final_total_score.toLocaleString()}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Insertion Point
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                            {getInsertionPointName(carnageReport.campaign_insertion_point)}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Total Kills
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                            {totalKills.toLocaleString()}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Total Deaths
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                            {totalDeaths.toLocaleString()}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Headshots
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                            {totalHeadshots.toLocaleString()}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                            Assassinations
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                            {totalAssassinations.toLocaleString()}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Paper>
+
             {/* Player Breakdown */}
             <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
                     Player Breakdown
                 </Typography>
-                {!carnageReport.campaign_metagame_enabled && (
-                    <Typography variant="body2" sx={{ color: '#B0B0B0', mb: 2, fontStyle: 'italic' }}>
-                        Statistics are not available for campaign when scoring is not enabled.
-                    </Typography>
-                )}
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Player</TableCell>
-                                {carnageReport.campaign_metagame_enabled && (
-                                    <>
-                                        <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Score</TableCell>
-                                        <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Kills</TableCell>
-                                        <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Deaths</TableCell>
-                                        <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Assists</TableCell>
-                                        <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Headshots</TableCell>
-                                    </>
-                                )}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {carnageReport.players.map((player: typeof carnageReport.players[0]) => {
-                                const primaryColor = getColor(getColorName(player.primary_color));
-                                return (
-                                    <TableRow
-                                        key={player.player_xuid}
-                                        sx={{
-                                            backgroundColor: `rgba(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}, 0.4)`,
-                                            '&:hover': {
-                                                backgroundColor: `rgba(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}, 0.6)`,
-                                            },
-                                        }}
-                                    >
-                                        <TableCell>
-                                            <Stack direction="row" spacing={2} alignItems="center">
-                                                <Emblem
-                                                    size={40}
-                                                    emblem={{
-                                                        primary: player.foreground_emblem,
-                                                        secondary: player.emblem_flags === 0,
-                                                        background: player.background_emblem,
-                                                        primaryColor: player.emblem_primary_color,
-                                                        secondaryColor: player.emblem_secondary_color,
-                                                        backgroundColor: player.emblem_background_color,
-                                                        armourPrimaryColor: player.primary_color,
-                                                    }}
-                                                />
-                                                <Box>
-                                                    <Link href={`/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
-                                                        <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                            {player.player_name}
-                                                        </Typography>
-                                                    </Link>
-                                                    {player.service_tag && (
-                                                        <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                            {player.service_tag}
-                                                        </Typography>
-                                                    )}
-                                                </Box>
-                                            </Stack>
-                                        </TableCell>
-                                        {carnageReport.campaign_metagame_enabled && (
-                                            <>
-                                                <TableCell align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                    {player.player_final_score.toLocaleString()}
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                    {player.kills_total}
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                    {player.deaths}
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                    {player.assists}
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
-                                                    {player.headshot_kills}
-                                                </TableCell>
-                                            </>
-                                        )}
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <CampaignPlayerBreakdown 
+                    players={carnageReport.players} 
+                    metagameEnabled={carnageReport.campaign_metagame_enabled}
+                />
             </Paper>
         </Container>
     );

@@ -1,7 +1,8 @@
 "use client";
 
 import { Box, CircularProgress } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ScreenshotModal } from "./ScreenshotModal";
 import { env } from "@/src/env";
 
@@ -11,6 +12,7 @@ interface FileshareFiletypeIconProps {
   size?: number | string;
   shareId?: string;
   slot?: number;
+  fileId?: string;
   filename?: string;
   description?: string;
   author?: string;
@@ -63,45 +65,108 @@ export const FileshareFiletypeIcon = ({
   size = '30%',
   shareId,
   slot,
+  fileId,
   filename,
   description,
   author,
 }: FileshareFiletypeIconProps) => {
+  const router = useRouter();
   const fileImage = getFileImage(filetype);
   const gametypePosition = filetype < 10 && gameEngineType ? getGametypeIconPosition(gameEngineType) : null;
-  const [modalOpen, setModalOpen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [query, setQuery] = useState<Record<string, string>>({});
+  const [localModalOpen, setLocalModalOpen] = useState(false);
+  
+  // Read query params from URL on mount and when URL changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const queryObj: Record<string, string> = {};
+      params.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+      setQuery(queryObj);
+    }
+  }, []);
+  
+  // Listen for popstate events (back/forward button)
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const queryObj: Record<string, string> = {};
+      params.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+      setQuery(queryObj);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   
   const sizeValue = typeof size === 'number' ? `${size}px` : size;
   const iconSize = typeof size === 'number' ? size : 64; // Default size for calculations
 
   // Convert shareId to padded hex string - shareId comes as decimal string from backend
-  // const hexShareId = shareId 
-  //   ? BigInt(shareId).toString(16).toUpperCase().padStart(16, '0')
-  //   : null;
+  const hexShareId = shareId 
+    ? BigInt(shareId).toString(16).toUpperCase().padStart(16, '0')
+    : null;
 
   // Use the fileshare endpoint to load the image directly
-  // Temporarily disabled due to screenshot file errors
-  // const screenshotUrl = (filetype === 13 && hexShareId && slot !== undefined && slot !== null) 
-  //   ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view` 
-  //   : null;
-  const screenshotUrl: string | null = null;
-  const showScreenshot = false; // filetype === 13 && screenshotUrl;
+  const screenshotUrl = (filetype === 13 && hexShareId && slot !== undefined && slot !== null) 
+    ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view` 
+    : null;
+  const showScreenshot = filetype === 13 && screenshotUrl;
+
+  const updateURL = (slotUniqueId: string | null) => {
+    const newQuery = { ...query };
+    if (slotUniqueId) {
+      newQuery.viewSlot = slotUniqueId;
+      setLocalModalOpen(true); // Open modal immediately
+    } else {
+      delete newQuery.viewSlot;
+      setLocalModalOpen(false); // Close modal immediately
+    }
+    setQuery(newQuery); // Update local state immediately
+    
+    const params = new URLSearchParams();
+    Object.entries(newQuery).forEach(([key, value]) => {
+      params.set(key, value);
+    });
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+    
+    router.replace(newUrl, { scroll: false });
+  };
+
+  // Sync local modal state with URL param
+  useEffect(() => {
+    if (fileId) {
+      const shouldBeOpen = query.viewSlot === fileId;
+      if (shouldBeOpen !== localModalOpen) {
+        setLocalModalOpen(shouldBeOpen);
+      }
+    } else {
+      setLocalModalOpen(false);
+    }
+  }, [query.viewSlot, fileId, localModalOpen]);
+
+  const modalOpen = fileId ? (query.viewSlot === fileId || localModalOpen) : false;
 
   return (
     <>
       <Box
-        onClick={showScreenshot ? () => setModalOpen(true) : undefined}
+        onClick={showScreenshot && !imageError && fileId ? () => updateURL(fileId) : undefined}
         sx={{
           position: 'relative',
           width: sizeValue,
           height: sizeValue,
           display: 'inline-block',
-          cursor: showScreenshot ? 'pointer' : 'default',
+          cursor: showScreenshot && !imageError && fileId ? 'pointer' : 'default',
         }}
       >
-        {/* Screenshot thumbnail behind icon - Temporarily disabled due to screenshot file errors */}
-        {/* {showScreenshot && (
+        {/* Screenshot thumbnail behind icon */}
+        {showScreenshot && (
           <Box
             sx={{
               position: 'absolute',
@@ -111,9 +176,13 @@ export const FileshareFiletypeIcon = ({
               height: '100%',
               zIndex: 0,
               overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
             }}
           >
-            {!imageLoaded && (
+            {!imageLoaded && !imageError && (
               <Box
                 sx={{
                   position: 'absolute',
@@ -126,19 +195,75 @@ export const FileshareFiletypeIcon = ({
                 <CircularProgress size={20} sx={{ color: '#7CB342' }} />
               </Box>
             )}
-            <img
-              src={screenshotUrl!}
-              alt={description || filename || 'Screenshot'}
-              onLoad={() => setImageLoaded(true)}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: imageLoaded ? 'block' : 'none',
-              }}
-            />
+            {!imageError ? (
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {/* Screenshot image - will be masked by the icon */}
+                <img
+                  src={screenshotUrl!}
+                  alt={description || filename || 'Screenshot'}
+                  onLoad={() => setImageLoaded(true)}
+                  onError={() => {
+                    setImageError(true);
+                    setImageLoaded(true);
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    display: imageLoaded ? 'block' : 'none',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 0,
+                  }}
+                />
+                {/* Screenshot icon as mask/overlay - defines the visible area */}
+                <img
+                  src="/img/files/screenshot.png"
+                  alt="Screenshot icon"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                    mixBlendMode: 'normal',
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                <img
+                  src="/img/invalid_screen_ui.png"
+                  alt="Invalid screenshot"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+              </Box>
+            )}
           </Box>
-        )} */}
+        )}
         {/* Filetype icon */}
         <Box
           sx={{
@@ -146,46 +271,56 @@ export const FileshareFiletypeIcon = ({
             width: '100%',
             height: '100%',
             zIndex: 1,
+            pointerEvents: showScreenshot && !imageError ? 'none' : 'auto',
           }}
         >
-          <img
-            src={`/img/files/${fileImage}.png`}
-            alt={fileImage}
-            style={{
+          <Box
+            sx={{
+              position: 'relative',
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
             }}
-          />
-          {gametypePosition && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
+          >
+            <img
+              src={`/img/files/${fileImage}.png`}
+              alt={fileImage}
+              style={{
                 width: '100%',
                 height: '100%',
-                backgroundImage: 'url("/img/game_types_lg_ui.png")',
-                backgroundSize: '200% 500%', // 2 columns, 5 rows
-                backgroundPosition: `${gametypePosition.x * 100}% ${gametypePosition.y * 25}%`, // x: 0% or 100%, y: 0%, 25%, 50%, 75%, 100%
-                backgroundRepeat: 'no-repeat',
-                pointerEvents: 'none',
+                objectFit: 'contain',
+                display: 'block',
               }}
             />
-          )}
+            {gametypePosition && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: 'url("/img/game_types_lg_ui.png")',
+                  backgroundSize: '200% 500%', // 2 columns, 5 rows
+                  backgroundPosition: `${gametypePosition.x * 100}% ${gametypePosition.y * 25}%`, // x: 0% or 100%, y: 0%, 25%, 50%, 75%, 100%
+                  backgroundRepeat: 'no-repeat',
+                  pointerEvents: 'none',
+                  objectFit: 'contain',
+                }}
+              />
+            )}
+          </Box>
         </Box>
       </Box>
-      {/* Temporarily disabled due to screenshot file errors */}
-      {/* {showScreenshot && screenshotUrl && (
+      {showScreenshot && screenshotUrl && !imageError && fileId && (
         <ScreenshotModal
           open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={() => updateURL(null)}
           screenshotUrl={screenshotUrl}
           filename={filename || ''}
           description={description || ''}
           author={author}
         />
-      )} */}
+      )}
     </>
   );
 };

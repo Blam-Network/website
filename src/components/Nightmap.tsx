@@ -7,9 +7,25 @@ import { useNightmap } from "../contexts/NightmapContext";
 export const Nightmap = () => {
   const { show24h } = useNightmap();
   const [imagesLoaded, setImagesLoaded] = useState({ current: false, "24h": false });
+  const [cacheBuster, setCacheBuster] = useState(0);
 
-  // Preload both images on mount - browser will cache them
+  // Update cache buster every minute to force image refresh
   useEffect(() => {
+    const interval = setInterval(() => {
+      setCacheBuster(Math.floor(Date.now() / 60000)); // Update every minute
+    }, 60000);
+    
+    // Set initial cache buster
+    setCacheBuster(Math.floor(Date.now() / 60000));
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Preload both images on mount and when cache buster changes - browser will cache them
+  useEffect(() => {
+    // Reset loaded state when cache buster changes
+    setImagesLoaded({ current: false, "24h": false });
+    
     const img6h = new Image();
     const img24h = new Image();
 
@@ -20,10 +36,10 @@ export const Nightmap = () => {
       setImagesLoaded(prev => ({ ...prev, "24h": true }));
     };
 
-    // Start loading both images immediately
-    img6h.src = "/api/nightmap";
-    img24h.src = "/api/nightmap-24h";
-  }, []);
+    // Start loading both images immediately with cache buster
+    img6h.src = `/api/nightmap?t=${cacheBuster}`;
+    img24h.src = `/api/nightmap-24h?t=${cacheBuster}`;
+  }, [cacheBuster]);
 
   const bothLoaded = imagesLoaded.current && imagesLoaded["24h"];
   const currentImageLoaded = show24h ? imagesLoaded["24h"] : imagesLoaded.current;
@@ -76,7 +92,7 @@ export const Nightmap = () => {
             )}
             {/* Render both images but hide/show them - browser keeps them cached */}
             <img 
-              src="/api/nightmap"
+              src={`/api/nightmap?t=${cacheBuster}`}
               alt="Nightmap" 
               style={{ 
                 width: '100%',
@@ -89,7 +105,7 @@ export const Nightmap = () => {
               }}
             />
             <img 
-              src="/api/nightmap-24h"
+              src={`/api/nightmap-24h?t=${cacheBuster}`}
               alt="Nightmap (24h)" 
               style={{ 
                 width: '100%',

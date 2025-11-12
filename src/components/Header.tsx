@@ -1,10 +1,11 @@
 "use client";
 
-import { Stack, Box, Typography, Button } from "@mui/material";
+import { Stack, Box, Typography, Button, Link as MuiLink } from "@mui/material";
 import { Session } from "next-auth";
 import { getSession, signIn, signOut } from "next-auth/react";
 import { NavBar } from "./NavBar";
 import Link from "next/link";
+import { PendingTransfersIcon } from "./PendingTransfersIcon";
 
 export const Header = ({session}: {session: Session | null}) => {
     const loggedIn = !!session?.user?.xuid;
@@ -108,51 +109,52 @@ export const Header = ({session}: {session: Session | null}) => {
                         </Typography>
                     </Box>
                 </Link>
-                <Box 
-                    sx={{
-                        background: 'linear-gradient(180deg, #2A2A2A 0%, #1A1A1A 100%)',
-                        border: '1px solid #444',
-                        borderRadius: '4px',
-                        padding: 1.5,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 1,
-                        minWidth: { xs: 'auto', sm: 200 },
-                    }}
-                >
-                    {loggedIn 
-                        ? <>
-                            <Typography component='p' variant="body2" sx={{ color: '#B0B0B0' }}>
-                                Logged in as{" "}
-                                <Link 
-                                    href={"/profile"} 
-                                    style={{ 
-                                        textDecoration: 'underline', 
-                                        color: '#7CB342',
-                                        fontWeight: 600,
-                                    }}
+                <Stack direction="row" spacing={3} alignItems="center">
+                    {loggedIn && <PendingTransfersIcon />}
+                    <Box 
+                        sx={{
+                            background: 'linear-gradient(180deg, #2A2A2A 0%, #1A1A1A 100%)',
+                            border: '1px solid #444',
+                            borderRadius: '4px',
+                            padding: 1.5,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 1,
+                            minWidth: { xs: 'auto', sm: 300 },
+                        }}
+                    >
+                        {loggedIn 
+                            ? <Stack direction="row" justifyContent="space-between" gap={1} spacing={1} alignItems="center">
+                                <Typography component='p' variant="body2" sx={{ color: '#B0B0B0' }}>
+                                    Logged in as{" "}
+                                    <MuiLink 
+                                        component={Link}
+                                        href={"/profile"} 
+                                        underline="always"
+                                        sx={{ fontWeight: 600 }}
+                                    >
+                                        {session?.user?.gamertag}
+                                    </MuiLink>
+                                </Typography>
+                                <Button 
+                                    variant="outlined" 
+                                    size="small"
+                                    onClick={() => signOut()}
+                                    sx={{ alignSelf: 'flex-start' }}
                                 >
-                                    {session?.user?.gamertag}
-                                </Link>
-                            </Typography>
-                            <Button 
-                                variant="outlined" 
+                                    Sign Out
+                                </Button>
+                            </Stack>
+                            : <Button 
+                                variant="contained" 
                                 size="small"
-                                onClick={() => signOut()}
-                                sx={{ alignSelf: 'flex-start' }}
+                                onClick={() => signIn('xbl')}
+                                sx={{ width: '100%' }}
                             >
-                                Sign Out
-                            </Button>
-                        </>
-                        : <Button 
-                            variant="contained" 
-                            size="small"
-                            onClick={() => signIn('xbl')}
-                            sx={{ width: '100%' }}
-                        >
-                            Sign in with Xbox LIVE
-                        </Button>}
-                </Box>
+                                Sign in with Xbox LIVE
+                            </Button>}
+                    </Box>
+                </Stack>
             </Stack>
         </Box>
     );

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
-import { Box, Typography, Container, Paper, Pagination, CircularProgress, Stack, TextField, Button } from "@mui/material";
+import { Box, Typography, Container, Paper, Pagination, CircularProgress, Stack, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Link from "next/link";
 import { format } from "date-fns";
 import { RecentGame } from "@/src/api/sunrise/recentGames";
@@ -102,47 +102,117 @@ export default function GamesPage() {
         </Box>
       ) : data && data.data.length > 0 ? (
         <>
-          <Stack gap={1.5} sx={{ width: '100%', mb: 4 }}>
-            {data.data.map((game: RecentGame) => (
-              <Paper
-                key={game.id}
-                elevation={4}
-                sx={{
-                  p: 2,
-                  background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
-                  border: '1px solid #333',
-                  '&:hover': {
-                    borderColor: '#7CB342',
-                    boxShadow: '0 0 10px rgba(124, 179, 66, 0.2)',
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                <Stack direction='row' justifyContent='space-between' alignItems='center' gap={2}>
-                  <Link href={`/halo3/carnage-report/${game.id}`} style={{ textDecoration: 'none', color: 'unset', flex: 1 }}>
-                    <Typography variant='body1' sx={{ display: 'inline', fontWeight: 600, color: '#9CCC65' }}>
-                      {game.map_variant_name}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ display: 'inline', ml: 1 }}>
-                      • {game.hopper_name ?? 'Custom Games'} • {format(game.finish_time, "MMM d, yyyy 'at' h:mm a")}
-                    </Typography>
-                  </Link>
-                  <Link href={`/halo3/carnage-report/${game.id}`}>
-                    <Typography 
-                      variant='body2' 
-                      sx={{ 
-                        textDecoration: 'underline',
-                        color: '#4A90E2',
-                        '&:hover': { color: '#6BA3E8' },
+          <TableContainer component={Paper} sx={{ background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333', overflow: 'hidden', mb: 4 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Game</TableCell>
+                  <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Type</TableCell>
+                  <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Playlist</TableCell>
+                  <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Date</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.data.map((game) => {
+                  const isCampaign = game.type === 'campaign';
+                  const gameVariantName = game.game_variant_name ?? null;
+                  const mapVariantName = game.map_variant_name ?? null;
+                  const hopperName = game.hopper_name ?? null;
+                  const gameId = game.id;
+                  const reportUrl = isCampaign ? `/halo3/campaign-carnage-report/${gameId}` : `/halo3/carnage-report/${gameId}`;
+                  
+                  // Determine game type
+                  let gameType: string;
+                  if (isCampaign) {
+                    gameType = 'Campaign';
+                  } else {
+                    // Game engine 9 = Forge (updated from 5)
+                    const isForge = game.game_engine === 9;
+                    if (isForge) {
+                      gameType = 'Forge';
+                    } else if (hopperName) {
+                      gameType = 'Matchmaking';
+                    } else {
+                      gameType = 'Custom Games';
+                    }
+                  }
+
+                  // Format date in local time with a nicer format
+                  const finishTime = new Date(game.finish_time);
+                  const formattedDate = format(finishTime, "MMM d, yyyy 'at' h:mm a");
+
+                  // Helper functions for campaign display
+                  const getMissionName = (mapId: number): string => {
+                    switch (mapId) {
+                      case 3005: return 'Arrival';
+                      case 3010: return 'Sierra 117';
+                      case 3020: return 'Crow\'s Nest';
+                      case 3030: return 'Tsavo Highway';
+                      case 3040: return 'The Storm';
+                      case 3050: return 'Floodgate';
+                      case 3070: return 'The Ark';
+                      case 3100: return 'The Covenant';
+                      case 3110: return 'Cortana';
+                      case 3120: return 'Halo';
+                      case 3130: return 'Epilogue';
+                      default: return 'Unknown Mission';
+                    }
+                  };
+
+                  const getDifficultyName = (difficulty: number | undefined): string => {
+                    if (difficulty === undefined) return "Unknown";
+                    switch (difficulty) {
+                      case 0: return "Easy";
+                      case 1: return "Normal";
+                      case 2: return "Heroic";
+                      case 3: return "Legendary";
+                      default: return "Unknown";
+                    }
+                  };
+
+                  return (
+                    <TableRow
+                      key={game.id}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: 'rgba(124, 179, 66, 0.1)',
+                        },
                       }}
                     >
-                      View Report
-                    </Typography>
-                  </Link>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
+                      <TableCell sx={{ color: '#E0E0E0' }}>
+                        <Link href={reportUrl} style={{ textDecoration: 'underline', color: '#4A90E2' }}>
+                          <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: 'inherit' }}>
+                            {isCampaign ? (
+                              <>
+                                {getMissionName(game.map_id)} on {getDifficultyName(game.campaign_difficulty)}
+                              </>
+                            ) : (
+                              <>
+                                {gameVariantName ?? 'Gametype'} on {mapVariantName ?? 'Unknown Map'}
+                              </>
+                            )}
+                          </Typography>
+                        </Link>
+                      </TableCell>
+                      <TableCell sx={{ color: '#B0B0B0' }}>
+                        <Typography variant='body2' sx={{ color: 'inherit' }}>
+                          {gameType}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ color: '#B0B0B0' }}>
+                        <Typography variant='body2' sx={{ color: 'inherit' }}>
+                          {isCampaign ? '-' : (hopperName ?? '-')}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ color: '#B0B0B0' }}>
+                        {formattedDate}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
           {data.totalPages > 1 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
               <Pagination

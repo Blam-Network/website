@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
 import { ServiceRecordComponent } from "@/src/components/ServiceRecord";
-import { Stack, Box, Typography, Divider, Paper, Container } from "@mui/material";
+import { Stack, Box, Typography, Divider, Paper, Container, Link as MuiLink } from "@mui/material";
 import { Screenshots } from "@/src/api/sunrise/screenshots";
 import { authOptions } from "@/src/api/auth";
 import { FileShare } from "@/src/api/sunrise/fileShare";
@@ -26,7 +26,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
   let serviceRecord: any | undefined = undefined;
   let fileShare: any | undefined = undefined;
   let screenshots: Screenshots = [];
-  const previousGamesResponse = await api.sunrise2.playerPreviousGames.query({ gamertag, page: 1, pageSize: 25 });
+  const previousGamesResponse = await api.sunrise2.playerPreviousGames.query({ gamertag, page: 1, pageSize: 45 });
   const previousGames = previousGamesResponse.data;
   try {
     serviceRecord = await api.sunrise.serviceRecord.query({ gamertag });
@@ -284,6 +284,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                             size="100%"
                             shareId={slot.header.filetype === 13 ? fileShare.id : undefined}
                             slot={slot.header.filetype === 13 ? slot.slotNumber : undefined}
+                            fileId={slot.header.filetype === 13 ? slot.id : undefined}
                             filename={slot.header.filetype === 13 ? slot.header.filename : undefined}
                             description={slot.header.filetype === 13 ? slot.header.description : undefined}
                             author={slot.header.filetype === 13 ? slot.header.author : undefined}
@@ -317,18 +318,15 @@ export default async function Home({params}: {params: { gamertag: string }}) {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1, borderBottom: '2px solid #7CB342' }}>
             <Typography variant='h4'>Recent Screenshots</Typography>
             {screenshots.length > 0 && (
-              <Link href={`/screenshots?gamertag=${encodeURIComponent(gamertag)}`} style={{ textDecoration: 'none' }}>
-                <Typography 
-                  variant='body2' 
-                  sx={{ 
-                    color: '#7CB342',
-                    textDecoration: 'underline',
-                    '&:hover': { color: '#9CCC65' },
-                  }}
-                >
+              <MuiLink 
+                component={Link}
+                href={`/screenshots?gamertag=${encodeURIComponent(gamertag)}`}
+                underline="always"
+              >
+                <Typography variant="body2" component="span">
                   View All
                 </Typography>
-              </Link>
+              </MuiLink>
             )}
           </Box>
           {screenshots.length > 0 ? (

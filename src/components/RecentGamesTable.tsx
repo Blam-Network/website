@@ -52,13 +52,12 @@ interface RecentGamesTableProps {
 export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTableProps) {
     return (
         <TableContainer component={Paper} sx={{ background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333', overflow: 'hidden', flex: stickyHeader ? 1 : undefined }}>
-            <Table size="small" stickyHeader={stickyHeader}>
+            <Table size="small" stickyHeader={stickyHeader} sx={{ '& .MuiTableCell-root': { py: 0.75, px: 1.5 } }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined }}>Game</TableCell>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined }}>Playlist</TableCell>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined }}>Date</TableCell>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined }}>Action</TableCell>
+                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Game</TableCell>
+                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Type</TableCell>
+                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Date</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -70,6 +69,23 @@ export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTab
                         const mapVariantName = 'map_variant_name' in game ? game.map_variant_name : null;
                         const hopperName = 'hopper_name' in game ? game.hopper_name : null;
                         const campaignDifficulty = 'campaign_difficulty' in game ? game.campaign_difficulty : undefined;
+                        
+                        // Determine game type
+                        let gameType: string;
+                        if (isCampaign) {
+                            gameType = 'Campaign';
+                        } else if (hopperName) {
+                            gameType = 'Matchmaking';
+                        } else {
+                            // Check if it's a Forge map (Forge canvas maps have specific IDs)
+                            // Forge canvas maps: 700 (Foundry), 701 (Sandbox)
+                            const isForgeMap = game.map_id === 700 || game.map_id === 701;
+                            gameType = isForgeMap ? 'Forge' : 'Custom Games';
+                        }
+
+                        // Format date in local time with a nicer format
+                        const finishTime = new Date(game.finish_time);
+                        const formattedDate = format(finishTime, "MMM d, yyyy 'at' h:mm a");
 
                         return (
                             <TableRow
@@ -81,53 +97,25 @@ export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTab
                                 }}
                             >
                                 <TableCell sx={{ color: '#E0E0E0' }}>
-                                    <Link href={reportUrl} style={{ textDecoration: 'none', color: 'unset' }}>
+                                    <Link href={reportUrl} style={{ textDecoration: 'underline', color: '#4A90E2' }}>
                                         {isCampaign ? (
-                                            <>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#9CCC65' }}>
-                                                    {getMissionName(game.map_id)}
-                                                </Typography>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#E0E0E0', ml: 0.5, mr: 0.5 }}>
-                                                    {' on '}
-                                                </Typography>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#9CCC65' }}>
-                                                    {getDifficultyName(campaignDifficulty)}
-                                                </Typography>
-                                            </>
+                                            <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
+                                                {getMissionName(game.map_id)} on {getDifficultyName(campaignDifficulty)}
+                                            </Typography>
                                         ) : (
-                                            <>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#9CCC65' }}>
-                                                    {gameVariantName ?? 'Gametype'}
-                                                </Typography>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#E0E0E0', ml: 0.5, mr: 0.5 }}>
-                                                    {' on '}
-                                                </Typography>
-                                                <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: '#9CCC65' }}>
-                                                    {mapVariantName ?? 'Unknown Map'}
-                                                </Typography>
-                                            </>
+                                            <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
+                                                {gameVariantName ?? 'Gametype'} on {mapVariantName ?? 'Unknown Map'}
+                                            </Typography>
                                         )}
                                     </Link>
                                 </TableCell>
                                 <TableCell sx={{ color: '#B0B0B0' }}>
-                                    {isCampaign ? '-' : (hopperName ?? 'Custom Games')}
+                                    <Typography variant='body2' sx={{ color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
+                                        {gameType}
+                                    </Typography>
                                 </TableCell>
-                                <TableCell sx={{ color: '#B0B0B0' }}>
-                                    {format(game.finish_time, "MMM d, yyyy 'at' h:mm a")}
-                                </TableCell>
-                                <TableCell>
-                                    <Link href={reportUrl} style={{ textDecoration: 'none' }}>
-                                        <Typography 
-                                            variant='body2' 
-                                            sx={{ 
-                                                textDecoration: 'underline',
-                                                color: '#4A90E2',
-                                                '&:hover': { color: '#6BA3E8' },
-                                            }}
-                                        >
-                                            View
-                                        </Typography>
-                                    </Link>
+                                <TableCell sx={{ color: '#B0B0B0', fontSize: '0.8125rem' }}>
+                                    {formattedDate}
                                 </TableCell>
                             </TableRow>
                         );

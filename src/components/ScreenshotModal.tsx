@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Modal, Box, Typography, IconButton, CircularProgress } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface ScreenshotModalProps {
   open: boolean;
@@ -79,12 +80,10 @@ export const ScreenshotModal = ({
           onClick={onClose}
           sx={{
             position: 'absolute',
-            top: 0,
-            right: 0,
+            top: -10,
+            right: -10,
             color: '#fff',
             zIndex: 1,
-            fontSize: '1.5rem',
-            fontWeight: 700,
             width: 40,
             height: 40,
             '&:hover': {
@@ -93,7 +92,7 @@ export const ScreenshotModal = ({
             },
           }}
         >
-          ×
+          <CloseIcon />
         </IconButton>
         <Box
           sx={{
