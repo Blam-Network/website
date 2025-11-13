@@ -5,6 +5,64 @@ import { authOptions } from "@/src/api/auth";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { CampaignSkulls } from "@/src/components/CampaignSkulls";
 import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
+import type { Metadata } from "next";
+import { env } from "@/src/env";
+
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  const vc = process.env.VERCEL_URL;
+  if (vc) return `https://${vc}`;
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+};
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const baseUrl = getBaseUrl();
+  
+  let carnageReport: any | undefined = undefined;
+  try {
+    carnageReport = await api.sunrise2.getCampaignCarnageReport.query({ id: params.id });
+  } catch {}
+
+  if (!carnageReport) {
+    return {
+      title: "Campaign Carnage Report - Blam Network",
+      description: "View Halo 3 campaign carnage report on Blam Network.",
+    };
+  }
+
+  const missionName = getMissionName(carnageReport.map_id);
+  const difficultyName = getDifficultyName(carnageReport.campaign_difficulty);
+  const title = `${missionName} on ${difficultyName} - Blam Network`;
+  const description = `Campaign carnage report for ${missionName} on ${difficultyName} difficulty. View full stats on Blam Network.`;
+
+  const mapImageUrl = `${baseUrl}/img/largemaps/${carnageReport.map_id}.jpg`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/halo3/campaign-carnage-report/${params.id}`,
+      siteName: "Blam Network",
+      images: [
+        {
+          url: mapImageUrl,
+          width: 512,
+          height: 512,
+          alt: `${missionName} map`,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [mapImageUrl],
+    },
+  };
+}
 
 const getMissionName = (mapId: number): string => {
     switch (mapId) {

@@ -7,6 +7,23 @@ import { Nightmap } from "@/src/components/Nightmap";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
 import { RecentGame } from "@/src/api/sunrise/recentGames";
 import { env } from "@/src/env";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blam Network - Halo 3 Web Services",
+  description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
+  openGraph: {
+    title: "Blam Network - Halo 3 Web Services",
+    description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
+    siteName: "Blam Network",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blam Network - Halo 3 Web Services",
+    description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
+  },
+};
 
 export default async function Home() {
   // Keep dates as strings - they'll be converted to Date objects in the client component
@@ -66,6 +83,7 @@ export default async function Home() {
                   filename={screenshot.header.filename}
                   description={screenshot.header.description}
                   author={screenshot.author}
+                  date={screenshot.date}
                 />
               ))}
             </Box>

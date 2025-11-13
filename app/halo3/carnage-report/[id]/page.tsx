@@ -18,6 +18,62 @@ import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { FileshareScreenshotThumb } from "@/src/components/FileshareScreenshotThumb";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
+import type { Metadata } from "next";
+import { format } from "date-fns";
+
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  const vc = process.env.VERCEL_URL;
+  if (vc) return `https://${vc}`;
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+};
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const baseUrl = getBaseUrl();
+  
+  let carnageReport: any | undefined = undefined;
+  try {
+    carnageReport = await api.sunrise2.getCarnageReport.query({ id: params.id });
+  } catch {}
+
+  if (!carnageReport) {
+    return {
+      title: "Carnage Report - Blam Network",
+      description: "View Halo 3 carnage report on Blam Network.",
+    };
+  }
+
+  const players = carnageReport.players.sort((a: typeof carnageReport.players[0], b: typeof carnageReport.players[0]) => a.standing - b.standing);
+  const winner = players[0];
+  const winningTeam = carnageReport.team_game && carnageReport.teams.length > 0 
+    ? carnageReport.teams.sort((a: typeof carnageReport.teams[0], b: typeof carnageReport.teams[0]) => a.standing - b.standing)[0]
+    : null;
+
+  const title = winningTeam 
+    ? `${getTeamName(winningTeam.team_index)} Team Wins! - Blam Network`
+    : `${winner.player_name} Wins! - Blam Network`;
+  
+  const startTime = new Date(carnageReport.start_time);
+  const formattedStartTime = format(startTime, "MMM d, yyyy 'at' h:mm a");
+  const description = `${carnageReport.game_variant.name} on ${carnageReport.map_variant_name}. Started ${formattedStartTime}. View full carnage report on Blam Network.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/halo3/carnage-report/${params.id}`,
+      siteName: "Blam Network",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
 
 const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
     <Box sx={{
@@ -310,7 +366,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
               <Typography variant="h5" sx={{ mb: 2, color: '#9CCC65', fontWeight: 600 }}>
                 File Share
               </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 2, width: '100%' }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 2, width: '100%' }}>
                 {relatedFiles.fileshare.map((file: typeof relatedFiles.fileshare[0]) => (
                   <Paper
                     key={file.id}
@@ -318,50 +374,43 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     sx={{
                       border: '1px solid #333',
                       background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
-                      transition: 'all 0.2s ease',
+                      p: 1.5,
+                      display: 'flex',
+                      flexDirection: 'column',
                       '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 0 10px rgba(124, 179, 66, 0.2)',
                         borderColor: '#7CB342',
+                        boxShadow: '0 0 10px rgba(124, 179, 66, 0.2)',
                       },
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    <Stack direction='column' justifyContent='space-between' sx={{ height: '100%' }}>
-                      <Box sx={{ p: 2 }}>
-                        <Typography variant='h6' sx={{ fontWeight: 600, color: '#E0E0E0', mb: 1 }}>
-                          {file.header.filename}
-                        </Typography>
-                        <Typography variant='caption' color='text.secondary' sx={{ fontSize: '0.75rem' }}>
-                          Created <DateTimeDisplay date={file.header.date} /> by{' '}
-                          <Link href={"/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
-                            {file.header.author}
-                          </Link>
-                        </Typography>
-                        <Typography variant='body2' color='text.secondary' sx={{ mt: 1, fontSize: '0.75rem' }}>
-                          {file.header.description}
-                        </Typography>
+                    <Box sx={{ width: '100%', mb: 1 }}>
+                      <FileshareFiletypeIcon 
+                        filetype={file.header.filetype} 
+                        gameEngineType={file.header.gameEngineType}
+                        size="100%"
+                        shareId={file.header.filetype === 13 ? file.shareId : undefined}
+                        slot={file.header.filetype === 13 ? file.slotNumber : undefined}
+                        fileId={file.header.filetype === 13 ? file.id : undefined}
+                        filename={file.header.filetype === 13 ? file.header.filename : undefined}
+                        description={file.header.filetype === 13 ? file.header.description : undefined}
+                        author={file.header.filetype === 13 ? file.header.author : undefined}
+                      />
+                    </Box>
+                    <Typography variant='body1' sx={{ fontWeight: 600, color: '#9CCC65', mb: 0.5 }}>
+                      {file.header.filename}
+                    </Typography>
+                    <Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#B0B0B0', mb: 1 }}>
+                      by{' '}
+                      <Link href={"/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
+                        {file.header.author}
+                      </Link>
+                    </Typography>
+                    {loggedIn && (
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 'auto' }}>
+                        <FileshareDownloadButton fileId={file.id} />
                       </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, pt: 0 }}>
-                        <FileshareFiletypeIcon 
-                          filetype={file.header.filetype} 
-                          gameEngineType={file.header.gameEngineType}
-                          size="30%"
-                        />
-                        {loggedIn && <FileshareDownloadButton fileId={file.id} />}
-                      </Box>
-                      {/* Temporarily disabled due to screenshot file errors */}
-                      {/* {file.header.filetype === 13 && (
-                        <Box sx={{ px: 2, pb: 2 }}>
-                          <FileshareScreenshotThumb
-                            shareId={file.shareId}
-                            slot={file.slotNumber}
-                            filename={file.header.filename}
-                            description={file.header.description}
-                            author={file.header.author}
-                          />
-                        </Box>
-                      )} */}
-                    </Stack>
+                    )}
                   </Paper>
                 ))}
               </Box>
@@ -382,6 +431,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     filename={screenshot.header.filename}
                     description={screenshot.header.description}
                     author={screenshot.author}
+                    date={screenshot.date}
                   />
                 ))}
               </Box>

@@ -21,6 +21,17 @@ import { NightmapProvider } from "@/src/contexts/NightmapContext";
 export const metadata: Metadata = {
   title: "Blam Network",
   description: "Unofficial Halo Web Services",
+  openGraph: {
+    title: "Blam Network",
+    description: "Unofficial Halo Web Services",
+    siteName: "Blam Network",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Blam Network",
+    description: "Unofficial Halo Web Services",
+  },
 };
 
 export default async function RootLayout({

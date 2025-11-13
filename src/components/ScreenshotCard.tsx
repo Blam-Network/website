@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Paper, Box, Typography, CircularProgress } from "@mui/material";
 import Link from "next/link";
 import { ScreenshotModal } from "./ScreenshotModal";
+import { DateTimeDisplay } from "./DateTimeDisplay";
 
 interface ScreenshotCardProps {
   screenshotId: string;
@@ -12,6 +13,7 @@ interface ScreenshotCardProps {
   filename: string;
   description: string;
   author?: string;
+  date?: Date | string;
 }
 
 export const ScreenshotCard = ({
@@ -20,6 +22,7 @@ export const ScreenshotCard = ({
   filename,
   description,
   author,
+  date,
 }: ScreenshotCardProps) => {
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -177,7 +180,7 @@ export const ScreenshotCard = ({
           <Typography variant='body2' sx={{ fontWeight: 500, color: '#E0E0E0' }}>
             {filename}
           </Typography>
-          <Typography variant='caption' color='text.secondary'>
+          <Typography variant='caption' color='text.secondary' sx={{ display: 'block' }}>
             {author ? (
               <>
                 by{' '}
@@ -202,6 +205,11 @@ export const ScreenshotCard = ({
               description
             )}
           </Typography>
+          {date && (
+            <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mt: 0.5 }}>
+              on <DateTimeDisplay date={date} />
+            </Typography>
+          )}
         </Box>
       </Paper>
       {!imageError && (

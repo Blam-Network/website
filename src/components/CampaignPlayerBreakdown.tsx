@@ -114,12 +114,12 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                                                 />
                                                 <Box>
                                                     <Link href={`/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
-                                                        <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
+                                                        <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                                             {player.player_name}
                                                         </Typography>
                                                     </Link>
                                                     {player.service_tag && (
-                                                        <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
+                                                        <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                                             {player.service_tag}
                                                         </Typography>
                                                     )}
@@ -155,12 +155,12 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                     />
                     <Box>
                         <Link href={`/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
+                            <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                 {player.player_name}
                             </Typography>
                         </Link>
                         {player.service_tag && (
-                            <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
+                            <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                 {player.service_tag}
                             </Typography>
                         )}
@@ -226,16 +226,16 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         </TableHead>
                         <TableBody>
                             {players.map((player) => renderTableRow(player, [
-                                <TableCell key="score" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="score" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.player_final_score.toLocaleString()}
                                 </TableCell>,
-                                <TableCell key="kills" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="kills" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.kills_total}
                                 </TableCell>,
-                                <TableCell key="deaths" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="deaths" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.deaths}
                                 </TableCell>,
-                                <TableCell key="assists" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="assists" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.assists}
                                 </TableCell>,
                             ]))}
@@ -259,19 +259,19 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         </TableHead>
                         <TableBody>
                             {players.map((player) => renderTableRow(player, [
-                                <TableCell key="headshots" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="headshots" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.headshot_kills}
                                 </TableCell>,
-                                <TableCell key="assass" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="assass" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.assassination_kills}
                                 </TableCell>,
-                                <TableCell key="splatters" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="splatters" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.splatter_kills}
                                 </TableCell>,
-                                <TableCell key="multi" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="multi" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.multi_kills}
                                 </TableCell>,
-                                <TableCell key="sticky" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="sticky" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.grenade_sticky_kills}
                                 </TableCell>,
                             ]))}
@@ -294,16 +294,16 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         </TableHead>
                         <TableBody>
                             {players.map((player) => renderTableRow(player, [
-                                <TableCell key="infantry" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="infantry" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.infantry_kills}
                                 </TableCell>,
-                                <TableCell key="leader" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="leader" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.leader_kills}
                                 </TableCell>,
-                                <TableCell key="hero" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="hero" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.hero_kills}
                                 </TableCell>,
-                                <TableCell key="specialist" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="specialist" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.specialist_kills}
                                 </TableCell>,
                             ]))}
@@ -326,16 +326,16 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         </TableHead>
                         <TableBody>
                             {players.map((player) => renderTableRow(player, [
-                                <TableCell key="light" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="light" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.light_vehicle_kills}
                                 </TableCell>,
-                                <TableCell key="heavy" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="heavy" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.heavy_vehicle_kills}
                                 </TableCell>,
-                                <TableCell key="giant" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="giant" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.giant_vehicle_kills}
                                 </TableCell>,
-                                <TableCell key="std" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)', whiteSpace: 'nowrap' }}>
+                                <TableCell key="std" align="right" sx={{ color: '#E0E0E0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000', whiteSpace: 'nowrap' }}>
                                     {player.standard_vehicle_kills}
                                 </TableCell>,
                             ]))}

@@ -16,6 +16,62 @@ import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { getColor, getColorName, getCssColor } from "@/src/colors";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
 import { env } from "@/src/env";
+import type { Metadata } from "next";
+
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return "";
+  const vc = process.env.VERCEL_URL;
+  if (vc) return `https://${vc}`;
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+};
+
+export async function generateMetadata({ params }: { params: { gamertag: string } }): Promise<Metadata> {
+  const gamertag = decodeURIComponent(params.gamertag);
+  const baseUrl = getBaseUrl();
+  
+  let serviceRecord: any | undefined = undefined;
+  try {
+    serviceRecord = await api.sunrise.serviceRecord.query({ gamertag });
+  } catch {}
+
+  const title = serviceRecord 
+    ? `${serviceRecord.playerName} - Blam Network`
+    : `${gamertag} - Blam Network`;
+  
+  const description = serviceRecord
+    ? `View ${serviceRecord.playerName}'s Halo 3 service record, fileshare, screenshots, and game history on Blam Network.`
+    : `View ${gamertag}'s Halo 3 profile on Blam Network.`;
+
+  const emblemUrl = serviceRecord
+    ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/emblem?primary=${serviceRecord.foregroundEmblem}&secondary=${serviceRecord.emblemFlags === 0 ? 'true' : 'false'}&background=${serviceRecord.backgroundEmblem}&primary_color=${serviceRecord.emblemPrimaryColor}&secondary_color=${serviceRecord.emblemSecondaryColor}&background_color=${serviceRecord.emblemBackgroundColor}&armour_primary_color=${serviceRecord.primaryColor}&size=400`
+    : `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/emblem?primary=0&secondary=false&background=0&primary_color=0&secondary_color=0&background_color=0&size=400`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/player/${encodeURIComponent(gamertag)}`,
+      siteName: "Blam Network",
+      images: [
+        {
+          url: emblemUrl,
+          width: 200,
+          height: 200,
+          alt: `${serviceRecord?.playerName || gamertag}'s emblem`,
+        },
+      ],
+      type: "profile",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: [emblemUrl],
+    },
+  };
+}
 
 export default async function Home({params}: {params: { gamertag: string }}) {
   const session = await getServerSession(authOptions);
@@ -337,7 +393,9 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                   screenshotId={screenshot.id}
                   screenshotUrl={`${env.HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`}
                   filename={screenshot.header.filename}
-                  description={screenshot.header.description}
+                  description={screenshot.header.description || ''}
+                  author={screenshot.author || undefined}
+                  date={screenshot.date}
                 />
               ))}
             </Box>

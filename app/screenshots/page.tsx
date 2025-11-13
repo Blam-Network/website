@@ -113,6 +113,7 @@ export default function ScreenshotsPage() {
                 filename={screenshot.header.filename}
                 description={screenshot.header.description || ""}
                 author={screenshot.author || undefined}
+                date={screenshot.date}
               />
             ))}
           </Box>

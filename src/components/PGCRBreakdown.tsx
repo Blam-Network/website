@@ -67,7 +67,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
         }
         
         return {
-            backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.4)`,
+            backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
             textColor: `rgb(${textColor.r}, ${textColor.g}, ${textColor.b})`,
         };
     };
@@ -108,7 +108,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                 backgroundColor: rowColor.backgroundColor,
                                 '& .MuiTableCell-root': {
                                     color: rowColor.textColor,
-                                    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8), 1px -1px 2px rgba(0, 0, 0, 0.8), -1px 1px 2px rgba(0, 0, 0, 0.8)',
+                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
                                 },
                                 '&:hover': {
                                     backgroundColor: `${rowColor.backgroundColor.replace('0.4', '0.6')}`,
@@ -136,7 +136,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                                 color: rowColor.textColor,
                                                 textDecoration: 'none',
                                                 fontWeight: 600,
-                                                textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8), 1px -1px 2px rgba(0, 0, 0, 0.8), -1px 1px 2px rgba(0, 0, 0, 0.8)',
+                                                textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
                                             }}
                                         >
                                             {player.player_name}

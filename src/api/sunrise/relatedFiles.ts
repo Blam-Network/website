@@ -7,6 +7,7 @@ const FileShareSlotSchema = z.object({
     id: z.string(),
     uniqueId: z.string(),
     slotNumber: z.number(),
+    shareId: z.string(),
     header: z.object({
         buildNumber: z.number(),
         mapVersion: z.number(),
