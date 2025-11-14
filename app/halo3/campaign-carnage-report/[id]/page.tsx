@@ -164,62 +164,64 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                 )}
             </Box>
 
-            {/* General Stats */}
-            <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
-                <Typography variant="h5" sx={{ mb: 3, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
-                    Game Statistics
-                </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Total Score
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#7CB342', fontWeight: 700 }}>
-                            {carnageReport.final_total_score.toLocaleString()}
-                        </Typography>
+            {/* General Stats - Only show if scoring is enabled */}
+            {carnageReport.campaign_metagame_enabled && (
+                <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
+                    <Typography variant="h5" sx={{ mb: 3, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
+                        Game Statistics
+                    </Typography>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Total Score
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#7CB342', fontWeight: 700 }}>
+                                {carnageReport.final_total_score.toLocaleString()}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Insertion Point
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                                {getInsertionPointName(carnageReport.campaign_insertion_point)}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Total Kills
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                                {totalKills.toLocaleString()}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Total Deaths
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                                {totalDeaths.toLocaleString()}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Headshots
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                                {totalHeadshots.toLocaleString()}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
+                                Assassinations
+                            </Typography>
+                            <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
+                                {totalAssassinations.toLocaleString()}
+                            </Typography>
+                        </Box>
                     </Box>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Insertion Point
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
-                            {getInsertionPointName(carnageReport.campaign_insertion_point)}
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Total Kills
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
-                            {totalKills.toLocaleString()}
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Total Deaths
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
-                            {totalDeaths.toLocaleString()}
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Headshots
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
-                            {totalHeadshots.toLocaleString()}
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
-                            Assassinations
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#E0E0E0', fontWeight: 700 }}>
-                            {totalAssassinations.toLocaleString()}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Paper>
+                </Paper>
+            )}
 
             {/* Player Breakdown */}
             <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>

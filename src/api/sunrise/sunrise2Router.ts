@@ -15,6 +15,8 @@ import { getRelatedFiles } from "./relatedFiles";
 import { getScreenshotByFileshare } from "./getScreenshotByUniqueId";
 import { getCampaignCarnageReport } from "./campaignCarnageReport";
 import { pendingTransfers } from "./pendingTransfers";
+import { playerStatistics } from "./playerStatistics";
+import { activityHeatmap } from "./activityHeatmap";
 
 export const sunrise2Router = createTRPCRouter({
   unlockRecon,
@@ -31,6 +33,8 @@ export const sunrise2Router = createTRPCRouter({
   getRelatedFiles,
   getScreenshotByFileshare,
   pendingTransfers,
+  playerStatistics,
+  activityHeatmap,
 });
 
 export const sunrise2Axios = new Axios({

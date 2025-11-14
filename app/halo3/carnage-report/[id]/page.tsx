@@ -75,25 +75,78 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-const MapImage = ({mapId, size}: {mapId: number, size: number}) => (
-    <Box sx={{
-        height: size, 
-        width: size,
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        border: '2px solid #7CB342',
-        borderRadius: '4px',
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-    }}>
+const getGametypeIconPosition = (gameEngineType: number): { x: number; y: number } | null => {
+  // Sprite sheet has 2 columns, 5 rows
+  // Left column: forge (10), slayer (2), koth (4), juggernaut (5), assault (7)
+  // Right column: ctf (1), oddball (3), vip (8), territories (6), infection (9)
+  
+  switch (gameEngineType) {
+    case 10: // Forge
+      return { x: 0, y: 0 }; // Left column, row 0
+    case 2: // Slayer
+      return { x: 0, y: 1 }; // Left column, row 1
+    case 4: // KOTH
+      return { x: 0, y: 2 }; // Left column, row 2
+    case 5: // Juggernaut
+      return { x: 0, y: 3 }; // Left column, row 3
+    case 7: // Assault
+      return { x: 0, y: 4 }; // Left column, row 4
+    case 1: // CTF
+      return { x: 1, y: 0 }; // Right column, row 0
+    case 3: // Oddball
+      return { x: 1, y: 1 }; // Right column, row 1
+    case 8: // VIP
+      return { x: 1, y: 2 }; // Right column, row 2
+    case 6: // Territories
+      return { x: 1, y: 3 }; // Right column, row 3
+    case 9: // Infection
+      return { x: 1, y: 4 }; // Right column, row 4
+    default:
+      return null;
+  }
+};
+
+const MapImage = ({mapId, size, gameEngineType}: {mapId: number, size: number, gameEngineType?: number}) => {
+    const gametypePosition = gameEngineType ? getGametypeIconPosition(gameEngineType) : null;
+    
+    return (
+        <Box sx={{
+            height: size, 
+            // width: size,
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            border: '2px solid #7CB342',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+            position: 'relative',
+        }}>
         <img src={`/img/largemaps/${mapId}.jpg`} style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-        }} />
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+            }} />
+            {gametypePosition && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: 'url("/img/game_types_lg_ui.png")',
+                        backgroundSize: '200% 500%', // 2 columns, 5 rows
+                        backgroundPosition: `${gametypePosition.x * 100}% ${gametypePosition.y * 25}%`, // x: 0% or 100%, y: 0%, 25%, 50%, 75%, 100%
+                        backgroundRepeat: 'no-repeat',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                    }}
+                />
+            )}
     </Box>
-)
+    );
+}
 
 const get_kill_type_name = (kill_type: number) => {
   switch (kill_type) {
@@ -275,7 +328,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
           }}
         >
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
-            <MapImage mapId={carnageReport.map_id} size={200} />
+            <MapImage mapId={carnageReport.map_id} size={200} gameEngineType={carnageReport.game_variant.game_engine} />
             <Stack spacing={2} flex={1}>
               <Box>
                 <Typography variant="h4" sx={{ color: '#7CB342', fontWeight: 700, mb: 1 }}>
@@ -284,9 +337,9 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     : `${winner.player_name} Wins!`}
                 </Typography>
                 <Typography variant="h5" sx={{ color: '#E0E0E0', mb: 2 }}>
-                  {carnageReport.game_variant.name} on {carnageReport.map_variant_name}
-                </Typography>
-              </Box>
+            {carnageReport.game_variant.name} on {carnageReport.map_variant_name}
+          </Typography>
+    </Box>
               <Stack direction="row" spacing={2} flexWrap="wrap">
                 <Chip 
                   label={carnageReport.matchmaking_options ? carnageReport.matchmaking_options.hopper_name : 'Custom Games'}

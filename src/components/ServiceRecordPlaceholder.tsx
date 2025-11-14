@@ -234,7 +234,7 @@ export const ServiceRecordPlaceholder = ({serviceRecord}: {serviceRecord: Servic
                 }}/>
                 <Box display='flex' alignItems='flex-start' flexDirection='column' justifyContent='center' height='100%'>
                     <Typography variant='h4'>{serviceRecord.playerName} - {serviceRecord.serviceTag}</Typography>
-                    <Typography variant='body1'>Global Rank: {rankStrings[serviceRecord.rank]}, {'Grade ' + serviceRecord.grade}</Typography>
+                    <Typography variant='body1'>Global Rank: {rankStrings[serviceRecord.rank]}{serviceRecord.grade === 0 ? '' : ', Grade ' + serviceRecord.grade}</Typography>
                     <Typography variant='body2'>Highest Skill: {serviceRecord.highestSkill} | EXP {serviceRecord.totalEXP} | Next Rating: {getNextRank(serviceRecord.rank, serviceRecord.grade, serviceRecord.highestSkill)}</Typography>
                 </Box>
             </Stack>

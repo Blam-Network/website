@@ -31,7 +31,7 @@ const ServiceRecordSchema = jsonStringifySchema(z.object({
     totalEXP: z.number(),
     unknownInsignia: z.number(),
     rank: z.number(),
-    grade: z.number().transform((val) => val + 1),
+    grade: z.number(),
     unknownInsignia2: z.number(),
     firstPlayed: z.coerce.date().optional(),
     lastPlayed: z.coerce.date().optional(),

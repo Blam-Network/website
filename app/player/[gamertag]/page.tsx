@@ -17,6 +17,7 @@ import { getColor, getColorName, getCssColor } from "@/src/colors";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
+import { PlayerStatistics } from "@/src/components/PlayerStatistics";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -25,9 +26,56 @@ const getBaseUrl = () => {
   return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 };
 
-export async function generateMetadata({ params }: { params: { gamertag: string } }): Promise<Metadata> {
+export async function generateMetadata({ 
+  params,
+  searchParams 
+}: { 
+  params: { gamertag: string };
+  searchParams: { viewScreenshot?: string };
+}): Promise<Metadata> {
   const gamertag = decodeURIComponent(params.gamertag);
   const baseUrl = getBaseUrl();
+  
+  // Check if viewing a screenshot
+  if (searchParams?.viewScreenshot) {
+    let screenshot: any | undefined = undefined;
+    try {
+      screenshot = await api.sunrise.screenshot.query({ id: searchParams.viewScreenshot });
+    } catch {}
+
+    if (screenshot) {
+      const title = screenshot.header.filename || "Screenshot";
+      const description = screenshot.header.description || `Halo 3 screenshot${screenshot.author ? ` by ${screenshot.author}` : ""}`;
+      const imageUrl = `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`;
+      const pageUrl = `${baseUrl}/player/${encodeURIComponent(gamertag)}?viewScreenshot=${screenshot.id}`;
+
+      return {
+        title: `${title} - Blam Network`,
+        description,
+        openGraph: {
+          title,
+          description,
+          url: pageUrl,
+          siteName: "Blam Network",
+          images: [
+            {
+              url: imageUrl,
+              width: 1280,
+              height: 720,
+              alt: title,
+            },
+          ],
+          type: "website",
+        },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
+          images: [imageUrl],
+        },
+      };
+    }
+  }
   
   let serviceRecord: any | undefined = undefined;
   try {
@@ -405,6 +453,9 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             </Typography>
           )}
         </Box>
+      )}
+      {hasPlayed && (
+        <PlayerStatistics gamertag={gamertag} />
       )}
       </Container>
     </>

@@ -12,6 +12,7 @@ import type { Medals } from "../api/sunrise/carnage-report/players";
 import { getDamageSourceCategory, getDamageSourceName } from "../api/sunrise/carnage-report/players";
 import { RouterOutputs } from "../api/router";
 import { Medal } from "./Medal";
+import { isGuestXuid } from "../utils/xuid";
 
 type CarnageReport = RouterOutputs['sunrise2']['getCarnageReport'];
 
@@ -130,17 +131,34 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                             }} 
                                             size={25} 
                                         />
-                                        <Link 
-                                            href={`/player/${encodeURIComponent(player.player_name)}`}
-                                            style={{
-                                                color: rowColor.textColor,
-                                                textDecoration: 'none',
-                                                fontWeight: 600,
-                                                textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
-                                            }}
-                                        >
-                                            {player.player_name}
-                                        </Link>
+                                        {isGuestXuid(player.player_xuid) ? (
+                                            <Typography
+                                                component="span"
+                                                sx={{
+                                                    color: rowColor.textColor,
+                                                    fontWeight: 600,
+                                                    fontSize: '0.875rem',
+                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                                    cursor: 'default',
+                                                    opacity: 0.7,
+                                                }}
+                                            >
+                                                {player.player_name}
+                                            </Typography>
+                                        ) : (
+                                            <Link 
+                                                href={`/player/${encodeURIComponent(player.player_name)}`}
+                                                style={{
+                                                    color: rowColor.textColor,
+                                                    textDecoration: 'none',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.875rem',
+                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                                }}
+                                            >
+                                                {player.player_name}
+                                            </Link>
+                                        )}
                                     </Box>
                                     <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
                                         <Typography variant="body2" sx={{ color: rowColor.textColor, opacity: 0.8 }}>

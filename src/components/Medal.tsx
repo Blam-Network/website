@@ -51,10 +51,12 @@ type MedalType = 'perfection'
     | 'assault_bomb_planted'
     | 'infection_survive'
     | 'koth_kill_5'
-    | 'zombie_kill_5'
+    |     'zombie_kill_5'
     | 'juggernaut_kill_5'
     | 'zombie_kill_10'
     | 'juggernaut_kill_10'
+    | 'human_kill_5'
+    | 'human_kill_10'
 
 const MEDAL_OFFSETS: { [type in MedalType]: [number, number]} = {
     'perfection': [0, 0],
@@ -114,8 +116,10 @@ const MEDAL_OFFSETS: { [type in MedalType]: [number, number]} = {
 
     'infection_survive': [0, 7],
     'koth_kill_5': [1, 7],
+    'human_kill_5': [2, 7],
     'zombie_kill_5': [3, 7],
     'juggernaut_kill_5': [4, 7],
+    'human_kill_10': [5, 7],
     'zombie_kill_10': [6, 7],
     'juggernaut_kill_10': [7, 7],
 

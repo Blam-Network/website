@@ -4,6 +4,7 @@ import { getCssColor, getColor, getColorName } from "../colors";
 import { Emblem } from "./Emblem";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { rankStrings, RankBadge, getNextRank } from "./ServiceRecordPlaceholder";
+import { getCampaignIconPosition } from "../utils/campaignProgress";
 
 interface ServiceRecordProps {
   serviceRecord: ServiceRecord;
@@ -16,24 +17,6 @@ const darkenColor = (colorIndex: number, factor: number = 0.15): string => {
   const g = Math.round(color.g * factor);
   const b = Math.round(color.b * factor);
   return `rgb(${r},${g},${b})`;
-};
-
-// Campaign progress icon positions in sprite sheet (2 rows, 5 columns)
-// Row 1: not started (0), normal completed (4), heroic completed (6), legendary completed (8), easy completed (2)
-// Row 2: easy started (1), normal started (3), heroic started (5), legendary started (7)
-const getCampaignIconPosition = (progress: number): { x: string; y: string } => {
-  const positions: Record<number, { x: string; y: string }> = {
-    0: { x: '0%', y: '0%' },      // not started - row 1, col 1
-    1: { x: '0%', y: '100%' },     // easy started - row 2, col 1
-    2: { x: '100%', y: '0%' },   // easy completed - row 1, col 5
-    3: { x: '25%', y: '100%' },    // normal started - row 2, col 2
-    4: { x: '25%', y: '0%' },     // normal completed - row 1, col 2
-    5: { x: '50%', y: '100%' },    // heroic started - row 2, col 3
-    6: { x: '50%', y: '0%' },     // heroic completed - row 1, col 3
-    7: { x: '75%', y: '100%' },    // legendary started - row 2, col 4
-    8: { x: '75%', y: '0%' },     // legendary completed - row 1, col 4
-  };
-  return positions[progress] || { x: '0%', y: '0%' };
 };
 
 export const ServiceRecordComponent = ({ serviceRecord }: ServiceRecordProps) => {
@@ -92,7 +75,7 @@ export const ServiceRecordComponent = ({ serviceRecord }: ServiceRecordProps) =>
                 )}
               </Typography>
               <Typography variant="h5" sx={{ color: '#E0E0E0', fontFamily: 'sans-serif' }}>
-                {rankName} - Grade {serviceRecord.grade}
+                {serviceRecord.grade === 0 ? rankName : `${rankName} - Grade ${serviceRecord.grade}`}
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap">
                 <Typography variant="body2" sx={{ color: '#B0B0B0', fontFamily: 'sans-serif' }}>

@@ -3,7 +3,7 @@ import { Axios } from "axios";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { matchmakingPlaylists } from "./matchmakingPlaylists";
 import { serviceRecord, serviceRecords } from "./serviceRecord";
-import { playerScreenshots, screenshots } from "./screenshots";
+import { playerScreenshots, screenshot, screenshots } from "./screenshots";
 import { env } from "@/src/env";
 import { getXuid } from "./xuid";
 import { fileShare } from "./fileShare";
@@ -16,6 +16,7 @@ export const sunriseRouter = createTRPCRouter({
   serviceRecord,
   serviceRecords,
   playerScreenshots,
+  screenshot,
   screenshots,
   getXuid,
   fileShare,

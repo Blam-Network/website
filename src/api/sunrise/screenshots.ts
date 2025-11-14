@@ -47,6 +47,17 @@ export const playerScreenshots = publicProcedure.input(
     return parsed.data;
 });
 
+export const screenshot = publicProcedure.input(
+    z.object({ id: z.string().uuid() })
+).query(async (opts) => {
+    const response = await sunrise2Axios.get(`/halo3/screenshots/${opts.input.id}`);
+    const parsed = ScreenshotSchema.safeParse(response.data);
+    if (!parsed.success) {
+        throw new Error(`screenshot: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
+    }
+    return parsed.data;
+});
+
 export const screenshots = publicProcedure.input(
     z.object({
         page: z.number().min(1).default(1).optional(),
