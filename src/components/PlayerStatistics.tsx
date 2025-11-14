@@ -25,60 +25,93 @@ const COLORS: Record<string, string> = {
   Deaths: "#F44336",
 };
 
-// Helper function to get weapon name from kill type
-const getKillTypeName = (killType: number): string => {
-  const weaponNames: Record<number, string> = {
-    0: "Guardians",
-    1: "Falling Damage",
-    2: "Collision",
-    3: "Melee",
-    4: "Explosion",
-    5: "Magnum",
-    6: "Plasma Pistol",
-    7: "Needler",
-    8: "Mauler",
-    9: "SMG",
-    10: "Plasma Rifle",
-    11: "Battle Rifle",
-    12: "Carbine",
-    13: "Shotgun",
-    14: "Sniper Rifle",
-    15: "Beam Rifle",
-    16: "Assault Rifle",
-    17: "Spiker",
-    18: "Fuel Rod Cannon",
-    19: "Missile Pod",
-    20: "Rocket Launcher",
-    21: "Spartan Laser",
-    22: "Brute Shot",
-    23: "Flamethrower",
-    24: "Sentinel Beam",
-    25: "Energy Sword",
-    26: "Gravity Hammer",
-    27: "Frag Grenade",
-    28: "Plasma Grenade",
-    29: "Spike Grenade",
-    30: "Firebomb Grenade",
-    31: "Flag",
-    32: "Bomb",
-    33: "Bomb (Explosion)",
-    34: "Ball",
-    35: "Machine Gun Turret",
-    36: "Plasma Cannon",
-    39: "Banshee",
-    40: "Ghost",
-    41: "Mongoose",
-    43: "Scorpion (Turret)",
-    46: "Warthog",
-    47: "Warthog Turret",
-    48: "Warthog Turret (Gauss)",
-    49: "Wraith",
-    50: "Wraith Turret",
-    51: "Scorpion",
-    52: "Chopper",
-    53: "Hornet",
+// Damage source enum from backend (killType index -> damage source string)
+const damageSourceEnum = [
+  'guardians', 'falling_damage', 'generic_collision_damage', 'generic_melee_damage',
+  'generic_explosion', 'magnum_pistol', 'plasma_pistol', 'needler', 'excavator',
+  'smg', 'plasma_rifle', 'battle_rifle', 'carbine', 'shotgun', 'sniper_rifle',
+  'beam_rifle', 'assault_rifle', 'spike_rifle', 'flak_cannon', 'missile_launcher',
+  'rocket_launcher', 'spartan_laser', 'brute_shot', 'flame_thrower', 'sentinal_gun',
+  'energy_sword', 'gravity_hammer', 'frag_grenade', 'plasma_grenade', 'claymore_grenade',
+  'firebomb_grenade', 'flag_melee_damage', 'bomb_melee_damage', 'bomb_explosion_damage',
+  'ball_melee_damage', 'human_turret', 'plasma_cannon', 'unknown_37', 'unknown_38',
+  'banshee', 'ghost', 'mongoose', 'unknown_42', 'scorpion_gunner', 'unknown_44',
+  'unknown_45', 'warthog_driver', 'warthog_gunner', 'warthog_gunner_gauss', 'wraith',
+  'wraith_anti_infantry', 'scorpion', 'chopper', 'hornet', 'mauler', 'unknown_56',
+  'unknown_57', 'unknown_58', 'tripmine', 'sandtrap_mine', 'unknown_61',
+];
+
+// Helper function to get weapon name from damage source string
+const getWeaponNameFromString = (damageSource: string): string => {
+  const weaponNameMap: Record<string, string> = {
+    'guardians': 'Guardians',
+    'falling_damage': 'Falling Damage',
+    'generic_collision_damage': 'Collision',
+    'generic_melee_damage': 'Melee',
+    'generic_explosion': 'Explosion',
+    'magnum_pistol': 'Magnum',
+    'plasma_pistol': 'Plasma Pistol',
+    'needler': 'Needler',
+    'excavator': 'Mauler',
+    'smg': 'SMG',
+    'plasma_rifle': 'Plasma Rifle',
+    'battle_rifle': 'Battle Rifle',
+    'carbine': 'Carbine',
+    'shotgun': 'Shotgun',
+    'sniper_rifle': 'Sniper Rifle',
+    'beam_rifle': 'Beam Rifle',
+    'assault_rifle': 'Assault Rifle',
+    'spike_rifle': 'Spiker',
+    'flak_cannon': 'Fuel Rod Cannon',
+    'missile_launcher': 'Missile Pod',
+    'rocket_launcher': 'Rocket Launcher',
+    'spartan_laser': 'Spartan Laser',
+    'brute_shot': 'Brute Shot',
+    'flame_thrower': 'Flamethrower',
+    'sentinal_gun': 'Sentinel Beam',
+    'energy_sword': 'Energy Sword',
+    'gravity_hammer': 'Gravity Hammer',
+    'frag_grenade': 'Frag Grenade',
+    'plasma_grenade': 'Plasma Grenade',
+    'claymore_grenade': 'Spike Grenade',
+    'firebomb_grenade': 'Firebomb Grenade',
+    'flag_melee_damage': 'Flag',
+    'bomb_melee_damage': 'Bomb',
+    'bomb_explosion_damage': 'Bomb (Explosion)',
+    'ball_melee_damage': 'Ball',
+    'human_turret': 'Machine Gun Turret',
+    'plasma_cannon': 'Plasma Cannon',
+    'banshee': 'Banshee',
+    'ghost': 'Ghost',
+    'mongoose': 'Mongoose',
+    'scorpion_gunner': 'Scorpion (Turret)',
+    'warthog_driver': 'Warthog',
+    'warthog_gunner': 'Warthog Turret',
+    'warthog_gunner_gauss': 'Warthog Turret (Gauss)',
+    'wraith': 'Wraith',
+    'wraith_anti_infantry': 'Wraith Turret',
+    'scorpion': 'Scorpion',
+    'chopper': 'Chopper',
+    'hornet': 'Hornet',
+    'mauler': 'Mauler',
   };
-  return weaponNames[killType] || `Unknown ${killType}`;
+  
+  // Format the damage source string (replace underscores with spaces, capitalize)
+  const formatted = damageSource
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  
+  return weaponNameMap[damageSource] || formatted;
+};
+
+// Helper function to get weapon name from killType (number)
+const getWeaponName = (killType: number): string => {
+  const damageSource = damageSourceEnum[killType];
+  if (!damageSource) {
+    return `Unknown (${killType})`;
+  }
+  return getWeaponNameFromString(damageSource);
 };
 
 // Helper function to format medal type name (fallback)
@@ -249,7 +282,22 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
   const killsDeathsData = data?.killsDeaths ?? [];
   const mostKilled = data?.mostKilled ?? [];
   const mostKilledBy = data?.mostKilledBy ?? [];
-  const medalChest = data?.medalChest ?? {};
+  
+  // Convert medalChest array to Record<string, number>
+  const medalChestArray = data?.medalChest ?? [];
+  const medalChest: Record<string, number> = {};
+  medalChestArray.forEach((entry: { medal: string; count: number }) => {
+    medalChest[entry.medal] = entry.count;
+  });
+  
+  // Add steaktacular and linktacular if they exist
+  if (data?.steaktacularCount && data.steaktacularCount > 0) {
+    medalChest['steaktacular'] = data.steaktacularCount;
+  }
+  if (data?.linktacularCount && data.linktacularCount > 0) {
+    medalChest['linktacular'] = data.linktacularCount;
+  }
+  
   const weaponKills = data?.weaponKills ?? [];
   const weaponOfChoice = data?.weaponOfChoice;
 
@@ -558,10 +606,10 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {mostKilled.map((entry: { playerName: string; count: number; appearance?: any }, index: number) => {
-                      const primaryColor = entry.appearance ? getCssColor(entry.appearance.primaryColor) : undefined;
-                      const bgColor = primaryColor ? getColor(getColorName(entry.appearance.primaryColor)) : undefined;
-                      const textColor = bgColor ? getTextColor(getColorName(entry.appearance.primaryColor)) : undefined;
+                    {mostKilled.map((entry: any, index: number) => {
+                      const primaryColor = entry.primary_color ? getCssColor(entry.primary_color) : undefined;
+                      const bgColor = primaryColor ? getColor(getColorName(entry.primary_color)) : undefined;
+                      const textColor = bgColor ? getTextColor(getColorName(entry.primary_color)) : undefined;
                       const backgroundColor = bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.3)` : undefined;
                       const cellTextColor = textColor ? `rgb(${textColor.r}, ${textColor.g}, ${textColor.b})` : "#E0E0E0";
                       
@@ -574,24 +622,23 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                           }}
                         >
                           <TableCell sx={{ borderColor: "#333", width: "1px", py: 0.5, px: 1 }}>
-                            {entry.appearance && (
-                              <Emblem
-                                size={32}
-                                emblem={{
-                                  primary: entry.appearance.foregroundEmblem,
-                                  secondary: entry.appearance.emblemFlags === 0,
-                                  background: entry.appearance.backgroundEmblem,
-                                  primaryColor: entry.appearance.emblemPrimaryColor,
-                                  secondaryColor: entry.appearance.emblemSecondaryColor,
-                                  backgroundColor: entry.appearance.emblemBackgroundColor,
-                                }}
-                              />
-                            )}
+                            <Emblem
+                              size={32}
+                              emblem={{
+                                primary: entry.foreground_emblem,
+                                secondary: entry.emblem_flags === 0,
+                                background: entry.background_emblem,
+                                primaryColor: entry.emblem_primary_color,
+                                secondaryColor: entry.emblem_secondary_color,
+                                backgroundColor: entry.emblem_background_color,
+                                armourPrimaryColor: entry.primary_color,
+                              }}
+                            />
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
                             <Link
                               component={NextLink}
-                              href={`/player/${encodeURIComponent(entry.playerName)}`}
+                              href={`/player/${encodeURIComponent(entry.player_name)}`}
                               sx={{ 
                                 color: "#FFFFFF", 
                                 textDecoration: "none",
@@ -599,11 +646,11 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                                 "&:hover": { textDecoration: "underline" } 
                               }}
                             >
-                              {entry.playerName}
+                              {entry.player_name}
                             </Link>
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
-                            {entry.count}
+                            {Number(entry.count)}
                           </TableCell>
                         </TableRow>
                       );
@@ -639,10 +686,10 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {mostKilledBy.map((entry: { playerName: string; count: number; appearance?: any }, index: number) => {
-                      const primaryColor = entry.appearance ? getCssColor(entry.appearance.primaryColor) : undefined;
-                      const bgColor = primaryColor ? getColor(getColorName(entry.appearance.primaryColor)) : undefined;
-                      const textColor = bgColor ? getTextColor(getColorName(entry.appearance.primaryColor)) : undefined;
+                    {mostKilledBy.map((entry: any, index: number) => {
+                      const primaryColor = entry.primary_color ? getCssColor(entry.primary_color) : undefined;
+                      const bgColor = primaryColor ? getColor(getColorName(entry.primary_color)) : undefined;
+                      const textColor = bgColor ? getTextColor(getColorName(entry.primary_color)) : undefined;
                       const backgroundColor = bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.3)` : undefined;
                       const cellTextColor = textColor ? `rgb(${textColor.r}, ${textColor.g}, ${textColor.b})` : "#E0E0E0";
                       
@@ -655,24 +702,23 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                           }}
                         >
                           <TableCell sx={{ borderColor: "#333", width: "1px", py: 0.5, px: 1 }}>
-                            {entry.appearance && (
-                              <Emblem
-                                size={32}
-                                emblem={{
-                                  primary: entry.appearance.foregroundEmblem,
-                                  secondary: entry.appearance.emblemFlags === 0,
-                                  background: entry.appearance.backgroundEmblem,
-                                  primaryColor: entry.appearance.emblemPrimaryColor,
-                                  secondaryColor: entry.appearance.emblemSecondaryColor,
-                                  backgroundColor: entry.appearance.emblemBackgroundColor,
-                                }}
-                              />
-                            )}
+                            <Emblem
+                              size={32}
+                              emblem={{
+                                primary: entry.foreground_emblem,
+                                secondary: entry.emblem_flags === 0,
+                                background: entry.background_emblem,
+                                primaryColor: entry.emblem_primary_color,
+                                secondaryColor: entry.emblem_secondary_color,
+                                backgroundColor: entry.emblem_background_color,
+                                armourPrimaryColor: entry.primary_color,
+                              }}
+                            />
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
                             <Link
                               component={NextLink}
-                              href={`/player/${encodeURIComponent(entry.playerName)}`}
+                              href={`/player/${encodeURIComponent(entry.player_name)}`}
                               sx={{ 
                                 color: "#FFFFFF", 
                                 textDecoration: "none",
@@ -680,11 +726,11 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                                 "&:hover": { textDecoration: "underline" } 
                               }}
                             >
-                              {entry.playerName}
+                              {entry.player_name}
                             </Link>
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
-                            {entry.count}
+                            {Number(entry.count)}
                           </TableCell>
                         </TableRow>
                       );
@@ -846,13 +892,13 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                   variant="h5"
                   sx={{ color: "#E0E0E0", fontWeight: "bold" }}
                 >
-                  {getKillTypeName(weaponOfChoice.killType)}
+                  {getWeaponNameFromString(weaponOfChoice.weapon)}
                 </Typography>
                 <Typography
                   variant="body1"
                   sx={{ color: "#B0B0B0", mt: 0.5 }}
                 >
-                  {weaponOfChoice.count} kills
+                  {weaponOfChoice.kills} kills
                 </Typography>
               </Box>
             )}
@@ -865,57 +911,57 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(() => {
-                    // Calculate max kills for proportional bars
-                    const maxKills = weaponKills.length > 0 
-                      ? Math.max(...weaponKills.map((e: { killType: number; count: number }) => e.count))
-                      : 1;
-                    
-                    return weaponKills.map((entry: { killType: number; count: number }, index: number) => {
-                      const percentage = (entry.count / maxKills) * 100;
-                      const isWeaponOfChoice = weaponOfChoice && entry.killType === weaponOfChoice.killType;
-                      
-                      return (
-                        <TableRow 
-                          key={index} 
-                          sx={{ 
-                            position: "relative",
-                            "&:hover": { 
-                              "&::before": {
-                                backgroundColor: isWeaponOfChoice 
-                                  ? "rgba(124, 179, 66, 0.3)" 
-                                  : "rgba(124, 179, 66, 0.2)",
-                              }
-                            },
-                            "&::before": {
-                              content: '""',
-                              position: "absolute",
-                              left: 0,
-                              top: 0,
-                              bottom: 0,
-                              width: `${percentage}%`,
-                              backgroundColor: isWeaponOfChoice 
-                                ? "rgba(124, 179, 66, 0.25)" 
-                                : "rgba(124, 179, 66, 0.15)",
-                              zIndex: 0,
-                              transition: "background-color 0.2s ease",
-                            },
-                            "& .MuiTableCell-root": {
-                              position: "relative",
-                              zIndex: 1,
-                            }
-                          }}
-                        >
-                          <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }}>
-                            {getKillTypeName(entry.killType)}
-                          </TableCell>
-                          <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }} align="right">
-                            {entry.count}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    });
-                  })()}
+                          {(() => {
+                            // Calculate max kills for proportional bars
+                            const maxKills = weaponKills.length > 0 
+                              ? Math.max(...weaponKills.map((e: { weapon: string; kills: number }) => e.kills))
+                              : 1;
+                            
+                            return weaponKills.map((entry: { weapon: string; kills: number }, index: number) => {
+                              const percentage = (entry.kills / maxKills) * 100;
+                              const isWeaponOfChoice = weaponOfChoice && entry.weapon === weaponOfChoice.weapon;
+                              
+                              return (
+                                <TableRow 
+                                  key={index} 
+                                  sx={{ 
+                                    position: "relative",
+                                    "&:hover": { 
+                                      "&::before": {
+                                        backgroundColor: isWeaponOfChoice 
+                                          ? "rgba(124, 179, 66, 0.3)" 
+                                          : "rgba(124, 179, 66, 0.2)",
+                                      }
+                                    },
+                                    "&::before": {
+                                      content: '""',
+                                      position: "absolute",
+                                      left: 0,
+                                      top: 0,
+                                      bottom: 0,
+                                      width: `${percentage}%`,
+                                      backgroundColor: isWeaponOfChoice 
+                                        ? "rgba(124, 179, 66, 0.25)" 
+                                        : "rgba(124, 179, 66, 0.15)",
+                                      zIndex: 0,
+                                      transition: "background-color 0.2s ease",
+                                    },
+                                    "& .MuiTableCell-root": {
+                                      position: "relative",
+                                      zIndex: 1,
+                                    }
+                                  }}
+                                >
+                                  <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }}>
+                                    {getWeaponNameFromString(entry.weapon)}
+                                  </TableCell>
+                                  <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }} align="right">
+                                    {entry.kills}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            });
+                          })()}
                 </TableBody>
               </Table>
             </TableContainer>
