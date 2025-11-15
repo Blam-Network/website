@@ -280,8 +280,8 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
 
   const gameTypeData = data?.gameTypes ?? [];
   const killsDeathsData = data?.killsDeaths ?? [];
-  const mostKilled = data?.mostKilled ?? [];
-  const mostKilledBy = data?.mostKilledBy ?? [];
+  const mostKilled = [...(data?.mostKilled ?? [])].sort((a, b) => Number(b.count) - Number(a.count));
+  const mostKilledBy = [...(data?.mostKilledBy ?? [])].sort((a, b) => Number(b.count) - Number(a.count));
   
   // Convert medalChest array to Record<string, number>
   const medalChestArray = data?.medalChest ?? [];
@@ -290,11 +290,12 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
     medalChest[entry.medal] = entry.count;
   });
   
-  // Add steaktacular and linktacular if they exist
-  if (data?.steaktacularCount && data.steaktacularCount > 0) {
+  // Add steaktacular and linktacular from separate fields (they're stored differently in the API)
+  // Use the separate count fields if they exist, as they're the authoritative source
+  if (data?.steaktacularCount !== undefined) {
     medalChest['steaktacular'] = data.steaktacularCount;
   }
-  if (data?.linktacularCount && data.linktacularCount > 0) {
+  if (data?.linktacularCount !== undefined) {
     medalChest['linktacular'] = data.linktacularCount;
   }
   
