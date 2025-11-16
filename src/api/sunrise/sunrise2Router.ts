@@ -17,6 +17,7 @@ import { getCampaignCarnageReport } from "./campaignCarnageReport";
 import { pendingTransfers } from "./pendingTransfers";
 import { playerStatistics } from "./playerStatistics";
 import { activityHeatmap } from "./activityHeatmap";
+import { datamineSessions, datamineSessionEvents, datamineFilterOptions, checkDatamineAccess } from "./datamine";
 
 export const sunrise2Router = createTRPCRouter({
   unlockRecon,
@@ -35,6 +36,10 @@ export const sunrise2Router = createTRPCRouter({
   pendingTransfers,
   playerStatistics,
   activityHeatmap,
+  datamineSessions,
+  datamineSessionEvents,
+  datamineFilterOptions,
+  checkDatamineAccess,
 });
 
 export const sunrise2Axios = new Axios({

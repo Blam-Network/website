@@ -3,6 +3,7 @@ import XboxLive from "../XboxLive";
 import { JWT } from "next-auth/jwt";
 import { env } from "../env";
 import { SunriseJWT } from "@/server/auth/jwt";
+import { Axios } from "axios";
 
 export const authOptions: AuthOptions = {
     // Configure one or more authentication providers
@@ -13,8 +14,27 @@ export const authOptions: AuthOptions = {
       })
     ],
     callbacks: {
-      jwt: ({token, user, account, profile}): JWT => {
+      jwt: async ({token, user, account, profile}): Promise<JWT> => {
         if (account && profile) {
+          // Register user in database when they login, validating XSTS token
+          try {
+            const axios = new Axios({
+              baseURL: env.HALO3_API_BASE_URL,
+            });
+            // Convert XUID to hex for the header
+            const xuidHex = BigInt(user.xuid).toString(16).toUpperCase().padStart(16, '0');
+            await axios.post('/user/register', undefined, {
+              headers: {
+                'x-xuid': xuidHex,
+                'x-uhs': user.userHash,
+                'Authorization': user.xstsToken,
+              },
+            });
+          } catch (error) {
+            // Log error but don't fail authentication
+            console.error('Failed to register user:', error);
+          }
+
           return {
             user: {
               xuid: user.xuid,
