@@ -81,6 +81,7 @@ export default function DatamineSessionPage() {
         };
     }, []);
 
+
     // Show loading while checking access - AFTER ALL HOOKS
     if (session?.user?.xuid && accessLoading) {
         return (
@@ -101,14 +102,6 @@ export default function DatamineSessionPage() {
             setSearch(value);
         }, 500);
     };
-
-    useEffect(() => {
-        return () => {
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-        };
-    }, []);
 
     // Filter events based on search and selected categories
     const filteredEvents = (eventsData?.events || []).filter((event: any) => {
