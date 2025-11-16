@@ -68,8 +68,8 @@ export default function DatamineSessionPage() {
     const { data: authSession } = useSession();
     const sessionId = params.id as string;
     const page = parseInt(searchParams.get('page') || '1', 10);
-    const [search, setSearch] = useState("");
-    const [searchInput, setSearchInput] = useState("");
+    const [search, setSearch] = useState(() => searchParams.get('search') || "");
+    const [searchInput, setSearchInput] = useState(() => searchParams.get('search') || "");
     
     // Initialize filters from URL params
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(() => {
@@ -206,8 +206,13 @@ export default function DatamineSessionPage() {
         
         debounceTimerRef.current = setTimeout(() => {
             setSearch(value);
-            // Reset to page 1 when search changes
+            // Update URL with search and reset to page 1 when search changes
             const params = new URLSearchParams(searchParams.toString());
+            if (value) {
+                params.set('search', value);
+            } else {
+                params.delete('search');
+            }
             params.set('page', '1');
             router.push(`/datamine/${sessionId}?${params.toString()}`);
         }, 500);
