@@ -45,6 +45,7 @@ export default function DatamineSessionPage() {
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+    const [selectedPriorities, setSelectedPriorities] = useState<Set<number>>(new Set());
     const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -103,13 +104,17 @@ export default function DatamineSessionPage() {
         }, 500);
     };
 
-    // Filter events based on search and selected categories
+    // Filter events based on search, selected categories, and selected priorities
     const filteredEvents = (eventsData?.events || []).filter((event: any) => {
         // Search filter (handled by backend)
         // Category filter (client-side)
         if (selectedCategories.size > 0) {
             const hasSelectedCategory = event.categories.some((cat: string) => selectedCategories.has(cat));
             if (!hasSelectedCategory) return false;
+        }
+        // Priority filter (client-side)
+        if (selectedPriorities.size > 0) {
+            if (!selectedPriorities.has(event.priority)) return false;
         }
         return true;
     });
@@ -136,6 +141,22 @@ export default function DatamineSessionPage() {
 
     const handleClearCategories = () => {
         setSelectedCategories(new Set());
+    };
+
+    const handlePriorityToggle = (priority: number) => {
+        setSelectedPriorities(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(priority)) {
+                newSet.delete(priority);
+            } else {
+                newSet.add(priority);
+            }
+            return newSet;
+        });
+    };
+
+    const handleClearPriorities = () => {
+        setSelectedPriorities(new Set());
     };
 
     const toggleRowExpansion = (eventIndex: number) => {
@@ -222,12 +243,62 @@ export default function DatamineSessionPage() {
                                 }}
                             />
                         </Box>
-                        {categoriesArray.length > 0 && (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {/* Priority/Log Level Filter */}
                             <Box>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                                     <Typography variant="caption" sx={{ fontWeight: 600, color: "#757575", fontSize: "0.75rem" }}>
-                                        Filter by Category:
+                                        Filter by Log Level:
                                     </Typography>
+                                    {selectedPriorities.size > 0 && (
+                                        <Button
+                                            size="small"
+                                            onClick={handleClearPriorities}
+                                            sx={{
+                                                fontSize: "0.75rem",
+                                                textTransform: "none",
+                                                minWidth: "auto",
+                                                px: 1,
+                                                py: 0.25,
+                                                color: "#1976d2",
+                                                "&:hover": {
+                                                    backgroundColor: "#e3f2fd",
+                                                },
+                                            }}
+                                        >
+                                            Clear ({selectedPriorities.size})
+                                        </Button>
+                                    )}
+                                </Box>
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                    {Object.entries(PRIORITY_MAP).map(([priority, label]) => (
+                                        <Chip
+                                            key={priority}
+                                            label={label}
+                                            size="small"
+                                            onClick={() => handlePriorityToggle(parseInt(priority))}
+                                            sx={{
+                                                height: 24,
+                                                fontSize: "0.75rem",
+                                                cursor: "pointer",
+                                                backgroundColor: selectedPriorities.has(parseInt(priority)) ? "#1976d2" : "#e0e0e0",
+                                                color: selectedPriorities.has(parseInt(priority)) ? "#ffffff" : "#424242",
+                                                "&:hover": {
+                                                    backgroundColor: selectedPriorities.has(parseInt(priority)) ? "#1565c0" : "#d0d0d0",
+                                                },
+                                            }}
+                                        />
+                                    ))}
+                                </Box>
+                            </Box>
+
+                            {/* Category Filter */}
+                            {categoriesArray.length > 0 && (
+                                <Box>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 600, color: "#757575", fontSize: "0.75rem" }}>
+                                            Filter by Category:
+                                        </Typography>
                                     {selectedCategories.size > 0 && (
                                         <Button
                                             size="small"
@@ -269,7 +340,8 @@ export default function DatamineSessionPage() {
                                     ))}
                                 </Box>
                             </Box>
-                        )}
+                            )}
+                        </Box>
                     </Box>
 
                     {eventsLoading ? (
@@ -278,7 +350,7 @@ export default function DatamineSessionPage() {
                         </Box>
                     ) : filteredEvents.length === 0 ? (
                         <Typography sx={{ py: 4, textAlign: "center", color: "#757575", fontSize: "0.875rem" }}>
-                            {search || selectedCategories.size > 0 
+                            {search || selectedCategories.size > 0 || selectedPriorities.size > 0
                                 ? "No events match your filters" 
                                 : "No events found for this session"}
                         </Typography>
@@ -289,8 +361,9 @@ export default function DatamineSessionPage() {
                                         <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                                             <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0", width: "40px" }}></TableCell>
                                             <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0" }}>Index</TableCell>
-                                            <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0" }}>Date</TableCell>
+                                            <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0", width: "180px", whiteSpace: "nowrap" }}>Date</TableCell>
                                             <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0" }}>Priority</TableCell>
+                                            <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0" }}>Map</TableCell>
                                             <TableCell sx={{ py: 1, px: 2, fontWeight: 600, fontSize: "0.875rem", color: "#424242", borderBottom: "2px solid #e0e0e0" }}>Message</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -303,16 +376,16 @@ export default function DatamineSessionPage() {
                                                         key={`${event.event_index}-${sessionId}`}
                                                         hover
                                                         sx={{
-                                                            backgroundColor: event.priority === 5 ? "#ffebee" : "#fafafa",
+                                                            backgroundColor: event.priority >= 4 ? "#ffebee" : "#fafafa",
                                                             borderBottom: "1px solid #e0e0e0",
                                                             cursor: "pointer",
                                                             "&:hover": {
-                                                                backgroundColor: event.priority === 5 ? "#ffcdd2" : "#f0f0f0",
+                                                                backgroundColor: event.priority >= 4 ? "#ffcdd2" : "#f0f0f0",
                                                             },
                                                         }}
                                                         onClick={() => toggleRowExpansion(event.event_index)}
                                                     >
-                                                        <TableCell sx={{ py: 1, px: 2, width: "40px" }}>
+                                                        <TableCell sx={{ py: 0, px: 2, width: "40px" }}>
                                                             <ExpandMoreIcon 
                                                                 sx={{ 
                                                                     transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -322,18 +395,21 @@ export default function DatamineSessionPage() {
                                                                 }} 
                                                             />
                                                         </TableCell>
-                                                        <TableCell sx={{ py: 1, px: 2, fontSize: "0.875rem", color: "#212121" }}>{event.event_index}</TableCell>
-                                                        <TableCell sx={{ py: 1, px: 2, fontSize: "0.875rem", color: "#212121" }}>
+                                                        <TableCell sx={{ py: 0, px: 2, fontSize: "0.875rem", color: "#212121" }}>{event.event_index}</TableCell>
+                                                        <TableCell sx={{ py: 0, px: 2, fontSize: "0.875rem", color: "#212121", width: "180px", whiteSpace: "nowrap" }}>
                                                             <DateTimeDisplay date={event.event_date} />
                                                         </TableCell>
-                                                        <TableCell sx={{ py: 1, px: 2, fontSize: "0.875rem", color: "#212121", fontWeight: event.priority >= 3 ? 600 : 400 }}>
+                                                        <TableCell sx={{ py: 0, px: 2, fontSize: "0.875rem", color: "#212121", fontWeight: event.priority >= 3 ? 600 : 400 }}>
                                                             {getPriorityString(event.priority)}
                                                         </TableCell>
-                                                        <TableCell sx={{ py: 1, px: 2, fontSize: "0.875rem", color: "#212121" }}>{event.message}</TableCell>
+                                                        <TableCell sx={{ py: 0, px: 2, fontSize: "0.875rem", color: "#212121", fontFamily: "monospace" }}>
+                                                            {event.map ? event.map.split(/[/\\]/).pop() || event.map : ""}
+                                                        </TableCell>
+                                                        <TableCell sx={{ py: 0, px: 2, fontSize: "0.875rem", color: "#212121" }}>{event.message}</TableCell>
                                                     </TableRow>
                                                     {isExpanded && (
                                                         <TableRow>
-                                                            <TableCell colSpan={5} sx={{ py: 1.5, px: 2, backgroundColor: "#ffffff", borderBottom: "1px solid #e0e0e0" }}>
+                                                            <TableCell colSpan={6} sx={{ py: 1.5, px: 2, backgroundColor: "#ffffff", borderBottom: "1px solid #e0e0e0" }}>
                                                                 <Box sx={{ pl: 4 }}>
                                                                     <Box sx={{ mb: 1.5 }}>
                                                                         <Typography variant="body2" sx={{ fontSize: "0.8125rem", color: "#424242", mb: 0.5 }}>
