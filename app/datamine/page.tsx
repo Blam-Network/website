@@ -23,10 +23,12 @@ import {
     IconButton,
     Popover,
     Badge,
+    ThemeProvider,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import type { DatamineSession } from "@/src/api/sunrise/datamine";
+import { datamineTheme } from "@/src/theme/datamineTheme";
 
 export default function DataminePage() {
     const router = useRouter();
@@ -193,8 +195,9 @@ export default function DataminePage() {
 
 
     return (
-        <Box sx={{ width: "100%", backgroundColor: "#fafafa", minHeight: "100vh", py: 2 }}>
-            <Box sx={{ maxWidth: "100%", mx: "auto", px: 2 }}>
+        <ThemeProvider theme={datamineTheme}>
+            <Box sx={{ width: "100%", backgroundColor: "#fafafa", minHeight: "100vh", py: 2 }}>
+                <Box sx={{ maxWidth: "100%", mx: "auto", px: 2 }}>
                 <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     {(buildStringFilter || systemIdFilter) && (
                         <Button
@@ -376,6 +379,7 @@ export default function DataminePage() {
                 </Popover>
             </Box>
         </Box>
+        </ThemeProvider>
     );
 }
 

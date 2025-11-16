@@ -18,6 +18,7 @@ import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { FileshareScreenshotThumb } from "@/src/components/FileshareScreenshotThumb";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
+import { MVPSection } from "@/src/components/MVPSection";
 import type { Metadata } from "next";
 import { format } from "date-fns";
 
@@ -389,6 +390,10 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
         </Paper>
       </Box>
 
+      {/* MVP Section */}
+      <Box sx={{ mb: 4 }}>
+        <MVPSection player={winner} />
+      </Box>
 
       {/* Breakdown Section */}
       <Box sx={{ mb: 4 }}>

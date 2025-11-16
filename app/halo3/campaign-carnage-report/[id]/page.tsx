@@ -5,6 +5,7 @@ import { authOptions } from "@/src/api/auth";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { CampaignSkulls } from "@/src/components/CampaignSkulls";
 import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
+import { MVPSection } from "@/src/components/MVPSection";
 import type { Metadata } from "next";
 import { env } from "@/src/env";
 
@@ -222,6 +223,11 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                     </Box>
                 </Paper>
             )}
+
+            {/* MVP Section */}
+            <Box sx={{ mb: 4 }}>
+                <MVPSection player={winner} />
+            </Box>
 
             {/* Player Breakdown */}
             <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>

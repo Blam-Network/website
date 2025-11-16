@@ -28,6 +28,7 @@ type AuthContext = SunriseJWT | undefined;
 interface CreateContextOptions {
   headers: Headers;
   auth?: AuthContext;
+  jwtTokenString?: string | null; // Raw JWT token string from cookie
   req?: NextRequest;
 }
 
@@ -54,10 +55,12 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = async (opts: {
   headers: Headers;
   auth: AuthContext;
+  jwtTokenString?: string | null;
   req?: NextRequest;
 }) => {
   return createInnerTRPCContext({
     auth: opts.auth,
+    jwtTokenString: opts.jwtTokenString,
     req: opts.req,
     headers: opts.headers,
   });
@@ -118,6 +121,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
       auth: {
         ...ctx.auth,
       },
+      jwtTokenString: ctx.jwtTokenString,
     },
   });
 });

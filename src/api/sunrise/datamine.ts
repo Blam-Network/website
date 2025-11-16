@@ -2,7 +2,6 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure } from "../trpc";
 import { sunrise2Axios } from "./sunrise2Router";
 import { jsonStringifySchema } from "@/src/zod";
-import { xuidToHex } from "@/src/utils/xuid";
 
 const DatamineSessionSchema = jsonStringifySchema(z.object({
     id: z.string(),
@@ -32,11 +31,12 @@ const DatamineFilterOptionsSchema = jsonStringifySchema(z.object({
 }));
 
 export const datamineFilterOptions = protectedProcedure.query(async (opts) => {
+    if (!opts.ctx.jwtTokenString) {
+        throw new Error('JWT token not found in request');
+    }
     const response = await sunrise2Axios.get('/datamine/sessions/filter-options', {
         headers: {
-            'x-xuid': xuidToHex(opts.ctx.auth.user.xuid),
-            'x-uhs': opts.ctx.auth.user.xboxUserHash,
-            'Authorization': opts.ctx.auth.tokens.xsts,
+            'Authorization': `Bearer ${opts.ctx.jwtTokenString}`,
         }
     });
     
@@ -71,11 +71,12 @@ export const datamineSessions = protectedProcedure.input(
         params.append('systemId', input.systemId);
     }
     
+    if (!ctx.jwtTokenString) {
+        throw new Error('JWT token not found in request');
+    }
     const response = await sunrise2Axios.get(`/datamine/sessions?${params.toString()}`, {
         headers: {
-            'x-xuid': xuidToHex(ctx.auth.user.xuid),
-            'x-uhs': ctx.auth.user.xboxUserHash,
-            'Authorization': ctx.auth.tokens.xsts,
+            'Authorization': `Bearer ${ctx.jwtTokenString}`,
         }
     });
     
@@ -122,27 +123,46 @@ const DatamineSessionEventsResponseSchema = jsonStringifySchema(z.object({
         session_start_date: z.coerce.date(),
     }),
     events: z.array(DatamineEventSchema),
+    total: z.number(),
+    page: z.number(),
+    pageSize: z.number(),
+    totalPages: z.number(),
 }));
 
 export const datamineSessionEvents = protectedProcedure.input(
     z.object({
         sessionId: z.string(),
         search: z.string().optional(),
+        categories: z.array(z.string()).optional(),
+        priorities: z.array(z.number()).optional(),
+        maps: z.array(z.string()).optional(),
+        page: z.number().optional().default(1),
     })
 ).query(async ({ input, ctx }) => {
     const params = new URLSearchParams();
     if (input.search) {
         params.append('search', input.search);
     }
+    if (input.categories && input.categories.length > 0) {
+        params.append('categories', input.categories.join(','));
+    }
+    if (input.priorities && input.priorities.length > 0) {
+        params.append('priorities', input.priorities.map(p => String(p)).join(','));
+    }
+    if (input.maps && input.maps.length > 0) {
+        params.append('maps', input.maps.join(','));
+    }
+    params.append('page', String(input.page || 1));
     
     const queryString = params.toString();
     const url = `/datamine/sessions/${input.sessionId}/events${queryString ? `?${queryString}` : ''}`;
     
+    if (!ctx.jwtTokenString) {
+        throw new Error('JWT token not found in request');
+    }
     const response = await sunrise2Axios.get(url, {
         headers: {
-            'x-xuid': xuidToHex(ctx.auth.user.xuid),
-            'x-uhs': ctx.auth.user.xboxUserHash,
-            'Authorization': ctx.auth.tokens.xsts,
+            'Authorization': `Bearer ${ctx.jwtTokenString}`,
         }
     });
     
@@ -159,12 +179,46 @@ export const datamineSessionEvents = protectedProcedure.input(
     return parsed.data;
 });
 
+const DatamineSessionFilterOptionsSchema = jsonStringifySchema(z.object({
+    categories: z.array(z.string()),
+    priorities: z.array(z.number()),
+    maps: z.array(z.string()),
+}));
+
+export const datamineSessionFilterOptions = protectedProcedure.input(
+    z.object({
+        sessionId: z.string(),
+    })
+).query(async ({ input, ctx }) => {
+    if (!ctx.jwtTokenString) {
+        throw new Error('JWT token not found in request');
+    }
+    const response = await sunrise2Axios.get(`/datamine/sessions/${input.sessionId}/filter-options`, {
+        headers: {
+            'Authorization': `Bearer ${ctx.jwtTokenString}`,
+        }
+    });
+    
+    // Handle Axios response - data might be a string that needs parsing
+    let data = response.data;
+    if (typeof data === 'string') {
+        data = JSON.parse(data);
+    }
+    
+    const parsed = DatamineSessionFilterOptionsSchema.safeParse(data);
+    if (!parsed.success) {
+        throw new Error(`datamineSessionFilterOptions: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
+    }
+    return parsed.data;
+});
+
 export const checkDatamineAccess = protectedProcedure.query(async (opts) => {
+    if (!opts.ctx.jwtTokenString) {
+        throw new Error('JWT token not found in request');
+    }
     const response = await sunrise2Axios.get('/user', {
         headers: {
-            'x-xuid': xuidToHex(opts.ctx.auth.user.xuid),
-            'x-uhs': opts.ctx.auth.user.xboxUserHash,
-            'Authorization': opts.ctx.auth.tokens.xsts,
+            'Authorization': `Bearer ${opts.ctx.jwtTokenString}`,
         }
     });
     

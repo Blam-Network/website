@@ -16,25 +16,6 @@ export const authOptions: AuthOptions = {
     callbacks: {
       jwt: async ({token, user, account, profile}): Promise<JWT> => {
         if (account && profile) {
-          // Register user in database when they login, validating XSTS token
-          try {
-            const axios = new Axios({
-              baseURL: env.HALO3_API_BASE_URL,
-            });
-            // Convert XUID to hex for the header
-            const xuidHex = BigInt(user.xuid).toString(16).toUpperCase().padStart(16, '0');
-            await axios.post('/user/register', undefined, {
-              headers: {
-                'x-xuid': xuidHex,
-                'x-uhs': user.userHash,
-                'Authorization': user.xstsToken,
-              },
-            });
-          } catch (error) {
-            // Log error but don't fail authentication
-            console.error('Failed to register user:', error);
-          }
-
           return {
             user: {
               xuid: user.xuid,
@@ -66,16 +47,21 @@ export const authOptions: AuthOptions = {
           return token as JWT;
         }
       },
-      session({ session, token, user }) {
+      session({ session, token }) {
+        const sunriseJWT = token as SunriseJWT;
+        
+        // Note: User registration will happen when they first access a protected endpoint
+        // The JWT token will be extracted from the cookie and sent to the backend
+        
         return {
         // TODO: clean this up
-          user: (token as SunriseJWT).user,
-          accessToken: (token as SunriseJWT).accessToken,
+          user: sunriseJWT.user,
+          accessToken: sunriseJWT.accessToken,
           expires: 0,
           tokens: {
-            microsoft: (token as SunriseJWT).tokens.microsoft,
-            xbox: (token as SunriseJWT).tokens.xbox,
-            xsts: (token as SunriseJWT).tokens.xsts,
+            microsoft: sunriseJWT.tokens.microsoft,
+            xbox: sunriseJWT.tokens.xbox,
+            xsts: sunriseJWT.tokens.xsts,
           }
         }
       },
