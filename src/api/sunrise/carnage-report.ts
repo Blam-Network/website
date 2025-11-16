@@ -12,7 +12,8 @@ export const getCarnageReport = publicProcedure.input(
     const response = await sunrise2Axios.get(`/halo3/carnage-reports/${opts.input.id}`);
     const parsed = CarnageReportResponseSchema.safeParse(response.data);
     if (!parsed.success) {
-        throw new Error(`carnageReport: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
+        const errorDetails = parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`carnageReport: schema mismatch. Errors: ${errorDetails}. Got: ${JSON.stringify(response.data).slice(0, 1000)}`);
     }
     return parsed.data;
 });

@@ -120,11 +120,11 @@ export const AchievementsSchema = z.object({
 });
 
 export const DamageSourceEnum = z.enum([
-    'guardians',
+    'unknown',
     'falling_damage',
-    'generic_collision_damage',
-    'generic_melee_damage',
-    'generic_explosion',
+    'collision_damage',
+    'melee',
+    'explosion',
     'magnum_pistol',
     'plasma_pistol',
     'needler',
@@ -151,36 +151,36 @@ export const DamageSourceEnum = z.enum([
     'plasma_grenade',
     'claymore_grenade',
     'firebomb_grenade',
-    'flag_melee_damage',
-    'bomb_melee_damage',
-    'bomb_explosion_damage',
-    'ball_melee_damage',
+    'flag',
+    'bomb',
+    'bomb_explosion',
+    'ball',
     'human_turret',
     'plasma_cannon',
-    'unknown_37',
-    'unknown_38',
+    'plasma_mortar',
+    'plasma_turret',
     'banshee',
     'ghost',
     'mongoose',
-    'unknown_42',
+    'scorpion',
     'scorpion_gunner',
-    'unknown_44',
-    'unknown_45',
+    'spectre_driver',
+    'spectre_gunner',
     'warthog_driver',
     'warthog_gunner',
     'warthog_gunner_gauss',
     'wraith',
     'wraith_anti_infantry',
-    'scorpion',
+    'tank',
     'chopper',
     'hornet',
+    'mantis',
     'mauler',
-    'unknown_56',
-    'unknown_57',
-    'unknown_58',
-    'tripmine',
+    'sentinel_beam',
+    'sentinel_rpg',
+    'teleporter',
     'sandtrap_mine',
-    'unknown_61',
+    'elephant_turret',
 ]);
 
 export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourceEnum>): "WEAPON" | "GRENADE" | "MELEE" | "OTHER" | 'VEHICLE' => {
@@ -210,19 +210,24 @@ export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourc
     case 'human_turret':
     case 'plasma_cannon':
     case 'mauler':
+    case 'sentinel_beam':
+    case 'sentinel_rpg':
       return 'WEAPON';
     case 'frag_grenade':
     case 'plasma_grenade':
     case 'claymore_grenade':
     case 'firebomb_grenade':
       return 'GRENADE';
-    case 'generic_melee_damage':
-    case 'flag_melee_damage':
-    case 'bomb_melee_damage':
+    case 'melee':
+    case 'flag':
+    case 'bomb':
       return 'MELEE';
-    case 'bomb_explosion_damage':
-    case 'ball_melee_damage':
-    case 'bomb_melee_damage':
+    case 'bomb_explosion':
+    case 'ball':
+    case 'explosion':
+    case 'collision_damage':
+    case 'falling_damage':
+    case 'unknown':
       return 'OTHER';
     case 'banshee':
     case 'ghost':
@@ -236,6 +241,11 @@ export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourc
     case 'scorpion':
     case 'chopper':
     case 'hornet':
+    case 'tank':
+    case 'spectre_driver':
+    case 'spectre_gunner':
+    case 'mantis':
+    case 'elephant_turret':
       return 'VEHICLE';
     default:
       return 'OTHER';
@@ -244,15 +254,15 @@ export const getDamageSourceCategory = (damageSource: z.infer<typeof DamageSourc
 
 export const getDamageSourceName = (damageSource: z.infer<typeof DamageSourceEnum>): string => {
   switch (damageSource) {
-    case 'guardians':
-      return 'Guardians';
+    case 'unknown':
+      return 'Unknown';
     case 'falling_damage':
       return 'Falling Damage';
-    case 'generic_collision_damage':
+    case 'collision_damage':
       return 'Collision';
-    case 'generic_melee_damage':
+    case 'melee':
       return 'Melee';
-    case 'generic_explosion':
+    case 'explosion':
       return 'Explosion';
     case 'magnum_pistol':
       return 'Magnum Pistol';
@@ -306,64 +316,66 @@ export const getDamageSourceName = (damageSource: z.infer<typeof DamageSourceEnu
       return 'Spike Grenade';
     case 'firebomb_grenade':
       return 'Firebomb Grenade';
-    case 'flag_melee_damage':
-      return 'Flag Melee Damage';
-    case 'bomb_melee_damage':
-      return 'Bomb Melee Damage';
-    case 'ball_melee_damage':
-      return 'Ball Melee Damage';
+    case 'flag':
+      return 'Flag';
+    case 'bomb':
+      return 'Bomb';
+    case 'bomb_explosion':
+      return 'Bomb Explosion';
+    case 'ball':
+      return 'Ball';
     case 'human_turret':
       return 'Human Turret';
     case 'plasma_cannon':
       return 'Plasma Cannon';
-    case 'unknown_37':
-      return 'Unknown 37';
-    case 'unknown_38':
-      return 'Unknown 38';
+    case 'plasma_mortar':
+      return 'Plasma Mortar';
+    case 'plasma_turret':
+      return 'Plasma Turret';
     case 'banshee':
       return 'Banshee';
     case 'ghost':
       return 'Ghost';
     case 'mongoose':
       return 'Mongoose';
-    case 'unknown_42':
-      return 'Unknown 42';
+    case 'scorpion':
+      return 'Scorpion';
     case 'scorpion_gunner':
       return 'Scorpion Gunner';
-    case 'unknown_44':
-      return 'Unknown 44';
-    case 'unknown_45':
-      return 'Unknown 45';
+    case 'spectre_driver':
+      return 'Spectre Driver';
+    case 'spectre_gunner':
+      return 'Spectre Gunner';
     case 'warthog_driver':
       return 'Warthog Driver';
     case 'warthog_gunner':
       return 'Warthog Gunner';
     case 'warthog_gunner_gauss':
-      return 'Warthog Gunner Gauss';
+      return 'Warthog Gunner (Gauss)';
     case 'wraith':
       return 'Wraith';
     case 'wraith_anti_infantry':
-      return 'Wraith Anti Infantry';
-    case 'scorpion':
-      return 'Scorpion';
+      return 'Wraith Anti-Infantry';
+    case 'tank':
+      return 'Tank';
     case 'chopper':
       return 'Chopper';
     case 'hornet':
       return 'Hornet';
+    case 'mantis':
+      return 'Mantis';
     case 'mauler':
       return 'Mauler';
-    case 'unknown_56':
-      return 'Unknown 56';
-    case 'unknown_57':
-      return 'Unknown 57';
-    case 'unknown_58':
-      return 'Unknown 58';
-    case 'tripmine':
-      return 'Tripmine';
+    case 'sentinel_beam':
+      return 'Sentinel Beam';
+    case 'sentinel_rpg':
+      return 'Sentinel RPG';
+    case 'teleporter':
+      return 'Teleporter';
     case 'sandtrap_mine':
       return 'Sandtrap Mine';
-    case 'unknown_61':
-      return 'Unknown 61';
+    case 'elephant_turret':
+      return 'Elephant Turret';
     default:
       return damageSource;
   }
