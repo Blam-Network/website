@@ -222,7 +222,7 @@ export default function DatamineSessionPage() {
     const filteredEvents = allEvents;
 
     // Use filter options from backend (all pages) instead of extracting from current page
-    const categoriesArray = filterOptionsData?.categories || [];
+    const categoriesArray = (filterOptionsData?.categories || []).sort();
     const mapsArray = filterOptionsData?.maps || [];
 
     // Helper function to update URL with filters and reset to page 1
