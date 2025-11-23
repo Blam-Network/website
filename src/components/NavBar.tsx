@@ -64,6 +64,11 @@ export const NavBar = ({session}: {session: Session | null}) => {
                             Screenshots
                         </Button>
                     </Link>
+                    <Link href='/files' style={{ textDecoration: 'none' }}>
+                        <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
+                            Files
+                        </Button>
+                    </Link>
                     {/* <Link href='/playlists' style={{ textDecoration: 'none' }}>
                         <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                             Playlists

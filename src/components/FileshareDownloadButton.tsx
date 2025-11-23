@@ -5,9 +5,12 @@ import Image from "next/image";
 import { api } from "../trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import type { PendingTransfer } from "@/src/api/sunrise/pendingTransfers";
 
 export const FileshareDownloadButton = ({ fileId }: { fileId: string }) => {
+    const { data: session } = useSession();
+    const loggedIn = !!session?.user?.xuid;
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const queryClient = useQueryClient();
@@ -16,6 +19,7 @@ export const FileshareDownloadButton = ({ fileId }: { fileId: string }) => {
         queryKey: ['pendingTransfers'],
         queryFn: () => api.sunrise2.pendingTransfers.query(),
         refetchOnWindowFocus: true, // Refetch when window regains focus
+        enabled: loggedIn, // Only fetch if logged in
     });
 
     const pendingTransfers = pendingTransfersData?.transfers ?? [];
@@ -96,6 +100,10 @@ export const FileshareDownloadButton = ({ fileId }: { fileId: string }) => {
                 </Box>
             </Stack>
         );
+    }
+
+    if (!loggedIn) {
+        return null; // Don't show button if not logged in
     }
 
     const handleClick = () => {

@@ -18,6 +18,7 @@ import { pendingTransfers } from "./pendingTransfers";
 import { playerStatistics } from "./playerStatistics";
 import { activityHeatmap } from "./activityHeatmap";
 import { datamineSessions, datamineSessionEvents, datamineFilterOptions, datamineSessionFilterOptions, checkDatamineAccess } from "./datamine";
+import { fileshareFiles } from "./fileshareFiles";
 
 export const sunrise2Router = createTRPCRouter({
   unlockRecon,
@@ -41,6 +42,7 @@ export const sunrise2Router = createTRPCRouter({
   datamineFilterOptions,
   datamineSessionFilterOptions,
   checkDatamineAccess,
+  fileshareFiles,
 });
 
 export const sunrise2Axios = new Axios({

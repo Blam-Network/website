@@ -16,6 +16,7 @@ interface FileshareFiletypeIconProps {
   filename?: string;
   description?: string;
   author?: string;
+  mapId?: number;
 }
 
 const getFileImage = (type: number): string => {
@@ -69,10 +70,12 @@ export const FileshareFiletypeIcon = ({
   filename,
   description,
   author,
+  mapId,
 }: FileshareFiletypeIconProps) => {
   const router = useRouter();
   const fileImage = getFileImage(filetype);
-  const gametypePosition = filetype < 10 && gameEngineType ? getGametypeIconPosition(gameEngineType) : null;
+  // Show gametype icon for gametypes (filetype < 10) and films (filetype 11 or 12)
+  const gametypePosition = gameEngineType && (filetype < 10 || filetype === 11 || filetype === 12) ? getGametypeIconPosition(gameEngineType) : null;
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [query, setQuery] = useState<Record<string, string>>({});
@@ -117,6 +120,12 @@ export const FileshareFiletypeIcon = ({
     ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view` 
     : null;
   const showScreenshot = filetype === 13 && screenshotUrl;
+  
+  // Map image for films (filetype 11 only, not film clips)
+  const mapImageUrl = filetype === 11 && mapId 
+    ? `/img/maps/film/${mapId}.png` 
+    : null;
+  const showMapImage = filetype === 11 && mapImageUrl;
 
   const updateURL = (slotUniqueId: string | null) => {
     const newQuery = { ...query };
@@ -262,6 +271,42 @@ export const FileshareFiletypeIcon = ({
                 />
               </Box>
             )}
+          </Box>
+        )}
+        {/* Map image for films - behind everything */}
+        {showMapImage && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 0,
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <img
+              src={mapImageUrl!}
+              alt={`Map ${mapId}`}
+              onError={(e) => {
+                // Hide image if it fails to load
+                e.currentTarget.style.display = 'none';
+              }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 0,
+              }}
+            />
           </Box>
         )}
         {/* Filetype icon */}
