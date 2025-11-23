@@ -107,7 +107,27 @@ export const FileshareFiletypeIcon = ({
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
   
-  const sizeValue = typeof size === 'number' ? `${size}px` : size;
+  // Size prop is a maximum constraint (max-width), calculate max-height to maintain 16:9 aspect ratio
+  const aspectRatio = 16 / 9;
+  let maxWidthValue: string | undefined;
+  let maxHeightValue: string | undefined;
+  
+  if (size !== undefined) {
+    if (typeof size === 'number') {
+      // Size is max-width in pixels, calculate max-height
+      maxWidthValue = `${size}px`;
+      maxHeightValue = `${size / aspectRatio}px`;
+    } else if (typeof size === 'string' && size.endsWith('%')) {
+      // Size is max-width as percentage - don't set maxHeight, let aspectRatio handle it
+      maxWidthValue = size;
+      // maxHeightValue left undefined - aspectRatio will calculate it
+    } else {
+      // For other string values, treat as max-width
+      maxWidthValue = size;
+      // maxHeightValue left undefined - aspectRatio will calculate it
+    }
+  }
+
   const iconSize = typeof size === 'number' ? size : 64; // Default size for calculations
 
   // Convert shareId to padded hex string - shareId comes as decimal string from backend
@@ -168,10 +188,12 @@ export const FileshareFiletypeIcon = ({
         onClick={showScreenshot && !imageError && fileId ? () => updateURL(fileId) : undefined}
         sx={{
           position: 'relative',
-          width: sizeValue,
-          height: sizeValue,
+          width: '100%',
+          maxWidth: maxWidthValue,
+          maxHeight: maxHeightValue,
           display: 'inline-block',
           cursor: showScreenshot && !imageError && fileId ? 'pointer' : 'default',
+          aspectRatio: '16 / 9', // Enforce 16:9 aspect ratio
         }}
       >
         {/* Screenshot thumbnail behind icon */}
@@ -290,23 +312,23 @@ export const FileshareFiletypeIcon = ({
               pointerEvents: 'none',
             }}
           >
-            <img
-              src={mapImageUrl!}
-              alt={`Map ${mapId}`}
-              onError={(e) => {
-                // Hide image if it fails to load
-                e.currentTarget.style.display = 'none';
-              }}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 0,
-              }}
-            />
+                <img
+                  src={mapImageUrl!}
+                  alt={`Map ${mapId}`}
+                  onError={(e) => {
+                    // Hide image if it fails to load
+                    e.currentTarget.style.display = 'none';
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 0,
+                  }}
+                />
           </Box>
         )}
         {/* Filetype icon */}

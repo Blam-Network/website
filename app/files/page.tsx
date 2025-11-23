@@ -220,11 +220,11 @@ export default function FilesPage() {
                   <Stack spacing={0.5}>
                     <Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: file.header.description ? 0.25 : 0 }}>
-                        <Box sx={{ flexShrink: 0, width: 120, height: 80 }}>
+                        <Box sx={{ flexShrink: 0, width: '100%', maxWidth: 124 }}>
                           <FileshareFiletypeIcon 
                             filetype={file.header.filetype} 
                             gameEngineType={file.header.gameEngineType}
-                            size="100%"
+                            size={124}
                             shareId={file.header.filetype === 13 ? file.shareId : undefined}
                             slot={file.header.filetype === 13 ? file.slotNumber : undefined}
                             fileId={file.header.filetype === 13 ? file.id : undefined}
