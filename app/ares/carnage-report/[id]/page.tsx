@@ -34,13 +34,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   
   let carnageReport: any | undefined = undefined;
   try {
-    carnageReport = await api.sunrise2.getCarnageReport.query({ id: params.id });
+    carnageReport = await api.ares.getCarnageReport.query({ id: params.id });
   } catch {}
 
   if (!carnageReport) {
     return {
       title: "Carnage Report - Blam Network",
-      description: "View Halo 3 carnage report on Blam Network.",
+      description: "View Ares carnage report on Blam Network.",
     };
   }
 
@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     openGraph: {
       title,
       description,
-      url: `${baseUrl}/halo3/carnage-report/${params.id}`,
+      url: `${baseUrl}/ares/carnage-report/${params.id}`,
       siteName: "Blam Network",
       type: "website",
     },
@@ -169,22 +169,14 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
   const session = await getServerSession(authOptions);
   const loggedIn = !!session?.user;
 
-  const carnageReport = (await api.sunrise2.getCarnageReport.query({ id: params.id }));
+  const carnageReport = (await api.ares.getCarnageReport.query({ id: params.id }));
   const players = carnageReport.players.sort((a: typeof carnageReport.players[0], b: typeof carnageReport.players[0]) => a.standing - b.standing);
-  const columns = ["", "Player Name", "", "Place", "Score", "Kills", "Deaths", "Assists", "Betrayals"];
-
-  const playerNames = players.reduce((acc: Record<number, string>, player: typeof players[0]) => {
-    acc[player.player_index] = player.player_name;
-    return acc;
-  }, {} as Record<number, string>);
 
   const durationInSeconds = (new Date(carnageReport.finish_time).getTime() - new Date(carnageReport.start_time).getTime()) / 1000;
   const winner = players[0];
   const winningTeam = carnageReport.team_game && carnageReport.teams.length > 0 
     ? carnageReport.teams.sort((a: typeof carnageReport.teams[0], b: typeof carnageReport.teams[0]) => a.standing - b.standing)[0]
     : null;
-
-  const relatedFiles = await api.sunrise2.getRelatedFiles.query({ id: params.id });
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -282,92 +274,6 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
           <PGCRBreakdown report={carnageReport} />
         </Paper>
       </Box>
-
-      {/* Related Files Section */}
-      {(relatedFiles.fileshare.length > 0 || relatedFiles.screenshots.length > 0) && (
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ mb: 2, pb: 1, borderBottom: '2px solid #7CB342', color: '#7CB342', fontWeight: 700 }}>
-            Related Files
-          </Typography>
-          
-          {relatedFiles.fileshare.length > 0 && (
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" sx={{ mb: 2, color: '#9CCC65', fontWeight: 600 }}>
-                File Share
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 2, width: '100%' }}>
-                {relatedFiles.fileshare.map((file: typeof relatedFiles.fileshare[0]) => (
-                  <Paper
-                    key={file.id}
-                    elevation={4}
-                    sx={{
-                      border: '1px solid #333',
-                      background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
-                      p: 1.5,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      '&:hover': {
-                        borderColor: '#7CB342',
-                        boxShadow: '0 0 10px rgba(124, 179, 66, 0.2)',
-                      },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    <Box sx={{ width: '100%', mb: 1 }}>
-                      <FileshareFiletypeIcon 
-                        filetype={file.header.filetype} 
-                        gameEngineType={file.header.gameEngineType}
-                        size="100%"
-                        shareId={file.header.filetype === 13 ? file.shareId : undefined}
-                        slot={file.header.filetype === 13 ? file.slotNumber : undefined}
-                        fileId={file.header.filetype === 13 ? file.id : undefined}
-                        filename={file.header.filetype === 13 ? file.header.filename : undefined}
-                        description={file.header.filetype === 13 ? file.header.description : undefined}
-                        author={file.header.filetype === 13 ? file.header.author : undefined}
-                      />
-                    </Box>
-                    <Typography variant='body1' sx={{ fontWeight: 600, color: '#9CCC65', mb: 0.5 }}>
-                      {file.header.filename}
-                    </Typography>
-                    <Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#B0B0B0', mb: 1 }}>
-                      by{' '}
-                      <Link href={"/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
-                        {file.header.author}
-                      </Link>
-                    </Typography>
-                    {loggedIn && (
-                      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 'auto' }}>
-                        <FileshareDownloadButton fileId={file.id} />
-                      </Box>
-                    )}
-                  </Paper>
-                ))}
-              </Box>
-            </Box>
-          )}
-
-          {relatedFiles.screenshots.length > 0 && (
-            <Box>
-              <Typography variant="h5" sx={{ mb: 2, color: '#9CCC65', fontWeight: 600 }}>
-                Screenshots
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 2, width: '100%' }}>
-                {relatedFiles.screenshots.map((screenshot: typeof relatedFiles.screenshots[0]) => (
-                  <ScreenshotCard
-                    key={screenshot.id}
-                    screenshotId={screenshot.id}
-                    screenshotUrl={`/api/screenshot/${screenshot.id}`}
-                    filename={screenshot.header.filename}
-                    description={screenshot.header.description}
-                    author={screenshot.author}
-                    date={screenshot.date}
-                  />
-                ))}
-              </Box>
-            </Box>
-          )}
-        </Box>
-      )}
 
     </Container>
   );
