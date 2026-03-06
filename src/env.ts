@@ -8,6 +8,7 @@ export const env = createEnv({
     AZURE_AD_TENANT_ID: z.string().min(1),
     NEXTAUTH_SECRET: z.string().min(1),
     HALO3_API_BASE_URL: z.string().min(1),
+    PORT: z.coerce.number().default(3000),
   },
   client: {
     // NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),
@@ -21,7 +22,7 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     HALO3_API_BASE_URL: process.env.HALO3_API_BASE_URL,
     NEXT_PUBLIC_HALO3_API_BASE_URL: process.env.NEXT_PUBLIC_HALO3_API_BASE_URL,
-
+    PORT: process.env.PORT,
     // NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
   },
 });
