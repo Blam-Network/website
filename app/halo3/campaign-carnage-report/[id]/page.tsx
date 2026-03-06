@@ -7,17 +7,10 @@ import { CampaignSkulls } from "@/src/components/CampaignSkulls";
 import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
 import { MVPSection } from "@/src/components/MVPSection";
 import type { Metadata } from "next";
-import { env } from "@/src/env";
-
-const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "";
-  const vc = process.env.VERCEL_URL;
-  if (vc) return `https://${vc}`;
-  return process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:${env.PORT}`;
-};
+import { getSiteUrl } from "@/src/utils/siteUrl";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const baseUrl = getBaseUrl();
+  const baseUrl = getSiteUrl();
   
   let carnageReport: any | undefined = undefined;
   try {

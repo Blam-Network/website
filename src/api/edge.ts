@@ -5,8 +5,8 @@ import { sunriseRouter } from "./sunrise/sunriseRouter";
 import { createTRPCRouter } from "./trpc";
 import { xboxRouter } from "./xbox/xboxRouter";
 
-// Deployed to /trpc/edge/**
-export const edgeRouter = createTRPCRouter({
+// tRPC API router - served at /api/trpc
+export const apiRouter = createTRPCRouter({
   sunrise: sunriseRouter,
   sunrise2: sunrise2Router,
   ares: aresRouter,

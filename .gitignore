@@ -16,6 +16,9 @@
 # production
 /build
 
+# local SSL certs (mkcert)
+.cert/
+
 # misc
 .DS_Store
 *.pem

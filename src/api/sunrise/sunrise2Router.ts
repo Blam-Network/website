@@ -47,4 +47,7 @@ export const sunrise2Router = createTRPCRouter({
 
 export const sunrise2Axios = new Axios({
     baseURL: env.HALO3_API_BASE_URL,
+    validateStatus: (status: number) => {
+      return true;
+    },
 })

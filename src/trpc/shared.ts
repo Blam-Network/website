@@ -1,13 +1,7 @@
 import type { HTTPBatchLinkOptions, HTTPHeaders, TRPCLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client";
 import { AppRouter } from "../api/router";
-
-const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "";
-  const vc = process.env.VERCEL_URL;
-  if (vc) return `https://${vc}`;
-  return `http://localhost:3000`;
-};
+import { getSiteUrl } from "../utils/siteUrl";
 
 export const endingLink = (opts?: {
   headers?: HTTPHeaders | (() => HTTPHeaders);
@@ -17,9 +11,9 @@ export const endingLink = (opts?: {
       headers: opts?.headers,
     } satisfies Partial<HTTPBatchLinkOptions<any>>;
 
-    const edgeLink = httpBatchLink({
+    const httpLink = httpBatchLink({
       ...sharedOpts,
-      url: `${getBaseUrl()}/api/trpc/edge`,
+      url: `${getSiteUrl()}/api/trpc`,
     })(runtime);
 
     return (ctx) => {
@@ -30,6 +24,6 @@ export const endingLink = (opts?: {
         op: { ...ctx.op, path: path.join(".") },
       };
 
-      return edgeLink(newCtx);
+      return httpLink(newCtx);
     };
   }) satisfies TRPCLink<AppRouter>;

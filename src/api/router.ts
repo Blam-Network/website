@@ -1,8 +1,8 @@
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { mergeRouters } from "./trpc";
-import { edgeRouter } from "./edge";
+import { apiRouter } from "./edge";
 
-export const appRouter = mergeRouters(edgeRouter);
+export const appRouter = mergeRouters(apiRouter);
 export type AppRouter = typeof appRouter;
 
 export { createTRPCContext, createInnerTRPCContext } from "./trpc";
