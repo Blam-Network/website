@@ -37,7 +37,7 @@ const PRIORITY_MAP: Record<number, string> = {
     2: "message",
     3: "WARNING",
     4: "-ERROR-",
-    5: "-CRITICAL-",
+    5: "-FATAL-",
 };
 
 const getPriorityString = (priority: number): string => {
