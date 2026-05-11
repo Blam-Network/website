@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Modal, Box, Typography, IconButton, CircularProgress } from "@mui/material";
+import { Modal, Box, Typography, IconButton } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface ScreenshotModalProps {
@@ -72,7 +73,7 @@ export const ScreenshotModal = ({
         }}
       >
         {!shouldShowModal && (
-          <CircularProgress size={60} sx={{ color: '#7CB342' }} />
+          <LoadingSpinner size={120} />
         )}
         {shouldShowModal && (
           <>

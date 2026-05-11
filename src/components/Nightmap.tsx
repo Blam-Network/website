@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Box, Paper, Container, CircularProgress } from "@mui/material";
+import { Box, Paper, Container } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { useNightmap } from "../contexts/NightmapContext";
 
 export const Nightmap = () => {
@@ -81,13 +82,12 @@ export const Nightmap = () => {
             }}
           >
             {!bothLoaded && (
-              <CircularProgress 
-                size={60} 
-                sx={{ 
-                  color: '#FFFFFF',
+              <LoadingSpinner
+                size={120}
+                sx={{
                   position: 'absolute',
                   zIndex: 1,
-                }} 
+                }}
               />
             )}
             {/* Render both images but hide/show them - browser keeps them cached */}

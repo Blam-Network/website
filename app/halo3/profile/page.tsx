@@ -7,7 +7,7 @@ export default async function ProfileRedirect() {
 	if (!session?.user?.gamertag) {
 		redirect("/");
 	}
-	redirect("/player/" + session.user.gamertag);
+	redirect("/halo3/player/" + session.user.gamertag);
 }
 
 

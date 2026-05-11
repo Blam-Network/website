@@ -325,7 +325,7 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     </Typography>
                     <Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#B0B0B0', mb: 1 }}>
                       by{' '}
-                      <Link href={"/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
+                      <Link href={"/halo3/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
                         {file.header.author}
                       </Link>
                     </Typography>

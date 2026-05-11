@@ -3,7 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
-import { Box, Typography, Container, Pagination, CircularProgress, Stack, Button, Paper, Card, CardContent } from "@mui/material";
+import { Box, Typography, Container, Pagination, Stack, Button, Paper, Card, CardContent } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { useState, useEffect } from "react";
 import { FileshareFile } from "@/src/api/sunrise/fileshareFiles";
 import Link from "next/link";
@@ -73,7 +74,7 @@ export default function FilesPage() {
       params.set(key, value);
     });
     const queryString = params.toString();
-    const newUrl = `/files${queryString ? `?${queryString}` : ""}`;
+    const newUrl = `/halo3/files${queryString ? `?${queryString}` : ""}`;
     
     router.push(newUrl);
   };
@@ -193,7 +194,7 @@ export default function FilesPage() {
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#7CB342' }} />
+          <LoadingSpinner size={96} />
         </Box>
       ) : data && data.data.length > 0 ? (
         <>
@@ -247,7 +248,7 @@ export default function FilesPage() {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       {file.header.authorXuid && !isGuestXuid(file.header.authorXuid) ? (
                         <Link 
-                          href={`/player/${file.header.author}`} 
+                          href={`/halo3/player/${file.header.author}`} 
                           style={{ textDecoration: 'underline', color: '#4A90E2' }}
                         >
                           <Typography variant='caption' sx={{ color: 'inherit' }}>

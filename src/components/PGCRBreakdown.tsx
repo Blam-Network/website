@@ -147,7 +147,7 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                             </Typography>
                                         ) : (
                                             <Link 
-                                                href={`/player/${encodeURIComponent(player.player_name)}`}
+                                                href={`/halo3/player/${encodeURIComponent(player.player_name)}`}
                                                 style={{
                                                     color: rowColor.textColor,
                                                     textDecoration: 'none',

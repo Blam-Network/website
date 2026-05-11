@@ -34,7 +34,7 @@ export const Footer = () => {
                   Home
                 </Typography>
               </Link>
-              <Link href="/players" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link href="/halo3/players" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Typography 
                   variant="body2" 
                   sx={{ 
@@ -49,7 +49,7 @@ export const Footer = () => {
                   Players
                 </Typography>
               </Link>
-              <Link href="/screenshots" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link href="/halo3/screenshots" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Typography 
                   variant="body2" 
                   sx={{ 

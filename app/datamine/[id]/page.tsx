@@ -11,7 +11,6 @@ import {
     Typography,
     TextField,
     Chip,
-    CircularProgress,
     Button,
     Table,
     TableBody,
@@ -30,6 +29,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DownloadIcon from "@mui/icons-material/Download";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { datamineTheme } from "@/src/theme/datamineTheme";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 
 const PRIORITY_MAP: Record<number, string> = {
     0: "verbose",
@@ -192,7 +192,7 @@ export default function DatamineSessionPage() {
     if (authSession?.user?.xuid && accessLoading) {
         return (
             <Box sx={{ width: "100%", backgroundColor: "#fafafa", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <CircularProgress />
+                <LoadingSpinner size={96} />
             </Box>
         );
     }
@@ -627,7 +627,7 @@ export default function DatamineSessionPage() {
 
                     {eventsLoading ? (
                         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-                            <CircularProgress size={24} />
+                            <LoadingSpinner size={48} />
                         </Box>
                     ) : filteredEvents.length === 0 ? (
                         <Typography sx={{ py: 4, textAlign: "center", color: "#757575", fontSize: "0.875rem" }}>

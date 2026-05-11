@@ -14,7 +14,7 @@ const ScreenshotSchema = z.object({
 });
 
 const ScreenshotsSchema = jsonStringifySchema(z.array(ScreenshotSchema));
-const ScreenshotsResponseSchema = jsonStringifySchema(z.object({
+export const ScreenshotsResponseSchema = jsonStringifySchema(z.object({
     data: z.array(ScreenshotSchema),
     total: z.number(),
     page: z.number(),

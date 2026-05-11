@@ -3,7 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
-import { Box, Typography, Container, Paper, Pagination, CircularProgress, Stack, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Typography, Container, Paper, Pagination, Stack, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import Link from "next/link";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { RecentGame } from "@/src/api/sunrise/recentGames";
@@ -73,7 +74,7 @@ export default function GamesPage() {
       params.set(key, value);
     });
     const queryString = params.toString();
-    router.push(`/games${queryString ? `?${queryString}` : ""}`);
+    router.push(`/halo3/games${queryString ? `?${queryString}` : ""}`);
   };
 
   const handleSearch = () => {
@@ -98,7 +99,7 @@ export default function GamesPage() {
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#7CB342' }} />
+          <LoadingSpinner size={96} />
         </Box>
       ) : data && data.data.length > 0 ? (
         <>

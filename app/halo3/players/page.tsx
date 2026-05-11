@@ -74,7 +74,7 @@ export default function PlayersPage() {
       params.set(key, value);
     });
     const queryString = params.toString();
-    const newUrl = `/players${queryString ? `?${queryString}` : ""}`;
+    const newUrl = `/halo3/players${queryString ? `?${queryString}` : ""}`;
     
     router.push(newUrl);
   };
@@ -204,7 +204,7 @@ export default function PlayersPage() {
             {data.players.map((serviceRecord: ServiceRecord) => (
               <Link
                 key={serviceRecord.id}
-                href={"/player/" + serviceRecord.playerName}
+                href={"/halo3/player/" + serviceRecord.playerName}
                 style={{
                   textDecoration: "none",
                   color: "unset",

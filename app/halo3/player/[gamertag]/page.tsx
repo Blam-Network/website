@@ -47,7 +47,7 @@ export async function generateMetadata({
       const title = screenshot.header.filename || "Screenshot";
       const description = screenshot.header.description || `Halo 3 screenshot${screenshot.author ? ` by ${screenshot.author}` : ""}`;
       const imageUrl = `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`;
-      const pageUrl = `${baseUrl}/player/${encodeURIComponent(gamertag)}?viewScreenshot=${screenshot.id}`;
+      const pageUrl = `${baseUrl}/halo3/player/${encodeURIComponent(gamertag)}?viewScreenshot=${screenshot.id}`;
 
       return {
         title: `${title} - Blam Network`,
@@ -100,7 +100,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `${baseUrl}/player/${encodeURIComponent(gamertag)}`,
+      url: `${baseUrl}/halo3/player/${encodeURIComponent(gamertag)}`,
       siteName: "Blam Network",
       images: [
         {
@@ -206,7 +206,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
           <Box sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2, pb: 1, borderBottom: '2px solid #7CB342' }}>
               <Typography variant='h4'>Recent Games</Typography>
-              <Link href={`/games?gamertag=${encodeURIComponent(gamertag)}`} style={{ textDecoration: 'none' }}>
+              <Link href={`/halo3/games?gamertag=${encodeURIComponent(gamertag)}`} style={{ textDecoration: 'none' }}>
                 <Typography 
                   variant='body2' 
                   sx={{ 
@@ -399,7 +399,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                         </Typography>
                         <Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#B0B0B0', mb: 1 }}>
                           by{' '}
-                          <Link href={"/player/" + slot.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
+                          <Link href={"/halo3/player/" + slot.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
                             {slot.header.author}
                           </Link>
                         </Typography>
@@ -424,7 +424,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             {screenshots.length > 0 && (
               <MuiLink 
                 component={Link}
-                href={`/screenshots?gamertag=${encodeURIComponent(gamertag)}`}
+                href={`/halo3/screenshots?gamertag=${encodeURIComponent(gamertag)}`}
                 underline="always"
               >
                 <Typography variant="body2" component="span">

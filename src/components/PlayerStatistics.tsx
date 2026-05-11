@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Tooltip } from "@mui/material";
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Tooltip } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { keyframes } from "@mui/system";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from "recharts";
 import { api } from "@/src/trpc/client";
@@ -393,7 +394,7 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
             py: 8,
           }}
         >
-          <CircularProgress />
+          <LoadingSpinner size={96} />
           <Typography variant="body1" sx={{ color: "#B0B0B0" }}>
             Loading statistics
           </Typography>
@@ -639,7 +640,7 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
                             <Link
                               component={NextLink}
-                              href={`/player/${encodeURIComponent(entry.player_name)}`}
+                              href={`/halo3/player/${encodeURIComponent(entry.player_name)}`}
                               sx={{ 
                                 color: "#FFFFFF", 
                                 textDecoration: "none",
@@ -719,7 +720,7 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
                             <Link
                               component={NextLink}
-                              href={`/player/${encodeURIComponent(entry.player_name)}`}
+                              href={`/halo3/player/${encodeURIComponent(entry.player_name)}`}
                               sx={{ 
                                 color: "#FFFFFF", 
                                 textDecoration: "none",

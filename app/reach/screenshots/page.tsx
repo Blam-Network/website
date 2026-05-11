@@ -3,13 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
-import { Box, Typography, Container, Pagination, CircularProgress, TextField, Button, Stack } from "@mui/material";
+import { Box, Typography, Container, Pagination, TextField, Button, Stack } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { useState, useEffect } from "react";
 import { Screenshot } from "@/src/api/sunrise/screenshots";
 import { env } from "@/src/env";
 
-export default function ScreenshotsPage() {
+export default function ReachScreenshotsPage() {
   const router = useRouter();
   const [query, setQuery] = useState<Record<string, string>>({});
   const page = parseInt(query.page || "1", 10);
@@ -17,9 +18,8 @@ export default function ScreenshotsPage() {
   const [gamertagInput, setGamertagInput] = useState(gamertag);
   const pageSize = 48;
 
-  // Read query params from URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const queryObj: Record<string, string> = {};
       params.forEach((value, key) => {
@@ -30,7 +30,6 @@ export default function ScreenshotsPage() {
     }
   }, []);
 
-  // Listen for popstate events (back/forward button)
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
@@ -41,17 +40,18 @@ export default function ScreenshotsPage() {
       setQuery(queryObj);
       setGamertagInput(queryObj.gamertag || "");
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['screenshots', page, pageSize, gamertag],
-    queryFn: () => api.sunrise.screenshots.query({
-      page,
-      pageSize,
-      gamertag: gamertag || undefined,
-    }),
+    queryKey: ["reachScreenshots", page, pageSize, gamertag],
+    queryFn: () =>
+      api.reach.screenshots.query({
+        page,
+        pageSize,
+        gamertag: gamertag || undefined,
+      }),
   });
 
   const updateURL = (newPage: number, newGamertag: string) => {
@@ -67,15 +67,13 @@ export default function ScreenshotsPage() {
       delete newQuery.gamertag;
     }
     setQuery(newQuery);
-    
+
     const params = new URLSearchParams();
     Object.entries(newQuery).forEach(([key, value]) => {
       params.set(key, value);
     });
     const queryString = params.toString();
-    const newUrl = `/screenshots${queryString ? `?${queryString}` : ""}`;
-    
-    router.push(newUrl);
+    router.push(`/reach/screenshots${queryString ? `?${queryString}` : ""}`);
   };
 
   const handleSearch = () => {
@@ -99,17 +97,25 @@ export default function ScreenshotsPage() {
       </Typography>
 
       {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#7CB342' }} />
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <LoadingSpinner size={96} />
         </Box>
       ) : data && data.data.length > 0 ? (
         <>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2, width: '100%', mb: 4 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+              gap: 2,
+              width: "100%",
+              mb: 4,
+            }}
+          >
             {data.data.map((screenshot: Screenshot) => (
               <ScreenshotCard
                 key={screenshot.id}
                 screenshotId={screenshot.id}
-                  screenshotUrl={`${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`}
+                screenshotUrl={`${env.NEXT_PUBLIC_HALO_REACH_API_BASE_URL}/haloreach/screenshots/${screenshot.id}/view`}
                 filename={screenshot.header.filename}
                 description={screenshot.header.description || ""}
                 author={screenshot.author || undefined}
@@ -118,24 +124,24 @@ export default function ScreenshotsPage() {
             ))}
           </Box>
           {data.totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
               <Pagination
                 count={data.totalPages}
                 page={page}
                 onChange={handlePageChange}
                 color="primary"
                 sx={{
-                  '& .MuiPaginationItem-root': {
-                    color: '#B0B0B0',
-                    '&.Mui-selected': {
-                      backgroundColor: '#7CB342',
-                      color: '#fff',
-                      '&:hover': {
-                        backgroundColor: '#558B2F',
+                  "& .MuiPaginationItem-root": {
+                    color: "#B0B0B0",
+                    "&.Mui-selected": {
+                      backgroundColor: "#7CB342",
+                      color: "#fff",
+                      "&:hover": {
+                        backgroundColor: "#558B2F",
                       },
                     },
-                    '&:hover': {
-                      backgroundColor: 'rgba(124, 179, 66, 0.1)',
+                    "&:hover": {
+                      backgroundColor: "rgba(124, 179, 66, 0.1)",
                     },
                   },
                 }}
@@ -143,13 +149,13 @@ export default function ScreenshotsPage() {
             </Box>
           )}
           {data.total > 0 && (
-            <Typography variant="body2" sx={{ textAlign: 'center', mt: 2, color: '#B0B0B0' }}>
-              Showing {((page - 1) * pageSize) + 1}-{Math.min(page * pageSize, data.total)} of {data.total} screenshots
+            <Typography variant="body2" sx={{ textAlign: "center", mt: 2, color: "#B0B0B0" }}>
+              Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, data.total)} of {data.total} screenshots
             </Typography>
           )}
         </>
       ) : (
-        <Typography variant='body1' color='text.secondary' sx={{ textAlign: 'center', py: 4 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
           No screenshots found.
         </Typography>
       )}

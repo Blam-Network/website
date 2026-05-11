@@ -113,7 +113,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                                                     }}
                                                 />
                                                 <Box>
-                                                    <Link href={`/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
+                                                    <Link href={`/halo3/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
                                                         <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                                             {player.player_name}
                                                         </Typography>
@@ -154,7 +154,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         }}
                     />
                     <Box>
-                        <Link href={`/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
+                        <Link href={`/halo3/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
                             <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                 {player.player_name}
                             </Typography>

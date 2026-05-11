@@ -34,7 +34,7 @@ const FileShareFileSchema = z.object({
     header: FileHeaderSchema,
 });
 
-const FileshareFilesResponseSchema = jsonStringifySchema(
+export const FileshareFilesResponseSchema = jsonStringifySchema(
     z.object({
         data: z.array(FileShareFileSchema),
         total: z.number(),

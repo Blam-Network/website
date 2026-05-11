@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ScreenshotModal } from "./ScreenshotModal";
@@ -17,6 +18,8 @@ interface FileshareFiletypeIconProps {
   description?: string;
   author?: string;
   mapId?: number;
+  /** Reach fileshare uses different `filetype` values than Halo 3 (see HaloReachController). */
+  fileShareGame?: "halo3" | "reach";
 }
 
 const getFileImage = (type: number): string => {
@@ -27,6 +30,24 @@ const getFileImage = (type: number): string => {
   if (type === 13) return "screenshot";
 
   return "gametype";
+};
+
+/** Reach: screenshots=2, films=3–4, map variants=5, game variants=6 */
+const getReachFileImage = (type: number): string => {
+  switch (type) {
+    case 2:
+      return "screenshot";
+    case 3:
+      return "film";
+    case 4:
+      return "clip";
+    case 5:
+      return "map";
+    case 6:
+      return "gametype";
+    default:
+      return "gametype";
+  }
 };
 
 const getGametypeIconPosition = (gameEngineType: number): { x: number; y: number } | null => {
@@ -71,11 +92,17 @@ export const FileshareFiletypeIcon = ({
   description,
   author,
   mapId,
+  fileShareGame = "halo3",
 }: FileshareFiletypeIconProps) => {
   const router = useRouter();
-  const fileImage = getFileImage(filetype);
-  // Show gametype icon for gametypes (filetype < 10) and films (filetype 11 or 12)
-  const gametypePosition = gameEngineType && (filetype < 10 || filetype === 11 || filetype === 12) ? getGametypeIconPosition(gameEngineType) : null;
+  const fileImage = fileShareGame === "reach" ? getReachFileImage(filetype) : getFileImage(filetype);
+  const gametypePosition =
+    gameEngineType &&
+    (fileShareGame === "reach"
+      ? filetype === 6 || filetype === 3 || filetype === 4
+      : filetype < 10 || filetype === 11 || filetype === 12)
+      ? getGametypeIconPosition(gameEngineType)
+      : null;
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [query, setQuery] = useState<Record<string, string>>({});
@@ -130,22 +157,30 @@ export const FileshareFiletypeIcon = ({
 
   const iconSize = typeof size === 'number' ? size : 64; // Default size for calculations
 
-  // Convert shareId to padded hex string - shareId comes as decimal string from backend
-  const hexShareId = shareId 
-    ? BigInt(shareId).toString(16).toUpperCase().padStart(16, '0')
+  // Convert shareId to padded hex string - shareId comes as decimal string from backend (Halo 3)
+  const hexShareId = shareId
+    ? BigInt(shareId).toString(16).toUpperCase().padStart(16, "0")
     : null;
 
-  // Use the fileshare endpoint to load the image directly
-  const screenshotUrl = (filetype === 13 && hexShareId && slot !== undefined && slot !== null) 
-    ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view` 
-    : null;
-  const showScreenshot = filetype === 13 && screenshotUrl;
-  
-  // Map image for films (filetype 11 only, not film clips)
-  const mapImageUrl = filetype === 11 && mapId 
-    ? `/img/maps/film/${mapId}.png` 
-    : null;
-  const showMapImage = filetype === 11 && mapImageUrl;
+  const reachScreenshotUrl =
+    fileShareGame === "reach" && filetype === 2 && shareId && fileId
+      ? `${env.NEXT_PUBLIC_HALO_REACH_API_BASE_URL}/haloreach/fileshare/${hexShareId}/${fileId}/view`
+      : null;
+
+  const halo3ScreenshotUrl =
+    fileShareGame === "halo3" && filetype === 13 && hexShareId && slot !== undefined && slot !== null
+      ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view`
+      : null;
+
+  const screenshotUrl = fileShareGame === "reach" ? reachScreenshotUrl : halo3ScreenshotUrl;
+  const showScreenshot = !!screenshotUrl;
+
+  const mapImageUrl =
+    mapId &&
+    (fileShareGame === "reach" ? filetype === 3 || filetype === 4 : filetype === 11)
+      ? `/img/maps/film/${mapId}.png`
+      : null;
+  const showMapImage = !!mapImageUrl;
 
   const updateURL = (slotUniqueId: string | null) => {
     const newQuery = { ...query };
@@ -223,7 +258,7 @@ export const FileshareFiletypeIcon = ({
                   zIndex: 1,
                 }}
               >
-                <CircularProgress size={20} sx={{ color: '#7CB342' }} />
+                <LoadingSpinner size={40} />
               </Box>
             )}
             {!imageError ? (

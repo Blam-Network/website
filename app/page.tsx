@@ -41,7 +41,7 @@ export default async function Home() {
               <Typography variant='h4'>
                 Recent Games
               </Typography>
-              <Link href="/games" style={{ textDecoration: 'none' }}>
+              <Link href="/halo3/games" style={{ textDecoration: 'none' }}>
                 <Typography 
                   variant='body2' 
                   sx={{ 
@@ -61,7 +61,7 @@ export default async function Home() {
               <Typography variant='h4'>
                 Recent Screenshots
               </Typography>
-              <Link href="/screenshots" style={{ textDecoration: 'none' }}>
+              <Link href="/halo3/screenshots" style={{ textDecoration: 'none' }}>
                 <Typography 
                   variant='body2' 
                   sx={{ 

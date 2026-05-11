@@ -190,7 +190,7 @@ export const PendingTransfersIcon = () => {
                                         sx={{ flex: 1 }}
                                         primary={
                                             <Link
-                                                href={`/player/${encodeURIComponent(transfer.fileAuthor || '')}`}
+                                                href={`/halo3/player/${encodeURIComponent(transfer.fileAuthor || '')}`}
                                                 style={{ textDecoration: 'none', color: 'inherit' }}
                                                 onClick={handleClose}
                                             >

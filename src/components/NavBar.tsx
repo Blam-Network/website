@@ -59,12 +59,12 @@ export const NavBar = ({session}: {session: Session | null}) => {
                             Home
                         </Button>
                     </Link>
-                    <Link href='/screenshots' style={{ textDecoration: 'none' }}>
+                    <Link href='/halo3/screenshots' style={{ textDecoration: 'none' }}>
                         <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                             Screenshots
                         </Button>
                     </Link>
-                    <Link href='/files' style={{ textDecoration: 'none' }}>
+                    <Link href='/halo3/files' style={{ textDecoration: 'none' }}>
                         <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                             Files
                         </Button>
@@ -74,13 +74,13 @@ export const NavBar = ({session}: {session: Session | null}) => {
                             Playlists
                         </Button>
                     </Link> */}
-                    <Link href='/players' style={{ textDecoration: 'none' }}>
+                    <Link href='/halo3/players' style={{ textDecoration: 'none' }}>
                         <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                             Players
                         </Button>
                     </Link>
                     {loggedIn && (
-                        <Link href={'/player/' + session.user.gamertag} style={{ textDecoration: 'none' }}>
+                        <Link href={'/halo3/player/' + session.user.gamertag} style={{ textDecoration: 'none' }}>
                             <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                                 Service Record
                             </Button>

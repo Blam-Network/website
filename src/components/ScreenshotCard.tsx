@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Paper, Box, Typography, CircularProgress } from "@mui/material";
+import { Paper, Box, Typography } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import Link from "next/link";
 import { ScreenshotModal } from "./ScreenshotModal";
 import { DateTimeDisplay } from "./DateTimeDisplay";
@@ -116,7 +117,7 @@ export const ScreenshotCard = ({
                 zIndex: 1,
               }}
             >
-              <CircularProgress size={40} sx={{ color: '#7CB342' }} />
+              <LoadingSpinner size={80} />
             </Box>
           )}
           {imageError ? (
@@ -185,7 +186,7 @@ export const ScreenshotCard = ({
               <>
                 by{' '}
                 <Link
-                  href={`/player/${author}`}
+                  href={`/halo3/player/${author}`}
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     color: '#4A90E2',

@@ -129,7 +129,7 @@ export const Header = ({session}: {session: Session | null}) => {
                                     Logged in as{" "}
                                     <MuiLink 
                                         component={Link}
-                                        href={"/profile"} 
+                                        href={"/halo3/profile"} 
                                         underline="always"
                                         sx={{ fontWeight: 600 }}
                                     >

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { ScreenshotModal } from "./ScreenshotModal";
 import { api } from "../trpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -41,7 +42,7 @@ export const FileshareScreenshotThumb = ({
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 80 }}>
-        <CircularProgress size={20} sx={{ color: '#7CB342' }} />
+        <LoadingSpinner size={40} />
       </Box>
     );
   }
@@ -83,7 +84,7 @@ export const FileshareScreenshotThumb = ({
               zIndex: 1,
             }}
           >
-            <CircularProgress size={20} sx={{ color: '#7CB342' }} />
+            <LoadingSpinner size={40} />
           </Box>
         )}
         <img

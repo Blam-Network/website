@@ -109,7 +109,7 @@ export function MVPSection({ player }: MVPSectionProps) {
                             player.player_name
                         ) : (
                             <Link
-                                href={`/player/${player.player_name}`}
+                                href={`/halo3/player/${player.player_name}`}
                                 style={{
                                     color: '#7CB342',
                                     textDecoration: 'none',

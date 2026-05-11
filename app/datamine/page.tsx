@@ -16,7 +16,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    CircularProgress,
     Autocomplete,
     TextField,
     Stack,
@@ -29,6 +28,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import type { DatamineSession } from "@/src/api/sunrise/datamine";
 import { datamineTheme } from "@/src/theme/datamineTheme";
+import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 
 export default function DataminePage() {
     const router = useRouter();
@@ -114,7 +114,7 @@ export default function DataminePage() {
     if (session?.user?.xuid && accessLoading) {
         return (
             <Box sx={{ width: "100%", backgroundColor: "#fafafa", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <CircularProgress />
+                <LoadingSpinner size={96} />
             </Box>
         );
     }
@@ -274,7 +274,7 @@ export default function DataminePage() {
                                 {sessionsLoading ? (
                                     <TableRow>
                                         <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                                            <CircularProgress size={24} />
+                                            <LoadingSpinner size={48} />
                                         </TableCell>
                                     </TableRow>
                                 ) : sessionsData?.sessions.length === 0 ? (
