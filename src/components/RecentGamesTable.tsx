@@ -1,8 +1,19 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import { PreviousGame } from "@/src/api/sunrise/previousGames";
-import { RecentGame } from "@/src/api/sunrise/recentGames";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
+
+/** Row shape for recent/previous games (Halo 3 or Ares); avoids coupling this UI to a specific API package. */
+export type RecentGamesTableRow = {
+  id: string;
+  map_id: number;
+  start_time: Date | string;
+  finish_time: Date | string;
+  type?: "multiplayer" | "campaign";
+  game_variant_name?: string | null;
+  map_variant_name?: string | null;
+  hopper_name?: string | null;
+  campaign_difficulty?: number;
+};
 
 const getMissionName = (mapId: number): string => {
     switch (mapId) {
@@ -44,18 +55,13 @@ const getDifficultyName = (difficulty: number | undefined): string => {
     }
 };
 
-// Flexible game type that accepts dates as either Date objects or strings
-type FlexibleGame = Omit<PreviousGame | RecentGame, 'start_time' | 'finish_time'> & {
-    start_time: Date | string;
-    finish_time: Date | string;
-};
-
 interface RecentGamesTableProps {
-    games: FlexibleGame[];
+    games: RecentGamesTableRow[];
     stickyHeader?: boolean;
+    routeBase?: "/halo3" | "/ares";
 }
 
-export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTableProps) {
+export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/halo3" }: RecentGamesTableProps) {
     return (
         <TableContainer component={Paper} sx={{ background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333', overflow: 'hidden', flex: stickyHeader ? 1 : undefined }}>
             <Table size="small" stickyHeader={stickyHeader} sx={{ '& .MuiTableCell-root': { py: 0.75, px: 1.5 } }}>
@@ -70,7 +76,7 @@ export function RecentGamesTable({ games, stickyHeader = false }: RecentGamesTab
                     {games.map((game) => {
                         const isCampaign = 'type' in game && game.type === 'campaign';
                         const gameId = game.id;
-                        const reportUrl = isCampaign ? `/halo3/campaign-carnage-report/${gameId}` : `/halo3/carnage-report/${gameId}`;
+                        const reportUrl = isCampaign ? `${routeBase}/campaign-carnage-report/${gameId}` : `${routeBase}/carnage-report/${gameId}`;
                         const gameVariantName = 'game_variant_name' in game ? game.game_variant_name : null;
                         const mapVariantName = 'map_variant_name' in game ? game.map_variant_name : null;
                         const hopperName = 'hopper_name' in game ? game.hopper_name : null;

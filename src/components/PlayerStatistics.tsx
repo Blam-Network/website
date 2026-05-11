@@ -15,6 +15,7 @@ import NextLink from "next/link";
 
 interface PlayerStatisticsProps {
   gamertag: string;
+  source?: "sunrise2" | "ares";
 }
 
 const COLORS: Record<string, string> = {
@@ -273,10 +274,12 @@ const medalHoverAnimation = keyframes`
   }
 `;
 
-export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
+export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatisticsProps) {
   const { data, isLoading } = useQuery({
     queryKey: ['playerStatistics', gamertag],
-    queryFn: () => api.sunrise2.playerStatistics.query({ gamertag }),
+    queryFn: () => source === "ares"
+      ? api.ares.playerStatistics.query({ gamertag })
+      : api.sunrise2.playerStatistics.query({ gamertag }),
   });
 
   const gameTypeData = data?.gameTypes ?? [];
@@ -305,7 +308,9 @@ export function PlayerStatistics({ gamertag }: PlayerStatisticsProps) {
 
   const { data: heatmapData } = useQuery({
     queryKey: ['activityHeatmap', gamertag],
-    queryFn: () => api.sunrise2.activityHeatmap.query({ gamertag }),
+    queryFn: () => source === "ares"
+      ? api.ares.activityHeatmap.query({ gamertag })
+      : api.sunrise2.activityHeatmap.query({ gamertag }),
   });
 
   // Filter medals that have a count > 0 and are valid medal types

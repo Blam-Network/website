@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { sunrise2Axios } from "@/src/api/sunrise/sunrise2Router";
+import { halo3Axios } from "@/src/api/halo3/halo3Axios";
 
 const handler = async (req: NextRequest, {params}: {params: { id: string }}) => {
-	const screenshot = await sunrise2Axios.get(`/halo3/screenshots/` + params.id + `/view`, {
+	const screenshot = await halo3Axios.get(`/halo3/screenshots/` + params.id + `/view`, {
 		responseType: 'arraybuffer',
 	});
 

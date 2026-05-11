@@ -2,7 +2,7 @@ import { api } from "@/src/trpc/server";
 import { ServiceRecordPlaceholder } from "@/src/components/ServiceRecordPlaceholder";
 import { Stack, Box, Typography, Input } from "@mui/material";
 import Link from "next/link";
-import { ServiceRecord } from "@/src/api/sunrise/serviceRecord";
+import { ServiceRecord } from "@/src/api/halo3/serviceRecord";
 import { ScreenshotViewer } from "@/src/components/ScreenshotViewer";
 
 export default async function Home() {

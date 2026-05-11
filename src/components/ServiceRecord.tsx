@@ -1,4 +1,4 @@
-import { ServiceRecord } from "../api/sunrise/serviceRecord";
+import { ServiceRecord } from "../api/halo3/serviceRecord";
 import { Stack, Box, Typography, Paper } from "@mui/material";
 import { getCssColor, getColor, getColorName } from "../colors";
 import { Emblem } from "./Emblem";

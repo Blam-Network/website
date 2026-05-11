@@ -7,7 +7,7 @@ import { Box, Typography, Container, Pagination, TextField, Button, Stack } from
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { useState, useEffect } from "react";
-import { Screenshot } from "@/src/api/sunrise/screenshots";
+import type { Screenshot } from "@/src/api/reach/screenshotsSchema";
 import { env } from "@/src/env";
 
 export default function ReachScreenshotsPage() {

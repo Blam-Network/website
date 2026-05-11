@@ -1,11 +1,11 @@
 import { Typography, Box, Container } from "@mui/material";
 import { api } from "@/src/trpc/server";
 import Link from "next/link";
-import { RecentScreenshot } from "@/src/api/sunrise/recentScreenshots";
+import { RecentScreenshot } from "@/src/api/halo3/recentScreenshots";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { Nightmap } from "@/src/components/Nightmap";
 import { RecentGamesTable } from "@/src/components/RecentGamesTable";
-import { RecentGame } from "@/src/api/sunrise/recentGames";
+import { RecentGame } from "@/src/api/halo3/recentGames";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
 

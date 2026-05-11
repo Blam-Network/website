@@ -1,7 +1,7 @@
 import type { HTTPBatchLinkOptions, HTTPHeaders, TRPCLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client";
 import { AppRouter } from "../api/router";
-import { getSiteUrl } from "../utils/siteUrl";
+import { getTrpcOrigin } from "../utils/siteUrl";
 
 export const endingLink = (opts?: {
   headers?: HTTPHeaders | (() => HTTPHeaders);
@@ -13,7 +13,7 @@ export const endingLink = (opts?: {
 
     const httpLink = httpBatchLink({
       ...sharedOpts,
-      url: `${getSiteUrl()}/api/trpc`,
+      url: `${getTrpcOrigin()}/api/trpc`,
     })(runtime);
 
     return (ctx) => {

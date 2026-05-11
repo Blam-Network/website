@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { sunrise2Axios } from "@/src/api/sunrise/sunrise2Router";
+import { halo3Axios } from "@/src/api/halo3/halo3Axios";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-    const response = await sunrise2Axios.get('/halo3/nightmap', {
+    const response = await halo3Axios.get('/halo3/nightmap', {
         responseType: 'arraybuffer',
     });
 

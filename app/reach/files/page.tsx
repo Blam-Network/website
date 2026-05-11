@@ -6,7 +6,7 @@ import { api } from "@/src/trpc/client";
 import { Box, Typography, Container, Pagination, Stack, Button, Card, CardContent } from "@mui/material";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { useState, useEffect } from "react";
-import { FileshareFile } from "@/src/api/sunrise/fileshareFiles";
+import type { FileshareFile } from "@/src/api/reach/fileshareFilesSchema";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";

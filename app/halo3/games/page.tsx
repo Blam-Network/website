@@ -7,7 +7,7 @@ import { Box, Typography, Container, Paper, Pagination, Stack, TextField, Button
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import Link from "next/link";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
-import { RecentGame } from "@/src/api/sunrise/recentGames";
+import { RecentGame } from "@/src/api/halo3/recentGames";
 import { useState, useEffect } from "react";
 
 export default function GamesPage() {

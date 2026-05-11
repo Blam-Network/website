@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
-import type { DatamineSession } from "@/src/api/sunrise/datamine";
+import type { DatamineSession } from "@/src/api/halo3/datamine";
 import { datamineTheme } from "@/src/theme/datamineTheme";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 

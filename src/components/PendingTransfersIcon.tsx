@@ -10,7 +10,7 @@ import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { PendingTransfer } from "@/src/api/sunrise/pendingTransfers";
+import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
 
 export const PendingTransfersIcon = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

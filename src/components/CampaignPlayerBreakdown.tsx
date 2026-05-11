@@ -41,6 +41,7 @@ type Player = {
 type CampaignPlayerBreakdownProps = {
     players: Player[];
     metagameEnabled: boolean;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
 };
 
 type TabPanelProps = {
@@ -65,7 +66,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPlayerBreakdownProps) {
+export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteBase = "/halo3/player" }: CampaignPlayerBreakdownProps) {
     const [tabValue, setTabValue] = useState(0);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -113,7 +114,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                                                     }}
                                                 />
                                                 <Box>
-                                                    <Link href={`/halo3/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
+                                                    <Link href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
                                                         <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                                             {player.player_name}
                                                         </Typography>
@@ -154,7 +155,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled }: CampaignPl
                         }}
                     />
                     <Box>
-                        <Link href={`/halo3/player/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
+                        <Link href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
                             <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                 {player.player_name}
                             </Typography>

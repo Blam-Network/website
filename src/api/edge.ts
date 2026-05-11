@@ -1,8 +1,7 @@
-
-import { aresRouter } from "./sunrise/aresRouter";
-import { reachRouter } from "./sunrise/reachRouter";
-import { sunrise2Router } from "./sunrise/sunrise2Router";
-import { sunriseRouter } from "./sunrise/sunriseRouter";
+import { aresRouter } from "./ares/aresRouter";
+import { reachRouter } from "./reach/reachRouter";
+import { sunrise2Router } from "./halo3/sunrise2Router";
+import { sunriseRouter } from "./halo3/sunriseRouter";
 import { createTRPCRouter } from "./trpc";
 import { xboxRouter } from "./xbox/xboxRouter";
 

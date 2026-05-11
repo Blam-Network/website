@@ -6,7 +6,7 @@ import { api } from "../trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import type { PendingTransfer } from "@/src/api/sunrise/pendingTransfers";
+import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
 
 export const FileshareDownloadButton = ({ fileId }: { fileId: string }) => {
     const { data: session } = useSession();

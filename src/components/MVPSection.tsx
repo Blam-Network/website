@@ -30,9 +30,10 @@ type MVPPlayer = {
 
 type MVPSectionProps = {
     player: MVPPlayer;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
 };
 
-export function MVPSection({ player }: MVPSectionProps) {
+export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSectionProps) {
     const score = player.score ?? player.player_final_score ?? 0;
     const kills = player.statistics?.kills ?? player.kills_total ?? 0;
     const deaths = player.statistics?.deaths ?? player.deaths ?? 0;
@@ -109,7 +110,7 @@ export function MVPSection({ player }: MVPSectionProps) {
                             player.player_name
                         ) : (
                             <Link
-                                href={`/halo3/player/${player.player_name}`}
+                                href={`${playerRouteBase}/${player.player_name}`}
                                 style={{
                                     color: '#7CB342',
                                     textDecoration: 'none',

@@ -7,7 +7,7 @@ import { api } from "@/src/trpc/client";
 import { ServiceRecordListItem } from "@/src/components/ServiceRecordListItem";
 import { Stack, Box, Typography, Container, TextField, Button, Paper, Pagination } from "@mui/material";
 import Link from "next/link";
-import { ServiceRecord } from "@/src/api/sunrise/serviceRecord";
+import { ServiceRecord } from "@/src/api/halo3/serviceRecord";
 
 export default function PlayersPage() {
   const router = useRouter();

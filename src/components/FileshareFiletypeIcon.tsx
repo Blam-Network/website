@@ -19,7 +19,7 @@ interface FileshareFiletypeIconProps {
   author?: string;
   mapId?: number;
   /** Reach fileshare uses different `filetype` values than Halo 3 (see HaloReachController). */
-  fileShareGame?: "halo3" | "reach";
+  fileShareGame?: "halo3" | "ares" | "reach";
 }
 
 const getFileImage = (type: number): string => {
@@ -168,11 +168,16 @@ export const FileshareFiletypeIcon = ({
       : null;
 
   const halo3ScreenshotUrl =
+    (fileShareGame === "halo3" || fileShareGame === "ares") && filetype === 13 && hexShareId && slot !== undefined && slot !== null
+      ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/${fileShareGame}/fileshare/${hexShareId}/${slot}/view`
+      : null;
+
+  const legacyHalo3ScreenshotUrl =
     fileShareGame === "halo3" && filetype === 13 && hexShareId && slot !== undefined && slot !== null
       ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/fileshare/${hexShareId}/${slot}/view`
       : null;
 
-  const screenshotUrl = fileShareGame === "reach" ? reachScreenshotUrl : halo3ScreenshotUrl;
+  const screenshotUrl = fileShareGame === "reach" ? reachScreenshotUrl : (halo3ScreenshotUrl ?? legacyHalo3ScreenshotUrl);
   const showScreenshot = !!screenshotUrl;
 
   const mapImageUrl =

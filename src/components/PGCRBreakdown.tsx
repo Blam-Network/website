@@ -8,13 +8,15 @@ import { Emblem } from "./Emblem";
 import { text } from "stream/consumers";
 import { getTeamColor, getTeamName, getTeamTextColor } from "../utils/teams";
 import { formatSeconds, getGametypeName } from "../utils/gametype";
-import type { Medals } from "../api/sunrise/carnage-report/players";
-import { getDamageSourceCategory, getDamageSourceName } from "../api/sunrise/carnage-report/players";
+import type { Medals } from "../api/halo3/carnage-report/players";
+import { getDamageSourceCategory, getDamageSourceName } from "../api/halo3/carnage-report/players";
 import { RouterOutputs } from "../api/router";
 import { Medal } from "./Medal";
 import { isGuestXuid } from "../utils/xuid";
 
-type CarnageReport = RouterOutputs['sunrise2']['getCarnageReport'];
+type CarnageReport =
+  | RouterOutputs["sunrise2"]["getCarnageReport"]
+  | RouterOutputs["ares"]["getCarnageReport"];
 
 
 export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
