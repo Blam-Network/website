@@ -58,8 +58,8 @@ export const PendingTransfersIcon = () => {
   const reachMax = reachQuery.data?.maxTransfers ?? 8;
 
   const rows: TransferRow[] = [
-    ...h3Transfers.map((t) => ({ ...t, game: "halo3" as const })),
-    ...reachTransfers.map((t) => ({ ...t, game: "reach" as const })),
+    ...h3Transfers.map((t: PendingTransfer) => ({ ...t, game: "halo3" as const })),
+    ...reachTransfers.map((t: ReachPendingTransfer) => ({ ...t, game: "reach" as const })),
   ];
 
   const deleteH3 = useMutation({
