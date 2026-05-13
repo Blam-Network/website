@@ -7,143 +7,151 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
+import type { ReachPendingTransfer } from "@/src/api/reach/pendingTransfers";
 
-export const FileshareDownloadButton = ({ fileId }: { fileId: string }) => {
-    const { data: session } = useSession();
-    const loggedIn = !!session?.user?.xuid;
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const queryClient = useQueryClient();
-    
-    const { data: pendingTransfersData } = useQuery({
-        queryKey: ['pendingTransfers'],
-        queryFn: () => api.sunrise2.pendingTransfers.query(),
-        refetchOnWindowFocus: true, // Refetch when window regains focus
-        enabled: loggedIn, // Only fetch if logged in
-    });
+export type FileshareDownloadGame = "halo3" | "reach";
 
-    const pendingTransfers = pendingTransfersData?.transfers ?? [];
-    const maxTransfers = pendingTransfersData?.maxTransfers ?? 8;
+export const FileshareDownloadButton = ({
+  fileId,
+  game = "halo3",
+}: {
+  fileId: string;
+  game?: FileshareDownloadGame;
+}) => {
+  const { data: session } = useSession();
+  const loggedIn = !!session?.user?.xuid;
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-    const isPending = pendingTransfers.some((t: PendingTransfer) => t.fileId === fileId);
-    const isAtCapacity = pendingTransfers.length >= maxTransfers;
-    
-    const mutation = useMutation({
-        mutationFn: () => api.sunrise2.createFileshareTransfer.mutate({ fileId }),
-        onSuccess: () => {
-            setSuccess(true);
-            setError(null);
-            setTimeout(() => setSuccess(false), 3000);
-            // Invalidate pending transfers query (used by FileshareDownloadButton and PendingTransfersIcon)
-            queryClient.invalidateQueries({ queryKey: ['pendingTransfers'] });
-            // Also invalidate any queries that might contain fileshare data
-            // This ensures the download button state updates correctly across all pages
-            queryClient.invalidateQueries({ 
-                predicate: (query) => {
-                    const key = JSON.stringify(query.queryKey);
-                    return key.includes('pendingTransfers') || key.includes('fileShare');
-                }
-            });
+  const pendingKey = game === "reach" ? (["reachPendingTransfers"] as const) : (["pendingTransfers"] as const);
+
+  const { data: pendingTransfersData } = useQuery({
+    queryKey: pendingKey,
+    queryFn: () =>
+      game === "reach"
+        ? api.reach.pendingTransfers.query()
+        : api.sunrise2.pendingTransfers.query(),
+    refetchOnWindowFocus: true,
+    enabled: loggedIn,
+  });
+
+  const pendingTransfers = pendingTransfersData?.transfers ?? [];
+  const maxTransfers = pendingTransfersData?.maxTransfers ?? 8;
+
+  const isPending = pendingTransfers.some((t: PendingTransfer | ReachPendingTransfer) => t.fileId === fileId);
+  const isAtCapacity = pendingTransfers.length >= maxTransfers;
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (game === "reach") {
+        await api.reach.createFileshareTransfer.mutate({ fileId });
+      } else {
+        await api.sunrise2.createFileshareTransfer.mutate({ fileId });
+      }
+    },
+    onSuccess: () => {
+      setSuccess(true);
+      setError(null);
+      setTimeout(() => setSuccess(false), 3000);
+      queryClient.invalidateQueries({ queryKey: ["pendingTransfers"] });
+      queryClient.invalidateQueries({ queryKey: ["reachPendingTransfers"] });
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const key = JSON.stringify(query.queryKey);
+          return key.includes("pendingTransfers") || key.includes("fileShare");
         },
-        onError: (error: any) => {
-            const errorMessage = error?.message || error?.data?.message || 'Failed to create transfer';
-            setError(errorMessage);
-            setTimeout(() => setError(null), 5000);
-        },
-    });
+      });
+    },
+    onError: (err: unknown) => {
+      const errorMessage =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message?: string }).message)
+          : "Failed to create transfer";
+      setError(errorMessage);
+      setTimeout(() => setError(null), 5000);
+    },
+  });
 
-    if (error) {
-        return (
-            <Box>
-                <Typography variant='body2' color='error.main' sx={{ mb: 0.5 }}>
-                    {error}
-                </Typography>
-                <Typography variant='caption' color='text.secondary'>
-                    Please complete or cancel existing transfers in-game before adding new ones.
-                </Typography>
-            </Box>
-        );
-    }
+  const gameTitle = game === "reach" ? "Halo: Reach" : "Halo 3";
+  const downloadLabel = game === "reach" ? "Download to Halo: Reach" : "Download to Halo 3";
 
-    if (success) {
-        return <Typography variant='body2' color='success.main'>Transfer created!</Typography>;
-    }
-
-    if (isPending) {
-        return (
-            <Stack 
-                direction="row" 
-                alignItems="center" 
-                spacing={1}
-                sx={{ 
-                    opacity: 0.5,
-                    cursor: 'not-allowed',
-                }}
-            >
-                <Typography 
-                    variant='body2' 
-                    sx={{ 
-                        textDecoration: 'none',
-                        color: '#888',
-                    }}
-                >
-                    Transfer pending...
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Image 
-                        src="/img/download_icon.png" 
-                        alt="Download" 
-                        width={16} 
-                        height={16}
-                        style={{ opacity: 0.5 }}
-                    />
-                </Box>
-            </Stack>
-        );
-    }
-
-    if (!loggedIn) {
-        return null; // Don't show button if not logged in
-    }
-
-    const handleClick = () => {
-        if (isAtCapacity && !isPending) {
-            alert(`Maximum transfers reached (${pendingTransfers.length}/${maxTransfers})\n\nPlease complete Active Transfers by playing Halo 3 on your Xbox 360 Console or cancel existing transfers before adding new ones.`);
-            return;
-        }
-        mutation.mutate();
-    };
-
+  if (error) {
     return (
-        <Stack 
-            direction="row" 
-            alignItems="center" 
-            spacing={1}
-            sx={{ 
-                cursor: isAtCapacity && !isPending ? 'not-allowed' : 'pointer',
-                opacity: isAtCapacity && !isPending ? 0.6 : 1,
-                '&:hover .download-text': { color: isAtCapacity && !isPending ? 'inherit' : 'primary.main' }
-            }}
-            onClick={handleClick}
-        >
-            <Typography 
-                variant='body2' 
-                className="download-text"
-                sx={{ 
-                    textDecoration: 'underline',
-                }}
-            >
-                {mutation.isPending ? 'Creating transfer...' : 'Download to Halo 3'}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Image 
-                    src="/img/download_icon.png" 
-                    alt="Download" 
-                    width={16} 
-                    height={16}
-                />
-            </Box>
-        </Stack>
+      <Box>
+        <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
+          {error}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Please complete or cancel existing transfers in-game before adding new ones.
+        </Typography>
+      </Box>
     );
-};
+  }
 
+  if (success) {
+    return <Typography variant="body2" color="success.main">Transfer created!</Typography>;
+  }
+
+  if (isPending) {
+    return (
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1}
+        sx={{
+          opacity: 0.5,
+          cursor: "not-allowed",
+        }}
+      >
+        <Typography
+          variant="body2"
+          sx={{
+            textDecoration: "none",
+            color: "#888",
+          }}
+        >
+          Transfer pending...
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Image src="/img/download_icon.png" alt="Download" width={16} height={16} style={{ opacity: 0.5 }} />
+        </Box>
+      </Stack>
+    );
+  }
+
+  if (!loggedIn) {
+    return null;
+  }
+
+  const handleClick = () => {
+    if (isAtCapacity && !isPending) {
+      alert(
+        `Maximum transfers reached (${pendingTransfers.length}/${maxTransfers})\n\nPlease complete Active Transfers by playing ${gameTitle} on your Xbox 360 Console or cancel existing transfers before adding new ones.`,
+      );
+      return;
+    }
+    mutation.mutate();
+  };
+
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={1}
+      sx={{
+        cursor: isAtCapacity && !isPending ? "not-allowed" : "pointer",
+        opacity: isAtCapacity && !isPending ? 0.6 : 1,
+        "&:hover .download-text": { color: isAtCapacity && !isPending ? "inherit" : "primary.main" },
+      }}
+      onClick={handleClick}
+    >
+      <Typography fontSize={12} className="download-text" sx={{ textDecoration: "underline" }}>
+        {mutation.isPending ? "Creating transfer..." : downloadLabel}
+      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Image src="/img/download_icon.png" alt="Download" width={16} height={16} />
+      </Box>
+    </Stack>
+  );
+};

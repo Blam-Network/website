@@ -9,11 +9,15 @@ import { useState, useEffect } from "react";
 import type { FileshareFile } from "@/src/api/reach/fileshareFilesSchema";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
+import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { isGuestXuid } from "@/src/utils/xuid";
+import { useSession } from "next-auth/react";
 
 export default function ReachFilesPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const loggedIn = !!session?.user?.xuid;
   const [query, setQuery] = useState<Record<string, string>>({});
   const page = parseInt(query.page || "1", 10);
   const fileType = query.fileType || "";
@@ -84,6 +88,12 @@ export default function ReachFilesPage() {
       <Typography variant="h4" sx={{ mb: 3, pb: 1, borderBottom: "2px solid #7CB342" }}>
         Files
       </Typography>
+
+      {!loggedIn && (
+        <Typography variant="caption" sx={{ color: "#B0B0B0", display: "block", mb: 2 }}>
+          Sign in with Xbox LIVE to queue files for download on your Xbox 360 (Halo: Reach).
+        </Typography>
+      )}
 
       <Stack direction="row" spacing={2} sx={{ mb: 3, flexWrap: "wrap", rowGap: 1 }}>
         <Button
@@ -230,6 +240,7 @@ export default function ReachFilesPage() {
                           {file.header.author}
                         </Typography>
                       )}
+                      <FileshareDownloadButton fileId={file.id} game="reach" />
                     </Box>
                     <Typography variant="caption" sx={{ color: "#B0B0B0" }}>
                       <DateTimeDisplay date={file.header.date} />

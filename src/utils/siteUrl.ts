@@ -1,18 +1,37 @@
 import { env } from "@/src/env";
 
 /**
+ * Parse SITE_URL / NEXTAUTH_URL / TRPC_ORIGIN-style values into a stable origin.
+ * Rejects common misconfigurations that yield a resolvable hostname of "http"
+ * (e.g. NEXTAUTH_URL=http, or VERCEL_URL already containing https:// so that
+ * `https://${VERCEL_URL}` becomes https://http://host/...).
+ */
+function parseEnvOrigin(raw: string | undefined): string | undefined {
+  if (raw == null) return undefined;
+  const trimmed = raw.trim().replace(/\/$/, "");
+  if (trimmed === "") return undefined;
+  try {
+    const withScheme = trimmed.includes("://") ? trimmed : `https://${trimmed}`;
+    const u = new URL(withScheme);
+    if (!u.hostname) return undefined;
+    if (u.hostname === "http" || u.hostname === "https") return undefined;
+    return `${u.protocol}//${u.host}`;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Returns the canonical base URL for the site.
  * Used for Open Graph, metadata, and server-to-server requests.
  * Set NEXTAUTH_URL (or SITE_URL) to your production URL with https://
  */
 export function getSiteUrl(): string {
   if (typeof window !== "undefined") return "";
-  const url =
-    process.env.SITE_URL ??
-    process.env.NEXTAUTH_URL;
-  if (url) {
-    return url.replace(/\/$/, "");
-  }
+  const parsed = parseEnvOrigin(
+    process.env.SITE_URL ?? process.env.NEXTAUTH_URL,
+  );
+  if (parsed) return parsed;
   return `http://localhost:${env.PORT}`;
 }
 
@@ -24,13 +43,17 @@ export function getSiteUrl(): string {
  */
 export function getTrpcOrigin(): string {
   if (typeof window !== "undefined") return "";
-  const override = process.env.TRPC_ORIGIN?.replace(/\/$/, "");
+  const override = parseEnvOrigin(process.env.TRPC_ORIGIN);
   if (override) return override;
   if (process.env.NODE_ENV === "development") {
     return `http://localhost:${env.PORT}`;
   }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  const vercelHost = process.env.VERCEL_URL?.replace(/^https?:\/\//i, "")
+    .split("/")[0]
+    ?.trim();
+  if (vercelHost) {
+    const fromVercel = parseEnvOrigin(`https://${vercelHost}`);
+    if (fromVercel) return fromVercel;
   }
   return getSiteUrl();
 }

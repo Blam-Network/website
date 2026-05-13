@@ -1,12 +1,10 @@
+import { Axios } from "axios";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { env } from "@/src/env";
+import { ScreenshotsResponseSchema } from "./screenshots";
 import { FileshareFilesResponseSchema } from "./fileshareFilesSchema";
-import { ScreenshotsResponseSchema } from "./screenshotsSchema";
-import { reachAxios } from "./reachAxios";
-import { reachPendingTransfers } from "./pendingTransfers";
-import { reachCreateFileshareTransfer } from "./createFileshareTransfer";
-import { reachDeleteFileshareTransfer } from "./deleteFileshareTransfer";
 
 const screenshots = publicProcedure
   .input(
@@ -62,7 +60,9 @@ const fileshareFiles = publicProcedure
 export const reachRouter = createTRPCRouter({
   screenshots,
   fileshareFiles,
-  pendingTransfers: reachPendingTransfers,
-  createFileshareTransfer: reachCreateFileshareTransfer,
-  deleteFileshareTransfer: reachDeleteFileshareTransfer,
+});
+
+export const reachAxios = new Axios({
+  baseURL: env.HALO_REACH_API_BASE_URL,
+  validateStatus: () => true,
 });
