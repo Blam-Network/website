@@ -15,7 +15,7 @@ export const AuthWindow = () => {
                 ImGui.WindowFlags.NoResize | ImGui.WindowFlags.AlwaysAutoResize
             );
 
-            if (!session) {
+            if (!session?.user) {
                 ImGui.Text('Not logged in.')
                 ImGui.End();
                 return;
