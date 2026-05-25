@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { protectedProcedure } from "../trpc";
 import axios from "axios";
+import { installDefaultAxiosRequestLoggingOnce } from "../http/attachAxiosRequestLogging";
+
+installDefaultAxiosRequestLoggingOnce();
 
 const AchievementsSchema = z.object({
     achievements: z.array(z.object({

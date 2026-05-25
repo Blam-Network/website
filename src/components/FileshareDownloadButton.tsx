@@ -7,9 +7,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
+import type { OdstPendingTransfer } from "@/src/api/odst/pendingTransfers";
 import type { ReachPendingTransfer } from "@/src/api/reach/pendingTransfers";
 
-export type FileshareDownloadGame = "halo3" | "reach";
+export type FileshareDownloadGame = "halo3" | "reach" | "odst";
 
 export const FileshareDownloadButton = ({
   fileId,
@@ -24,14 +25,21 @@ export const FileshareDownloadButton = ({
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const pendingKey = game === "reach" ? (["reachPendingTransfers"] as const) : (["pendingTransfers"] as const);
+  const pendingKey =
+    game === "reach"
+      ? (["reachPendingTransfers"] as const)
+      : game === "odst"
+        ? (["odstPendingTransfers"] as const)
+        : (["pendingTransfers"] as const);
 
   const { data: pendingTransfersData } = useQuery({
     queryKey: pendingKey,
     queryFn: () =>
       game === "reach"
         ? api.reach.pendingTransfers.query()
-        : api.sunrise2.pendingTransfers.query(),
+        : game === "odst"
+          ? api.odst.pendingTransfers.query()
+          : api.sunrise2.pendingTransfers.query(),
     refetchOnWindowFocus: true,
     enabled: loggedIn,
   });
@@ -39,13 +47,15 @@ export const FileshareDownloadButton = ({
   const pendingTransfers = pendingTransfersData?.transfers ?? [];
   const maxTransfers = pendingTransfersData?.maxTransfers ?? 8;
 
-  const isPending = pendingTransfers.some((t: PendingTransfer | ReachPendingTransfer) => t.fileId === fileId);
+  const isPending = pendingTransfers.some((t: PendingTransfer | ReachPendingTransfer | OdstPendingTransfer) => t.fileId === fileId);
   const isAtCapacity = pendingTransfers.length >= maxTransfers;
 
   const mutation = useMutation({
     mutationFn: async () => {
       if (game === "reach") {
         await api.reach.createFileshareTransfer.mutate({ fileId });
+      } else if (game === "odst") {
+        await api.odst.createFileshareTransfer.mutate({ fileId });
       } else {
         await api.sunrise2.createFileshareTransfer.mutate({ fileId });
       }
@@ -56,6 +66,7 @@ export const FileshareDownloadButton = ({
       setTimeout(() => setSuccess(false), 3000);
       queryClient.invalidateQueries({ queryKey: ["pendingTransfers"] });
       queryClient.invalidateQueries({ queryKey: ["reachPendingTransfers"] });
+      queryClient.invalidateQueries({ queryKey: ["odstPendingTransfers"] });
       queryClient.invalidateQueries({
         predicate: (query) => {
           const key = JSON.stringify(query.queryKey);
@@ -73,8 +84,9 @@ export const FileshareDownloadButton = ({
     },
   });
 
-  const gameTitle = game === "reach" ? "Halo: Reach" : "Halo 3";
-  const downloadLabel = game === "reach" ? "Download to Halo: Reach" : "Download to Halo 3";
+  const gameTitle = game === "reach" ? "Halo: Reach" : game === "odst" ? "Halo 3: ODST" : "Halo 3";
+  const downloadLabel =
+    game === "reach" ? "Download to Halo: Reach" : game === "odst" ? "Download to Halo 3: ODST" : "Download to Halo 3";
 
   if (error) {
     return (

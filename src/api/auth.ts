@@ -2,8 +2,8 @@ import { AuthOptions } from "next-auth";
 import XboxLive from "../XboxLive";
 import { JWT } from "next-auth/jwt";
 import { env } from "../env";
+import { fetchBnetUserFlags } from "@/server/auth/bnetUser";
 import { SunriseJWT } from "@/server/auth/jwt";
-import { Axios } from "axios";
 
 export const authOptions: AuthOptions = {
     // Configure one or more authentication providers
@@ -16,12 +16,16 @@ export const authOptions: AuthOptions = {
     callbacks: {
       jwt: async ({token, user, account, profile}): Promise<JWT> => {
         if (account && profile) {
+          const bnetUser = await fetchBnetUserFlags(user.xuid, user.userHash, user.xstsToken);
+
           return {
             user: {
               xuid: user.xuid,
               gamertag: user.gamertag,
               xboxUserHash: user.userHash,
               email: user.email,
+              datamine_access: bnetUser.datamine_access,
+              is_admin: bnetUser.is_admin,
             },
             tokens: {
               microsoft: account.access_token,
@@ -35,24 +39,43 @@ export const authOptions: AuthOptions = {
           };
         }
         else {
-          // if the tokens have expired, logout
-          const sunriseJWT = token as SunriseJWT;
-          if (sunriseJWT.tokens.xbox && sunriseJWT.tokens.xboxTokenExpiresAt && Date.now() > sunriseJWT.tokens.xboxTokenExpiresAt) {
-            return {};
+          const sunriseJWT = token as Partial<SunriseJWT> & { error?: string };
+
+          if (!sunriseJWT.user || !sunriseJWT.tokens) {
+            return { error: "SessionExpired" };
           }
-          if (sunriseJWT.tokens.xsts && sunriseJWT.tokens.xstsTokenExpiresAt && Date.now() > sunriseJWT.tokens.xstsTokenExpiresAt) {
-            return {};
+
+          if (
+            sunriseJWT.tokens.xbox &&
+            sunriseJWT.tokens.xboxTokenExpiresAt &&
+            Date.now() > sunriseJWT.tokens.xboxTokenExpiresAt
+          ) {
+            return { error: "SessionExpired" };
           }
-          
+          if (
+            sunriseJWT.tokens.xsts &&
+            sunriseJWT.tokens.xstsTokenExpiresAt &&
+            Date.now() > sunriseJWT.tokens.xstsTokenExpiresAt
+          ) {
+            return { error: "SessionExpired" };
+          }
+
           return token as JWT;
         }
       },
       session({ session, token }) {
-        const sunriseJWT = token as SunriseJWT;
-        
-        // Note: User registration will happen when they first access a protected endpoint
-        // The JWT token will be extracted from the cookie and sent to the backend
-        
+        const sunriseJWT = token as Partial<SunriseJWT> & { error?: string };
+        if (
+          sunriseJWT.error === "SessionExpired" ||
+          !sunriseJWT.user ||
+          !sunriseJWT.tokens
+        ) {
+          return {
+            expires: session.expires,
+            error: "SessionExpired",
+          } as typeof session;
+        }
+
         return {
         // TODO: clean this up
           user: sunriseJWT.user,

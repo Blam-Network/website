@@ -11,7 +11,7 @@ import { useNightmap } from "../contexts/NightmapContext";
 
 export const NavBar = ({session}: {session: Session | null}) => {    
     const [playerName, setPlayerName] = useState('');
-    const loggedIn = !!session?.user.xuid;
+    const loggedIn = !!session?.user?.xuid;
     const { show24h } = useNightmap();
 
     const { data: onlinePlayers } = useQuery({
@@ -79,10 +79,17 @@ export const NavBar = ({session}: {session: Session | null}) => {
                             Players
                         </Button>
                     </Link>
-                    {loggedIn && (
+                    {loggedIn && session?.user?.gamertag && (
                         <Link href={'/halo3/player/' + session.user.gamertag} style={{ textDecoration: 'none' }}>
                             <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                                 Service Record
+                            </Button>
+                        </Link>
+                    )}
+                    {session?.user?.is_admin && (
+                        <Link href="/admin" style={{ textDecoration: 'none' }}>
+                            <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
+                                Admin
                             </Button>
                         </Link>
                     )}

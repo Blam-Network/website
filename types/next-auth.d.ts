@@ -7,14 +7,16 @@ declare module "next-auth" {
    */
   interface Session {
     expires: number;
-    user: {
+    error?: "SessionExpired";
+    user?: {
         xuid: string,
         gamertag: string,
         xboxUserHash: string,
         email: string,
-        role: "user" | "admin",
+        datamine_access: boolean,
+        is_admin: boolean,
     };
-    tokens: {
+    tokens?: {
       microsoft: string,
       xbox: string,
       xsts: string,

@@ -1,0 +1,15 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true
+    },
+    "transform": {
+      "legacyDecorator": false,
+      "decoratorVersion": "2022-03",
+      "decoratorMetadata": false,
+      "useDefineForClassFields": true
+    },
+    "target": "es2022"
+  }
+}

@@ -1,9 +1,9 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getServerSession } from "next-auth";
-import { getSession, SessionProvider } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
+import { InvalidSessionGuard } from "./InvalidSessionGuard";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -16,6 +16,7 @@ const queryClient = new QueryClient({
 export const Providers = ({ children }: { children: ReactNode}) => {
     return (
         <SessionProvider>
+            <InvalidSessionGuard />
             <QueryClientProvider client={queryClient}>
                 {children}
             </QueryClientProvider>

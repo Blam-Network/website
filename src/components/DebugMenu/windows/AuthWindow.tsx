@@ -33,7 +33,8 @@ export const AuthWindow = () => {
             if (ImGui.TextLink("copy##2")) {
                 navigator.clipboard.writeText(xuid)
             }
-            ImGui.Text(`role: ${session.user.role}`)
+            ImGui.Text(`datamine_access: ${session.user.datamine_access}`)
+            ImGui.Text(`is_admin: ${session.user.is_admin}`)
             ImGui.SeparatorText("Tokens")
         
             ImGui.Text(`Microsoft`)

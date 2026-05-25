@@ -85,6 +85,11 @@ export const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
+const trpcRequestLoggingMiddleware = t.middleware(async ({ path, type, next }) => {
+  console.log(`[trpc] ${type.toUpperCase()} ${path}`);
+  return next();
+});
+
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
@@ -106,13 +111,13 @@ export const mergeRouters = t.mergeRouters;
  * tRPC API. It does not guarantee that a user querying is authorized, but you
  * can still access user session data if they are logged in
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(trpcRequestLoggingMiddleware);
 
 /**
  * Reusable procedure that enforces users are logged in before running the
  * code
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(trpcRequestLoggingMiddleware).use(({ ctx, next }) => {
   if (!ctx.auth?.user.xuid) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: 'auth ' + JSON.stringify(ctx.auth) });
   }
@@ -132,7 +137,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
  */
 export const protectedAdminProcedure = protectedProcedure.use(
   ({ ctx, next }) => {
-    if (ctx.auth?.user.role !== 'admin') {
+    if (!ctx.auth?.user.is_admin) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "You must be an admin to perform this action",

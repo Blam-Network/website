@@ -7,7 +7,8 @@ const JWTSchema = z.object({
         gamertag: z.string(),
         xboxUserHash: z.string(),
         email: z.string(),
-        role: z.union([z.literal("user"), z.literal('admin')]).default("user"),
+        datamine_access: z.boolean().default(false),
+        is_admin: z.boolean().default(false),
     }),
     tokens: z.object({
         microsoft: z.string(),
@@ -28,7 +29,6 @@ export const getParsedToken = async (
     const token = await getToken(...params);
     if (token === null) return undefined;
     const parsed = JWTSchema.safeParse(token);
-    if (!parsed.success) throw new Error(JSON.stringify(parsed.error));
     if (!parsed.success) return undefined;
     return parsed.data;
   };

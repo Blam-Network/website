@@ -213,23 +213,9 @@ export const datamineSessionFilterOptions = protectedProcedure.input(
 });
 
 export const checkDatamineAccess = protectedProcedure.query(async (opts) => {
-    if (!opts.ctx.jwtTokenString) {
-        throw new Error('JWT token not found in request');
-    }
-    const response = await halo3Axios.get('/user', {
-        headers: {
-            'Authorization': `Bearer ${opts.ctx.jwtTokenString}`,
-        }
-    });
-    
-    // Handle Axios response - data might be a string that needs parsing
-    let data = response.data;
-    if (typeof data === 'string') {
-        data = JSON.parse(data);
-    }
-    
+    const { datamine_access, is_admin } = opts.ctx.auth.user;
     return {
-        hasAccess: data.datamineAccess === true,
+        hasAccess: datamine_access === true || is_admin === true,
     };
 });
 
