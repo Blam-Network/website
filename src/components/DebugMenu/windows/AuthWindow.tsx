@@ -37,24 +37,29 @@ export const AuthWindow = () => {
             ImGui.Text(`is_admin: ${session.user.is_admin}`)
             ImGui.SeparatorText("Tokens")
         
-            ImGui.Text(`Microsoft`)
-            ImGui.SameLine();
-            if (ImGui.TextLink("copy##microsoft")) {
-                navigator.clipboard.writeText(session.tokens.microsoft);
+            if (session.tokens?.microsoft) {
+                ImGui.Text(`Microsoft`)
+                ImGui.SameLine();
+                if (ImGui.TextLink("copy##microsoft")) {
+                    navigator.clipboard.writeText(session.tokens.microsoft);
+                }
             }
         
-            ImGui.Text(`Xbox`)
-            ImGui.SameLine();
-            if (ImGui.TextLink("copy##xbox")) {
-                navigator.clipboard.writeText(session.tokens.xbox);
+            if (session.tokens?.xbox) {
+                ImGui.Text(`Xbox`)
+                ImGui.SameLine();
+                if (ImGui.TextLink("copy##xbox")) {
+                    navigator.clipboard.writeText(session.tokens.xbox);
+                }
             }
         
-            ImGui.Text(`XSTS`)
-            ImGui.SameLine();
-            if (ImGui.TextLink("copy##xsts")) {
-                navigator.clipboard.writeText(session.tokens.xsts);
+            if (session.tokens?.xsts) {
+                ImGui.Text(`XSTS`)
+                ImGui.SameLine();
+                if (ImGui.TextLink("copy##xsts")) {
+                    navigator.clipboard.writeText(session.tokens.xsts);
+                }
             }
-        
         
             ImGui.Separator();
             if (ImGui.Button("Logout")) {
