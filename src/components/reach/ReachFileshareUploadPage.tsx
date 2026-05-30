@@ -618,11 +618,6 @@ export function ReachFileshareUploadPage({
                 Upload files to the {fileshareLabel} Reach file share. Halo: Reach release files from Xbox 360 and MCC are supported.
             </Typography>
 
-            <ReachAdminFileshareFilesTables
-                fileshareTarget={fileshareTarget}
-                refreshKey={uploadedFilesRefreshKey}
-            />
-
             <Typography variant="h5" sx={{ color: "#E0E0E0", mb: 2 }}>
                 Upload queue
             </Typography>
@@ -732,6 +727,11 @@ export function ReachFileshareUploadPage({
                     </Button>
                 </>
             )}
+
+            <ReachAdminFileshareFilesTables
+                fileshareTarget={fileshareTarget}
+                refreshKey={uploadedFilesRefreshKey}
+            />
 
             <UploadNameEditModal
                 open={nameEditKey !== null && !!nameEditEntry?.metadata}
