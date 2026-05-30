@@ -87,7 +87,7 @@ export const NavBar = ({session}: {session: Session | null}) => {
                         </Link>
                     )}
                     {session?.user?.is_admin && (
-                        <Link href="/admin" style={{ textDecoration: 'none' }}>
+                        <Link href="/reach/admin" style={{ textDecoration: 'none' }}>
                             <Button variant="text" sx={{ color: '#B0B0B0', '&:hover': { color: '#7CB342' } }}>
                                 Admin
                             </Button>

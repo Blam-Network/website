@@ -11,6 +11,7 @@ import Link from "next/link";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
+import { Gamertag } from "@/src/components/Gamertag";
 import { isGuestXuid } from "@/src/utils/xuid";
 import { useSession } from "next-auth/react";
 
@@ -232,12 +233,12 @@ export default function ReachFilesPage() {
                       {file.header.authorXuid && !isGuestXuid(file.header.authorXuid) ? (
                         <Link href={`/halo3/player/${file.header.author}`} style={{ textDecoration: "underline", color: "#4A90E2" }}>
                           <Typography variant="caption" sx={{ color: "inherit" }}>
-                            {file.header.author}
+                            <Gamertag>{file.header.author}</Gamertag>
                           </Typography>
                         </Link>
                       ) : (
                         <Typography variant="caption" sx={{ color: "#B0B0B0" }}>
-                          {file.header.author}
+                          <Gamertag>{file.header.author ?? ""}</Gamertag>
                         </Typography>
                       )}
                       <FileshareDownloadButton fileId={file.id} game="reach" />

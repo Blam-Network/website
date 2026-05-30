@@ -10,10 +10,19 @@ import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 
 const ADMIN_LINKS = [
     { href: "/datamine", label: "View the Datamine", description: "Browse datamine sessions and event logs" },
-    { href: "/admin/upload", label: "Upload", description: "Upload files to the server" },
+    {
+        href: "/reach/admin/fileshare/blamnetwork",
+        label: "Blam Network file share",
+        description: "Upload files to the Blam Network system file share",
+    },
+    {
+        href: "/reach/admin/fileshare/bungie",
+        label: "Bungie file share",
+        description: "Upload files to the Bungie favourites system file share",
+    },
 ] as const;
 
-export default function AdminPage() {
+export default function ReachAdminPage() {
     const router = useRouter();
     const { data: session, status } = useSession();
 
@@ -35,10 +44,10 @@ export default function AdminPage() {
     return (
         <Container maxWidth="sm" sx={{ py: 4 }}>
             <Typography variant="h4" sx={{ mb: 1, color: "#E0E0E0" }}>
-                Admin
+                Reach Admin
             </Typography>
             <Typography variant="body2" sx={{ mb: 3, color: "#B0B0B0" }}>
-                Tools and pages for site administrators.
+                Tools and pages for Halo: Reach administrators.
             </Typography>
             <List
                 sx={{

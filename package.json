@@ -13,8 +13,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@blamnetwork/blf": "^1.0.0-beta.1",
-    "@craftycodie/cstruct": "^1.0.0",
+    "@blamnetwork/blf": "1.0.0-beta.4",
+    "@craftycodie/cstruct": "^1.1.1",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",

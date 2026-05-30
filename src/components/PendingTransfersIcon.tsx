@@ -17,6 +17,7 @@ import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/src/trpc/client";
 import { DateTimeDisplay } from "./DateTimeDisplay";
+import { Gamertag } from "./Gamertag";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
 import CloseIcon from "@mui/icons-material/Close";
@@ -308,7 +309,12 @@ export const PendingTransfersIcon = () => {
                       secondary={
                         <Box>
                           <Typography variant="caption" sx={{ color: "#B0B0B0", display: "block" }}>
-                            by {transfer.fileAuthor || "Unknown"}
+                            by{" "}
+                            {transfer.fileAuthor ? (
+                              <Gamertag>{transfer.fileAuthor}</Gamertag>
+                            ) : (
+                              "Unknown"
+                            )}
                           </Typography>
                           {fileDate && !Number.isNaN(fileDate.getTime()) && (
                             <Typography variant="caption" sx={{ color: "#888", display: "block" }}>
