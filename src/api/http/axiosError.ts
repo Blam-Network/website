@@ -2,10 +2,11 @@
 export function getAxiosErrorMessage(response: { status: number; data?: unknown }): string {
   let data = response.data;
   if (typeof data === "string") {
+    const raw = data;
     try {
-      data = JSON.parse(data) as unknown;
+      data = JSON.parse(raw) as unknown;
     } catch {
-      return data.trim() || `Request failed (${response.status})`;
+      return raw.trim() || `Request failed (${response.status})`;
     }
   }
   if (data && typeof data === "object" && "message" in data) {
