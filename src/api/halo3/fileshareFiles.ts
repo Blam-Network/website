@@ -10,8 +10,9 @@ export { FileshareFilesResponseSchema } from "./fileshareFilesSchema";
 export const fileshareFiles = publicProcedure.input(
   z.object({
     page: z.number().min(1).default(1),
-    pageSize: z.number().min(1).max(100).default(48),
+    pageSize: z.number().min(1).max(100).default(50),
     fileType: z.enum(["maps", "gametypes", "films", "screenshots"]).optional(),
+    search: z.string().optional(),
   }),
 ).query(async ({ input }) => {
   const params = new URLSearchParams();
@@ -19,6 +20,9 @@ export const fileshareFiles = publicProcedure.input(
   params.set("pageSize", String(input.pageSize));
   if (input.fileType) {
     params.set("fileType", input.fileType);
+  }
+  if (input.search?.trim()) {
+    params.set("search", input.search.trim());
   }
 
   const url = `/halo3/fileshare/files?${params.toString()}`;

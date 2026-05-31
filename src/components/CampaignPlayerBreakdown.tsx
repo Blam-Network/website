@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Box, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Tabs, Tab, Stack } from '@mui/material';
 import Link from 'next/link';
 import { Emblem } from '@/src/components/Emblem';
+import { formatGamertag, isLinkableGamertag } from '@/src/components/Gamertag';
 import { getColor, getColorName } from '@/src/colors';
 
 type Player = {
@@ -73,6 +74,19 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
         setTabValue(newValue);
     };
 
+    const renderPlayerName = (player: Player) => {
+        const nameSx = { color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' };
+        const displayName = formatGamertag(player.player_name);
+        if (!isLinkableGamertag(player.player_name, { authorXuid: player.player_xuid })) {
+            return <Typography sx={nameSx}>{displayName}</Typography>;
+        }
+        return (
+            <Link href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
+                <Typography sx={nameSx}>{displayName}</Typography>
+            </Link>
+        );
+    };
+
     if (!metagameEnabled) {
         return (
             <Box>
@@ -114,11 +128,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                                                     }}
                                                 />
                                                 <Box>
-                                                    <Link href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
-                                                        <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
-                                                            {player.player_name}
-                                                        </Typography>
-                                                    </Link>
+                                                    {renderPlayerName(player)}
                                                     {player.service_tag && (
                                                         <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                                             {player.service_tag}
@@ -155,11 +165,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                         }}
                     />
                     <Box>
-                        <Link href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`} style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#E0E0E0', fontWeight: 600, textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
-                                {player.player_name}
-                            </Typography>
-                        </Link>
+                        {renderPlayerName(player)}
                         {player.service_tag && (
                             <Typography variant="caption" sx={{ color: '#B0B0B0', textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000' }}>
                                 {player.service_tag}

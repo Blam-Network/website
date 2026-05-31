@@ -15,9 +15,12 @@ export type FileshareDownloadGame = "halo3" | "reach" | "odst";
 export const FileshareDownloadButton = ({
   fileId,
   game = "halo3",
+  compact = false,
 }: {
   fileId: string;
   game?: FileshareDownloadGame;
+  /** Shorter label for tight layouts (e.g. file grid cards). */
+  compact?: boolean;
 }) => {
   const { data: session } = useSession();
   const loggedIn = !!session?.user?.xuid;
@@ -85,8 +88,14 @@ export const FileshareDownloadButton = ({
   });
 
   const gameTitle = game === "reach" ? "Halo: Reach" : game === "odst" ? "Halo 3: ODST" : "Halo 3";
-  const downloadLabel =
-    game === "reach" ? "Download to Halo: Reach" : game === "odst" ? "Download to Halo 3: ODST" : "Download to Halo 3";
+  const downloadLabel = compact
+    ? "Download"
+    : game === "reach"
+      ? "Download to Halo: Reach"
+      : game === "odst"
+        ? "Download to Halo 3: ODST"
+        : "Download to Halo 3";
+  const downloadTitle = compact ? downloadLabel.replace(/^Download$/, `Download to ${gameTitle}`) : undefined;
 
   if (error) {
     return (
@@ -110,23 +119,19 @@ export const FileshareDownloadButton = ({
       <Stack
         direction="row"
         alignItems="center"
-        spacing={1}
+        spacing={0.5}
         sx={{
           opacity: 0.5,
           cursor: "not-allowed",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
         }}
       >
-        <Typography
-          variant="body2"
-          sx={{
-            textDecoration: "none",
-            color: "#888",
-          }}
-        >
-          Transfer pending...
+        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          Pending…
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Image src="/img/download_icon.png" alt="Download" width={16} height={16} style={{ opacity: 0.5 }} />
+          <Image src="/img/download_icon.png" alt="" width={14} height={14} style={{ opacity: 0.5 }} />
         </Box>
       </Stack>
     );
@@ -150,19 +155,26 @@ export const FileshareDownloadButton = ({
     <Stack
       direction="row"
       alignItems="center"
-      spacing={1}
+      spacing={0.5}
+      title={downloadTitle}
       sx={{
         cursor: isAtCapacity && !isPending ? "not-allowed" : "pointer",
         opacity: isAtCapacity && !isPending ? 0.6 : 1,
+        whiteSpace: "nowrap",
+        flexShrink: 0,
         "&:hover .download-text": { color: isAtCapacity && !isPending ? "inherit" : "primary.main" },
       }}
       onClick={handleClick}
     >
-      <Typography fontSize={12} className="download-text" sx={{ textDecoration: "underline" }}>
-        {mutation.isPending ? "Creating transfer..." : downloadLabel}
+      <Typography
+        variant="caption"
+        className="download-text"
+        sx={{ textDecoration: "underline", fontWeight: 600 }}
+      >
+        {mutation.isPending ? "Sending…" : downloadLabel}
       </Typography>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Image src="/img/download_icon.png" alt="Download" width={16} height={16} />
+      <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <Image src="/img/download_icon.png" alt="" width={14} height={14} />
       </Box>
     </Stack>
   );

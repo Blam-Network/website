@@ -2,160 +2,139 @@
 
 import { Stack, Box, Typography, Button, Link as MuiLink } from "@mui/material";
 import { Session } from "next-auth";
-import { getSession, signIn, signOut } from "next-auth/react";
-import { NavBar } from "./NavBar";
+import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { PendingTransfersIcon } from "./PendingTransfersIcon";
+import { fixedsysSize, fixedsysStyle } from "@/src/theme/fonts";
 
-export const Header = ({session}: {session: Session | null}) => {
+export const Header = ({ session }: { session: Session | null }) => {
     const loggedIn = !!session?.user?.xuid;
+    const logoSize = { xs: fixedsysSize(22), md: fixedsysSize(28) };
+    const networkSize = { xs: fixedsysSize(17), md: fixedsysSize(20) };
 
-    if (loggedIn) {
-        console.log(session?.user);
-    }
-    
     return (
         <Box
+            component="header"
             sx={{
-                background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-                borderBottom: '2px solid #7CB342',
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                 position: 'sticky',
                 top: 0,
-                zIndex: 1001,
+                zIndex: 1100,
+                backdropFilter: 'blur(16px)',
+                backgroundColor: 'rgba(11, 14, 20, 0.85)',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                boxShadow: '0 1px 0 rgba(124, 179, 66, 0.15)',
             }}
         >
-            <Stack 
+            <Stack
                 sx={{
-                    flexDirection: 'row',  
-                    justifyContent: 'space-between', 
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    maxWidth: 'lg', 
+                    maxWidth: 'lg',
                     flexGrow: 1,
-                    px: 2,
-                    py: 1,
+                    px: { xs: 2, md: 3 },
+                    py: 1.5,
                 }}
             >
                 <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <Box
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 0.5,
+                            display: 'inline-flex',
+                            alignItems: 'baseline',
+                            gap: 0,
                             cursor: 'pointer',
+                            lineHeight: 1,
+                            transition: 'transform 0.2s ease',
                             '&:hover': {
+                                transform: 'translateY(-1px)',
                                 '& .blam-text': {
-                                    textShadow: '0 0 10px rgba(124, 179, 66, 0.6), 0 0 20px rgba(124, 179, 66, 0.4)',
-                                    transform: 'scale(1.02)',
+                                    filter: 'drop-shadow(0 0 14px rgba(124, 179, 66, 0.55))',
                                 },
                                 '& .exclamation': {
-                                    transform: 'scale(1.2) rotate(5deg)',
-                                    textShadow: '0 0 25px rgba(124, 179, 66, 1)',
+                                    transform: 'scale(1.1)',
                                 },
                             },
-                            transition: 'all 0.3s ease',
                         }}
                     >
-                        <Typography 
+                        <Typography
                             className="blam-text"
-                            variant="h1" 
-                            sx={{ 
-                                fontSize: { xs: '1.75rem', md: '2.5rem' },
-                                m: 0,
-                                fontWeight: 900,
-                                fontFamily: '"Handel Gothic", sans-serif',
-                                background: 'linear-gradient(135deg, #9CCC65 0%, #7CB342 50%, #558B2F 100%)',
+                            component="span"
+                            sx={{
+                                ...fixedsysStyle,
+                                fontSize: logoSize,
+                                background: `linear-gradient(100deg, ${'#A5D65C'} 0%, ${'#7CB342'} 50%, ${'#558B2F'} 100%)`,
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 backgroundClip: 'text',
-                                letterSpacing: '0.1em',
-                                textTransform: 'uppercase',
-                                transition: 'all 0.3s ease',
+                                transition: 'filter 0.2s ease',
                             }}
                         >
-                            Blam
+                            BLAM
                         </Typography>
-                        <Typography 
+                        <Typography
                             className="exclamation"
-                            variant="h1" 
-                            sx={{ 
-                                fontSize: { xs: '1.75rem', md: '2.5rem' },
-                                m: 0,
-                                fontWeight: 900,
-                                color: '#7CB342',
-                                textShadow: '0 0 10px rgba(124, 179, 66, 0.8)',
-                                transition: 'all 0.3s ease',
-                                display: 'inline-block',
+                            component="span"
+                            sx={{
+                                ...fixedsysStyle,
+                                fontSize: logoSize,
+                                color: 'primary.main',
+                                transition: 'transform 0.2s ease',
                             }}
                         >
                             !
                         </Typography>
-                        <Typography 
-                            variant="h1" 
-                            sx={{ 
-                                fontSize: { xs: '1.25rem', md: '1.75rem' },
-                                m: 0,
-                                ml: 1,
-                                fontWeight: 600,
-                                color: '#B0B0B0',
-                                letterSpacing: '0.05em',
-                                textTransform: 'uppercase',
+                        <Typography
+                            component="span"
+                            sx={{
+                                ...fixedsysStyle,
+                                fontSize: networkSize,
+                                ml: 0.75,
+                                color: 'text.secondary',
+                                textTransform: 'lowercase',
                             }}
                         >
-                            Network
+                            network
                         </Typography>
                     </Box>
                 </Link>
-                <Stack direction="row" spacing={3} alignItems="center">
+                <Stack direction="row" spacing={2} alignItems="center">
                     {loggedIn && <PendingTransfersIcon />}
-                    <Box 
-                        sx={{
-                            background: 'linear-gradient(180deg, #2A2A2A 0%, #1A1A1A 100%)',
-                            border: '1px solid #444',
-                            borderRadius: '4px',
-                            padding: 1.5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                            minWidth: { xs: 'auto', sm: 300 },
-                        }}
-                    >
-                        {loggedIn 
-                            ? <Stack direction="row" justifyContent="space-between" gap={1} spacing={1} alignItems="center">
-                                <Typography component='p' variant="body2" sx={{ color: '#B0B0B0' }}>
-                                    Logged in as{" "}
-                                    <MuiLink 
-                                        component={Link}
-                                        href={"/halo3/profile"} 
-                                        underline="always"
-                                        sx={{ fontWeight: 600 }}
-                                    >
-                                        {session?.user?.gamertag}
-                                    </MuiLink>
-                                </Typography>
-                                <Button 
-                                    variant="outlined" 
-                                    size="small"
-                                    onClick={() => signOut()}
-                                    sx={{ alignSelf: 'flex-start' }}
+                    {loggedIn ? (
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <Typography component="p" variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+                                Logged in as{' '}
+                                <MuiLink
+                                    component={Link}
+                                    href="/halo3/profile"
+                                    underline="always"
+                                    sx={{ fontWeight: 600 }}
                                 >
-                                    Sign Out
-                                </Button>
-                            </Stack>
-                            : <Button 
-                                variant="contained" 
+                                    {session?.user?.gamertag}
+                                </MuiLink>
+                            </Typography>
+                            <Button
+                                variant="outlined"
                                 size="small"
-                                onClick={() => signIn('xbl')}
-                                sx={{ width: '100%' }}
+                                onClick={() => signOut()}
                             >
-                                Sign in with Xbox LIVE
-                            </Button>}
-                    </Box>
+                                Sign Out
+                            </Button>
+                        </Stack>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => signIn('xbl')}
+                        >
+                            Sign in with Xbox LIVE
+                        </Button>
+                    )}
                 </Stack>
             </Stack>
         </Box>
     );
-}
+};

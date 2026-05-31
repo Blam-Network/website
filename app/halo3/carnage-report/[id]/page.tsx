@@ -6,7 +6,7 @@ import { Stack, Box, Typography, Divider, TableContainer, Paper, Table, TableHea
 import { Screenshots } from "@/src/api/halo3/screenshots";
 import { authOptions } from "@/src/api/auth";
 import { FileShare } from "@/src/api/halo3/fileShare";
-import Link from "next/link";
+import { GamertagLink } from "@/src/components/Gamertag";
 import { Emblem } from "@/src/components/Emblem";
 import React from "react";
 import { PGCRBreakdown } from "@/src/components/PGCRBreakdown";
@@ -325,9 +325,13 @@ export default async function CarnageReport({params}: {params: { id: string }}) 
                     </Typography>
                     <Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#B0B0B0', mb: 1 }}>
                       by{' '}
-                      <Link href={"/halo3/player/" + file.header.author} style={{ color: '#4A90E2', textDecoration: 'none' }}>
-                        {file.header.author}
-                      </Link>
+                      <GamertagLink
+                        gamertag={file.header.author ?? ""}
+                        variant="body2"
+                        underline="hover"
+                        linkSx={{ color: "#4A90E2" }}
+                        sx={{ fontSize: "0.75rem", display: "inline" }}
+                      />
                     </Typography>
                     {loggedIn && (
                       <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 'auto' }}>

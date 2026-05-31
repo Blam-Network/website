@@ -3,7 +3,7 @@
 import { Box, Typography, Paper, Stack } from '@mui/material';
 import { Emblem } from './Emblem';
 import Link from 'next/link';
-import { isGuestXuid } from '../utils/xuid';
+import { formatGamertag, isLinkableGamertag } from './Gamertag';
 
 type MVPPlayer = {
     player_name: string;
@@ -41,7 +41,7 @@ export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSec
     const kdSpread = kills - deaths;
     const kdRatio = deaths > 0 ? (kills / deaths).toFixed(2) : kills > 0 ? '∞' : '0.00';
 
-    const isGuest = isGuestXuid(player.player_xuid);
+    const linkable = isLinkableGamertag(player.player_name, { authorXuid: player.player_xuid });
 
     return (
         <Paper
@@ -106,18 +106,18 @@ export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSec
                             fontFamily: 'sans-serif',
                         }}
                     >
-                        {isGuest ? (
-                            player.player_name
-                        ) : (
+                        {linkable ? (
                             <Link
-                                href={`${playerRouteBase}/${player.player_name}`}
+                                href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`}
                                 style={{
-                                    color: '#7CB342',
+                                    color: 'inherit',
                                     textDecoration: 'none',
                                 }}
                             >
-                                {player.player_name}
+                                {formatGamertag(player.player_name)}
                             </Link>
+                        ) : (
+                            formatGamertag(player.player_name)
                         )}
                         {player.service_tag && (
                             <Typography

@@ -12,6 +12,9 @@ import { Medal } from "./Medal";
 import { Emblem } from "./Emblem";
 import { getCssColor, getColor, getTextColor, getColorName } from "../colors";
 import NextLink from "next/link";
+import { formatGamertag, isLinkableGamertag } from "./Gamertag";
+import { getWeaponNameFromString } from "@/src/constants/weaponIcons";
+import { WeaponIcon } from "./WeaponIcon";
 
 interface PlayerStatisticsProps {
   gamertag: string;
@@ -42,70 +45,6 @@ const damageSourceEnum = [
   'wraith_anti_infantry', 'scorpion', 'chopper', 'hornet', 'mauler', 'unknown_56',
   'unknown_57', 'unknown_58', 'tripmine', 'sandtrap_mine', 'unknown_61',
 ];
-
-// Helper function to get weapon name from damage source string
-const getWeaponNameFromString = (damageSource: string): string => {
-  const weaponNameMap: Record<string, string> = {
-    'guardians': 'Guardians',
-    'falling_damage': 'Falling Damage',
-    'generic_collision_damage': 'Collision',
-    'generic_melee_damage': 'Melee',
-    'generic_explosion': 'Explosion',
-    'magnum_pistol': 'Magnum',
-    'plasma_pistol': 'Plasma Pistol',
-    'needler': 'Needler',
-    'excavator': 'Mauler',
-    'smg': 'SMG',
-    'plasma_rifle': 'Plasma Rifle',
-    'battle_rifle': 'Battle Rifle',
-    'carbine': 'Carbine',
-    'shotgun': 'Shotgun',
-    'sniper_rifle': 'Sniper Rifle',
-    'beam_rifle': 'Beam Rifle',
-    'assault_rifle': 'Assault Rifle',
-    'spike_rifle': 'Spiker',
-    'flak_cannon': 'Fuel Rod Cannon',
-    'missile_launcher': 'Missile Pod',
-    'rocket_launcher': 'Rocket Launcher',
-    'spartan_laser': 'Spartan Laser',
-    'brute_shot': 'Brute Shot',
-    'flame_thrower': 'Flamethrower',
-    'sentinal_gun': 'Sentinel Beam',
-    'energy_sword': 'Energy Sword',
-    'gravity_hammer': 'Gravity Hammer',
-    'frag_grenade': 'Frag Grenade',
-    'plasma_grenade': 'Plasma Grenade',
-    'claymore_grenade': 'Spike Grenade',
-    'firebomb_grenade': 'Firebomb Grenade',
-    'flag_melee_damage': 'Flag',
-    'bomb_melee_damage': 'Bomb',
-    'bomb_explosion_damage': 'Bomb (Explosion)',
-    'ball_melee_damage': 'Ball',
-    'human_turret': 'Machine Gun Turret',
-    'plasma_cannon': 'Plasma Cannon',
-    'banshee': 'Banshee',
-    'ghost': 'Ghost',
-    'mongoose': 'Mongoose',
-    'scorpion_gunner': 'Scorpion (Turret)',
-    'warthog_driver': 'Warthog',
-    'warthog_gunner': 'Warthog Turret',
-    'warthog_gunner_gauss': 'Warthog Turret (Gauss)',
-    'wraith': 'Wraith',
-    'wraith_anti_infantry': 'Wraith Turret',
-    'scorpion': 'Scorpion',
-    'chopper': 'Chopper',
-    'hornet': 'Hornet',
-    'mauler': 'Mauler',
-  };
-  
-  // Format the damage source string (replace underscores with spaces, capitalize)
-  const formatted = damageSource
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-  
-  return weaponNameMap[damageSource] || formatted;
-};
 
 // Helper function to get weapon name from killType (number)
 const getWeaponName = (killType: number): string => {
@@ -273,6 +212,30 @@ const medalHoverAnimation = keyframes`
     transform: scale(1) rotate(0deg);
   }
 `;
+
+function renderRivalPlayerName(entry: { player_name: string; player_xuid?: string }) {
+  const displayName = formatGamertag(entry.player_name);
+  const sx = {
+    color: "#FFFFFF",
+    textDecoration: "none",
+    textShadow: "1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000",
+    "&:hover": { textDecoration: "underline" },
+  };
+
+  if (!isLinkableGamertag(entry.player_name, { authorXuid: entry.player_xuid })) {
+    return (
+      <Typography component="span" sx={sx}>
+        {displayName}
+      </Typography>
+    );
+  }
+
+  return (
+    <Link component={NextLink} href={`/halo3/player/${encodeURIComponent(entry.player_name)}`} sx={sx}>
+      {displayName}
+    </Link>
+  );
+}
 
 export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatisticsProps) {
   const { data, isLoading } = useQuery({
@@ -643,18 +606,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                             />
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
-                            <Link
-                              component={NextLink}
-                              href={`/halo3/player/${encodeURIComponent(entry.player_name)}`}
-                              sx={{ 
-                                color: "#FFFFFF", 
-                                textDecoration: "none",
-                                textShadow: "1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000",
-                                "&:hover": { textDecoration: "underline" } 
-                              }}
-                            >
-                              {entry.player_name}
-                            </Link>
+                            {renderRivalPlayerName(entry)}
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
                             {Number(entry.count)}
@@ -723,18 +675,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                             />
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
-                            <Link
-                              component={NextLink}
-                              href={`/halo3/player/${encodeURIComponent(entry.player_name)}`}
-                              sx={{ 
-                                color: "#FFFFFF", 
-                                textDecoration: "none",
-                                textShadow: "1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000",
-                                "&:hover": { textDecoration: "underline" } 
-                              }}
-                            >
-                              {entry.player_name}
-                            </Link>
+                            {renderRivalPlayerName(entry)}
                           </TableCell>
                           <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
                             {Number(entry.count)}
@@ -877,7 +818,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
             </Paper>
           )}
 
-          {/* Weapon Kills Table and Weapon of Choice */}
+          {/* Weapon Kills */}
           {weaponKills.length > 0 && (
           <Paper
             elevation={4}
@@ -888,90 +829,177 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
             }}
           >
             {weaponOfChoice && (
-              <Box sx={{ mb: 3, textAlign: "center" }}>
+              <Box
+                sx={{
+                  position: "relative",
+                  mb: 3,
+                  p: 2.5,
+                  minHeight: 120,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  border: "1px solid",
+                  borderColor: "primary.main",
+                  background: "linear-gradient(180deg, rgba(124, 179, 66, 0.12) 0%, rgba(124, 179, 66, 0.04) 100%)",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <WeaponIcon
+                    weapon={weaponOfChoice.weapon}
+                    highlighted
+                    variant="backdrop"
+                    backdropAlign="center"
+                  />
+                </Box>
                 <Typography
-                  variant="h6"
-                  sx={{ mb: 1, color: "#7CB342" }}
+                  variant="overline"
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    color: "primary.main",
+                    letterSpacing: "0.12em",
+                    fontWeight: 700,
+                  }}
                 >
                   Weapon of Choice
                 </Typography>
                 <Typography
                   variant="h5"
-                  sx={{ color: "#E0E0E0", fontWeight: "bold" }}
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    color: "#E0E0E0",
+                    fontWeight: 700,
+                    mt: 0.5,
+                    textShadow: "0 1px 12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.6)",
+                  }}
                 >
                   {getWeaponNameFromString(weaponOfChoice.weapon)}
                 </Typography>
                 <Typography
-                  variant="body1"
-                  sx={{ color: "#B0B0B0", mt: 0.5 }}
+                  variant="body2"
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    color: "text.secondary",
+                    mt: 0.5,
+                    textShadow: "0 1px 8px rgba(0, 0, 0, 0.85)",
+                  }}
                 >
-                  {weaponOfChoice.kills} kills
+                  {weaponOfChoice.kills.toLocaleString()} kills
                 </Typography>
               </Box>
             )}
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ color: "#7CB342", borderColor: "#333" }}>Weapon</TableCell>
-                    <TableCell sx={{ color: "#7CB342", borderColor: "#333" }} align="right">Kills</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                          {(() => {
-                            // Calculate max kills for proportional bars
-                            const maxKills = weaponKills.length > 0 
-                              ? Math.max(...weaponKills.map((e: { weapon: string; kills: number }) => e.kills))
-                              : 1;
-                            
-                            return weaponKills.map((entry: { weapon: string; kills: number }, index: number) => {
-                              const percentage = (entry.kills / maxKills) * 100;
-                              const isWeaponOfChoice = weaponOfChoice && entry.weapon === weaponOfChoice.weapon;
-                              
-                              return (
-                                <TableRow 
-                                  key={index} 
-                                  sx={{ 
-                                    position: "relative",
-                                    "&:hover": { 
-                                      "&::before": {
-                                        backgroundColor: isWeaponOfChoice 
-                                          ? "rgba(124, 179, 66, 0.3)" 
-                                          : "rgba(124, 179, 66, 0.2)",
-                                      }
-                                    },
-                                    "&::before": {
-                                      content: '""',
-                                      position: "absolute",
-                                      left: 0,
-                                      top: 0,
-                                      bottom: 0,
-                                      width: `${percentage}%`,
-                                      backgroundColor: isWeaponOfChoice 
-                                        ? "rgba(124, 179, 66, 0.25)" 
-                                        : "rgba(124, 179, 66, 0.15)",
-                                      zIndex: 0,
-                                      transition: "background-color 0.2s ease",
-                                    },
-                                    "& .MuiTableCell-root": {
-                                      position: "relative",
-                                      zIndex: 1,
-                                    }
-                                  }}
-                                >
-                                  <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }}>
-                                    {getWeaponNameFromString(entry.weapon)}
-                                  </TableCell>
-                                  <TableCell sx={{ color: "#E0E0E0", borderColor: "#333" }} align="right">
-                                    {entry.kills}
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            });
-                          })()}
-                </TableBody>
-              </Table>
-            </TableContainer>
+
+            <Typography
+              variant="h6"
+              sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
+            >
+              Weapon Statistics
+            </Typography>
+
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+              {(() => {
+                const maxKills = Math.max(...weaponKills.map((e: { kills: number }) => e.kills), 1);
+
+                return weaponKills.map((entry: { weapon: string; kills: number }, index: number) => {
+                  const percentage = (entry.kills / maxKills) * 100;
+                  const isWeaponOfChoice = weaponOfChoice && entry.weapon === weaponOfChoice.weapon;
+
+                  return (
+                    <Box
+                      key={index}
+                      sx={{
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "stretch",
+                        gap: 1.5,
+                        px: 1.5,
+                        py: 1.25,
+                        minHeight: 56,
+                        border: "1px solid",
+                        borderColor: isWeaponOfChoice ? "primary.main" : "divider",
+                        backgroundColor: "rgba(0, 0, 0, 0.25)",
+                        overflow: "hidden",
+                        transition: "border-color 0.2s ease",
+                        "&:hover": {
+                          borderColor: isWeaponOfChoice ? "primary.light" : "rgba(124, 179, 66, 0.35)",
+                        },
+                        "&::before": {
+                          content: '""',
+                          position: "absolute",
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: `${percentage}%`,
+                          backgroundColor: isWeaponOfChoice
+                            ? "rgba(124, 179, 66, 0.22)"
+                            : "rgba(124, 179, 66, 0.1)",
+                          zIndex: 0,
+                          transition: "width 0.3s ease",
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          position: "relative",
+                          zIndex: 1,
+                          flex: 1,
+                          alignSelf: "stretch",
+                          display: "flex",
+                          alignItems: "center",
+                          pl: 1,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <WeaponIcon
+                          weapon={entry.weapon}
+                          highlighted={!!isWeaponOfChoice}
+                          variant="backdrop"
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            position: "relative",
+                            zIndex: 1,
+                            color: isWeaponOfChoice ? "primary.light" : "#E0E0E0",
+                            fontWeight: isWeaponOfChoice ? 700 : 600,
+                            textShadow: "0 1px 8px rgba(0, 0, 0, 0.9), 0 0 16px rgba(0, 0, 0, 0.5)",
+                          }}
+                        >
+                          {getWeaponNameFromString(entry.weapon)}
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          position: "relative",
+                          zIndex: 1,
+                          alignSelf: "center",
+                          color: isWeaponOfChoice ? "primary.main" : "text.secondary",
+                          fontWeight: 700,
+                          fontVariantNumeric: "tabular-nums",
+                          minWidth: 48,
+                          textAlign: "right",
+                          textShadow: "0 1px 6px rgba(0, 0, 0, 0.8)",
+                        }}
+                      >
+                        {entry.kills.toLocaleString()}
+                      </Typography>
+                    </Box>
+                  );
+                });
+              })()}
+            </Box>
           </Paper>
           )}
         </Box>

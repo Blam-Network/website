@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/trpc/client";
 import { ServiceRecordListItem } from "@/src/components/ServiceRecordListItem";
+import { SectionHeader } from "@/src/components/SectionHeader";
 import { Stack, Box, Typography, Container, TextField, Button, Paper, Pagination } from "@mui/material";
 import Link from "next/link";
 import { ServiceRecord } from "@/src/api/halo3/serviceRecord";
@@ -125,13 +126,9 @@ export default function PlayersPage() {
   }, []);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1, borderBottom: "2px solid #7CB342" }}>
-        <Typography variant="h4">
-          Players
-        </Typography>
-
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+      <SectionHeader title="Players">
+        <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
           <TextField
             label="Search by name"
             variant="outlined"
@@ -139,35 +136,9 @@ export default function PlayersPage() {
             onChange={(e) => handleSearchInputChange(e.target.value)}
             onKeyPress={handleKeyPress}
             size="small"
-            sx={{
-              width: 250,
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#7CB342",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#9CCC65",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#7CB342",
-                },
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#7CB342",
-              },
-            }}
+            sx={{ width: 250 }}
           />
-          <Button
-            variant="contained"
-            onClick={handleSearch}
-            size="small"
-            sx={{
-              backgroundColor: "#7CB342",
-              "&:hover": {
-                backgroundColor: "#558B2F",
-              },
-            }}
-          >
+          <Button variant="contained" onClick={handleSearch} size="small">
             Search
           </Button>
           {search && (
@@ -178,20 +149,12 @@ export default function PlayersPage() {
                 setSearchInput("");
                 updateURL(1, "");
               }}
-              sx={{
-                borderColor: "#7CB342",
-                color: "#7CB342",
-                "&:hover": {
-                  borderColor: "#9CCC65",
-                  backgroundColor: "rgba(124, 179, 66, 0.1)",
-                },
-              }}
             >
               Clear
             </Button>
           )}
         </Box>
-      </Box>
+      </SectionHeader>
 
       {isLoading ? (
         <Typography>Loading...</Typography>

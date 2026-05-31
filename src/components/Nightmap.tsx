@@ -10,34 +10,23 @@ export const Nightmap = () => {
   const [imagesLoaded, setImagesLoaded] = useState({ current: false, "24h": false });
   const [cacheBuster, setCacheBuster] = useState(0);
 
-  // Update cache buster every minute to force image refresh
   useEffect(() => {
     const interval = setInterval(() => {
-      setCacheBuster(Math.floor(Date.now() / 60000)); // Update every minute
+      setCacheBuster(Math.floor(Date.now() / 60000));
     }, 60000);
-    
-    // Set initial cache buster
     setCacheBuster(Math.floor(Date.now() / 60000));
-    
     return () => clearInterval(interval);
   }, []);
 
-  // Preload both images on mount and when cache buster changes - browser will cache them
   useEffect(() => {
-    // Reset loaded state when cache buster changes
     setImagesLoaded({ current: false, "24h": false });
-    
+
     const img6h = new Image();
     const img24h = new Image();
 
-    img6h.onload = () => {
-      setImagesLoaded(prev => ({ ...prev, current: true }));
-    };
-    img24h.onload = () => {
-      setImagesLoaded(prev => ({ ...prev, "24h": true }));
-    };
+    img6h.onload = () => setImagesLoaded((prev) => ({ ...prev, current: true }));
+    img24h.onload = () => setImagesLoaded((prev) => ({ ...prev, "24h": true }));
 
-    // Start loading both images immediately with cache buster
     img6h.src = `/api/nightmap?t=${cacheBuster}`;
     img24h.src = `/api/nightmap-24h?t=${cacheBuster}`;
   }, [cacheBuster]);
@@ -46,73 +35,70 @@ export const Nightmap = () => {
   const currentImageLoaded = show24h ? imagesLoaded["24h"] : imagesLoaded.current;
 
   return (
-    <Box 
-      sx={{ 
-        width: '100%',
-        backgroundColor: '#1f2a4a',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        pt: 0,
-        pb: 0,
+    <Box
+      sx={{
+        width: "100%",
+        backgroundColor: "#1f2a4a",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
-      <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 0 }}>
+      <Container maxWidth="lg" sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 0 }}>
         <Paper
           elevation={8}
           sx={{
             p: 0,
-            background: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-            display: 'inline-block',
-            position: 'relative',
-            width: '120%',
-            maxWidth: '120%',
+            background: "transparent",
+            border: "none",
+            boxShadow: "none",
+            display: "inline-block",
+            position: "relative",
+            width: "120%",
+            maxWidth: "120%",
           }}
         >
           <Box
             sx={{
-              position: 'relative',
-              width: '100%',
-              height: '150px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              position: "relative",
+              width: "100%",
+              height: "150px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             {!bothLoaded && (
               <LoadingSpinner
                 size={120}
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   zIndex: 1,
                 }}
               />
             )}
-            {/* Render both images but hide/show them - browser keeps them cached */}
-            <img 
+            <img
               src={`/api/nightmap?t=${cacheBuster}`}
-              alt="Nightmap" 
-              style={{ 
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                display: !show24h && currentImageLoaded ? 'block' : 'none',
-                position: 'absolute',
+              alt="Nightmap"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                display: !show24h && currentImageLoaded ? "block" : "none",
+                position: "absolute",
                 top: 0,
                 left: 0,
               }}
             />
-            <img 
+            <img
               src={`/api/nightmap-24h?t=${cacheBuster}`}
-              alt="Nightmap (24h)" 
-              style={{ 
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                display: show24h && currentImageLoaded ? 'block' : 'none',
-                position: 'absolute',
+              alt="Nightmap (24h)"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                display: show24h && currentImageLoaded ? "block" : "none",
+                position: "absolute",
                 top: 0,
                 left: 0,
               }}
@@ -123,4 +109,3 @@ export const Nightmap = () => {
     </Box>
   );
 };
-

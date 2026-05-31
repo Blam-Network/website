@@ -223,7 +223,13 @@ export default function FilesPage() {
                             filename={file.header.filetype === 13 ? file.header.filename : undefined}
                             description={file.header.filetype === 13 ? file.header.description : undefined}
                             author={file.header.filetype === 13 ? file.header.author : undefined}
-                            mapId={file.header.filetype === 11 ? file.header.mapId : undefined}
+                            mapId={
+                              file.header.filetype === 10 ||
+                              file.header.filetype === 11 ||
+                              file.header.filetype === 12
+                                ? file.header.mapId
+                                : undefined
+                            }
                           />
                         </Box>
                         <Box sx={{ flex: 1, minWidth: 0 }}>

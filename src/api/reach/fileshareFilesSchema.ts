@@ -17,6 +17,7 @@ const FileHeaderSchema = z.object({
   campaignId: z.number(),
   mapId: z.number(),
   gameEngineType: z.number(),
+  iconIndex: z.number().nullable().optional(),
   campaignDifficulty: z.number(),
   hopperId: z.number(),
   gameId: z.number(),

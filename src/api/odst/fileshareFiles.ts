@@ -9,8 +9,9 @@ export const fileshareFiles = publicProcedure
   .input(
     z.object({
       page: z.number().min(1).default(1),
-      pageSize: z.number().min(1).max(100).default(48),
+      pageSize: z.number().min(1).max(100).default(50),
       fileType: z.enum(["maps", "gametypes", "films", "screenshots"]).optional(),
+      search: z.string().optional(),
     }),
   )
   .query(async ({ input }) => {
@@ -18,6 +19,7 @@ export const fileshareFiles = publicProcedure
     params.set("page", String(input.page));
     params.set("pageSize", String(input.pageSize));
     if (input.fileType) params.set("fileType", input.fileType);
+    if (input.search?.trim()) params.set("search", input.search.trim());
 
     const response = await odstAxios.get(`/halo3odst/fileshare/files?${params.toString()}`);
     const parsed = FileshareFilesResponseSchema.safeParse(response.data);

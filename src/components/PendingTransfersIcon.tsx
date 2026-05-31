@@ -1,40 +1,59 @@
 "use client";
 
 import {
+  Badge,
   Button,
+  Chip,
   IconButton,
   Popover,
   Typography,
   Box,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Paper,
+  Stack,
+  Divider,
 } from "@mui/material";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/src/trpc/client";
 import { DateTimeDisplay } from "./DateTimeDisplay";
-import { Gamertag } from "./Gamertag";
+import { GamertagLink, isLinkableGamertag } from "./Gamertag";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { LoadingSpinner } from "./LoadingSpinner";
 import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
+import type { OdstPendingTransfer } from "@/src/api/odst/pendingTransfers";
 import type { ReachPendingTransfer } from "@/src/api/reach/pendingTransfers";
 import { useSession } from "next-auth/react";
 
+type TransferGame = "halo3" | "odst" | "reach";
+
 type TransferRow =
   | ({ game: "halo3" } & PendingTransfer)
+  | ({ game: "odst" } & OdstPendingTransfer)
   | ({ game: "reach" } & ReachPendingTransfer);
+
+function gameLabel(game: TransferGame): string {
+  switch (game) {
+    case "reach":
+      return "Reach";
+    case "odst":
+      return "ODST";
+    default:
+      return "Halo 3";
+  }
+}
+
+function isScreenshotTransfer(game: TransferGame, fileType: number): boolean {
+  if (game === "reach") return fileType === 2;
+  return fileType === 13;
+}
 
 export const PendingTransfersIcon = () => {
   const { data: session } = useSession();
   const loggedIn = !!session?.user?.xuid;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const queryClient = useQueryClient();
 
   const h3Query = useQuery({
@@ -53,13 +72,24 @@ export const PendingTransfersIcon = () => {
     enabled: loggedIn,
   });
 
+  const odstQuery = useQuery({
+    queryKey: ["odstPendingTransfers"],
+    queryFn: () => api.odst.pendingTransfers.query(),
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+    enabled: loggedIn,
+  });
+
   const h3Transfers = h3Query.data?.transfers ?? [];
   const reachTransfers = reachQuery.data?.transfers ?? [];
+  const odstTransfers = odstQuery.data?.transfers ?? [];
   const h3Max = h3Query.data?.maxTransfers ?? 8;
   const reachMax = reachQuery.data?.maxTransfers ?? 8;
+  const odstMax = odstQuery.data?.maxTransfers ?? 8;
 
   const rows: TransferRow[] = [
     ...h3Transfers.map((t: PendingTransfer) => ({ ...t, game: "halo3" as const })),
+    ...odstTransfers.map((t: OdstPendingTransfer) => ({ ...t, game: "odst" as const })),
     ...reachTransfers.map((t: ReachPendingTransfer) => ({ ...t, game: "reach" as const })),
   ];
 
@@ -81,9 +111,19 @@ export const PendingTransfersIcon = () => {
     },
   });
 
+  const deleteOdst = useMutation({
+    mutationFn: (fileId: string) => api.odst.deleteFileshareTransfer.mutate({ fileId }),
+    onSuccess: () => invalidateTransferQueries(),
+    onError: (error: unknown) => {
+      console.error("Failed to delete ODST transfer:", error);
+      alert(`Failed to cancel transfer: ${error instanceof Error ? error.message : "Unknown error"}`);
+    },
+  });
+
   function invalidateTransferQueries() {
     queryClient.invalidateQueries({ queryKey: ["pendingTransfers"] });
     queryClient.invalidateQueries({ queryKey: ["reachPendingTransfers"] });
+    queryClient.invalidateQueries({ queryKey: ["odstPendingTransfers"] });
     queryClient.invalidateQueries({
       predicate: (query) => {
         const key = JSON.stringify(query.queryKey);
@@ -92,8 +132,9 @@ export const PendingTransfersIcon = () => {
     });
   }
 
-  const isLoading = h3Query.isLoading || reachQuery.isLoading;
+  const isLoading = h3Query.isLoading || reachQuery.isLoading || odstQuery.isLoading;
   const hasPendingTransfers = rows.length > 0;
+  const isDeleting = deleteH3.isPending || deleteReach.isPending || deleteOdst.isPending;
 
   const handleDelete = async (row: TransferRow) => {
     const confirmed = window.confirm(`Cancel transfer for "${row.fileName || "Untitled"}"?`);
@@ -103,11 +144,20 @@ export const PendingTransfersIcon = () => {
     try {
       if (row.game === "reach") {
         await deleteReach.mutateAsync(row.fileId);
+      } else if (row.game === "odst") {
+        await deleteOdst.mutateAsync(row.fileId);
       } else {
         await deleteH3.mutateAsync(row.fileId);
       }
-      const [h3Refetch, reachRefetch] = await Promise.all([h3Query.refetch(), reachQuery.refetch()]);
-      const nextTotal = (h3Refetch.data?.transfers.length ?? 0) + (reachRefetch.data?.transfers.length ?? 0);
+      const [h3Refetch, odstRefetch, reachRefetch] = await Promise.all([
+        h3Query.refetch(),
+        odstQuery.refetch(),
+        reachQuery.refetch(),
+      ]);
+      const nextTotal =
+        (h3Refetch.data?.transfers.length ?? 0) +
+        (odstRefetch.data?.transfers.length ?? 0) +
+        (reachRefetch.data?.transfers.length ?? 0);
       if (isLast || nextTotal === 0) {
         handleClose();
       }
@@ -126,234 +176,255 @@ export const PendingTransfersIcon = () => {
 
   const open = Boolean(anchorEl);
 
-  if (!loggedIn) {
-    return null;
-  }
-
-  if (!hasPendingTransfers) {
+  if (!loggedIn || !hasPendingTransfers) {
     return null;
   }
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "fit-content" }}>
-      <Button
-        ref={buttonRef}
-        onClick={handleClick}
-        startIcon={<Image src="/img/download_icon.png" alt="Active Transfers" width={20} height={20} />}
+    <>
+      <Badge
+        badgeContent={rows.length}
+        color="primary"
+        overlap="rectangular"
         sx={{
-          color: "#4A90E2",
-          textTransform: "none",
-          background: "linear-gradient(180deg, #2A2A2A 0%, #1A1A1A 100%)",
-          border: "1px solid #4A90E2",
-          "&:hover": {
-            background: "linear-gradient(180deg, #3A3A3A 0%, #2A2A2A 100%)",
-            borderColor: "#6BA3E8",
+          "& .MuiBadge-badge": {
+            borderRadius: 0,
+            fontWeight: 700,
+            minWidth: 18,
+            height: 18,
+            fontSize: "0.65rem",
           },
         }}
       >
-        Active Transfers
-      </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleClick}
+          startIcon={<Image src="/img/download_icon.png" alt="" width={20} height={20} />}
+          sx={{ whiteSpace: "nowrap" }}
+        >
+          Active Transfers
+        </Button>
+      </Badge>
+
       <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              width: { xs: "min(100vw - 32px, 380px)", sm: 380 },
+              maxHeight: 440,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            },
+          },
+        }}
       >
-        <Paper
+        <Box
           sx={{
-            background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-            border: "1px solid #333",
-            minWidth: 300,
-            maxWidth: 400,
-            maxHeight: 400,
-            overflow: "auto",
+            px: 2,
+            py: 1.5,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            position: "relative",
+            flexShrink: 0,
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: -1,
+              left: 16,
+              width: 40,
+              height: 2,
+              backgroundColor: "primary.main",
+            },
           }}
         >
-          <Box
-            sx={{
-              p: 2,
-              borderBottom: "1px solid #333",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
             <Box>
-              <Typography variant="h6" sx={{ color: "#7CB342", fontWeight: 700 }}>
-                Active Transfers ({rows.length})
+              <Typography variant="h6" sx={{ color: "text.primary", lineHeight: 1.2 }}>
+                Active transfers
               </Typography>
-              <Typography variant="caption" sx={{ color: "#888", display: "block" }}>
-                Halo 3: {h3Transfers.length}/{h3Max} · Reach: {reachTransfers.length}/{reachMax}
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
+                Halo 3 {h3Transfers.length}/{h3Max} · ODST {odstTransfers.length}/{odstMax} · Reach {reachTransfers.length}/{reachMax}
               </Typography>
             </Box>
-            <IconButton
-              size="small"
-              onClick={handleClose}
-              sx={{
-                color: "#888",
-                "&:hover": {
-                  color: "#fff",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
+            <IconButton size="small" onClick={handleClose} aria-label="Close transfers">
               <CloseIcon fontSize="small" />
             </IconButton>
-          </Box>
+          </Stack>
+        </Box>
+
+        <Box sx={{ overflow: "auto", flex: 1 }}>
           {isLoading ? (
-            <Box sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
-                Loading...
-              </Typography>
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <LoadingSpinner size={48} />
             </Box>
           ) : rows.length > 0 ? (
-            <List sx={{ p: 0 }}>
-              {rows.map((transfer) => {
-                const ft = transfer.fileType ?? 0;
-                const isReach = transfer.game === "reach";
-                const fileDate =
-                  transfer.fileDate instanceof Date
-                    ? transfer.fileDate
-                    : transfer.fileDate
-                      ? new Date(transfer.fileDate)
-                      : null;
+            rows.map((transfer, index) => {
+              const ft = transfer.fileType ?? 0;
+              const game = transfer.game;
+              const isReach = game === "reach";
+              const isScreenshot = isScreenshotTransfer(game, ft);
+              const fileDate =
+                transfer.fileDate instanceof Date
+                  ? transfer.fileDate
+                  : transfer.fileDate
+                    ? new Date(transfer.fileDate)
+                    : null;
 
-                const primaryLink =
-                  isReach || !transfer.fileAuthor ? (
-                    <Typography variant="body2" sx={{ color: "#E0E0E0", fontWeight: 600 }}>
-                      {transfer.fileName || "Untitled"}
-                    </Typography>
-                  ) : (
-                    <Link
-                      href={`/halo3/player/${encodeURIComponent(transfer.fileAuthor)}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                      onClick={handleClose}
+              const title = transfer.fileName || "Untitled";
+              const titleNode =
+                isReach || !transfer.fileAuthor || !isLinkableGamertag(transfer.fileAuthor) ? (
+                  <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.25 }}>
+                    {title}
+                  </Typography>
+                ) : (
+                  <Link
+                    href={`/halo3/player/${encodeURIComponent(transfer.fileAuthor)}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                    onClick={handleClose}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 600,
+                        lineHeight: 1.25,
+                        "&:hover": { color: "secondary.main" },
+                      }}
                     >
-                      <Typography variant="body2" sx={{ color: "#E0E0E0", fontWeight: 600 }}>
-                        {transfer.fileName || "Untitled"}
-                      </Typography>
-                    </Link>
-                  );
+                      {title}
+                    </Typography>
+                  </Link>
+                );
 
-                return (
-                  <ListItem
-                    key={`${transfer.game}-${transfer.fileId}`}
+              const fileShareGame = game === "reach" ? "reach" : game === "odst" ? "odst" : "halo3";
+
+              return (
+                <Box key={`${transfer.game}-${transfer.fileId}`}>
+                  {index > 0 && <Divider />}
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="center"
                     sx={{
-                      borderBottom: "1px solid #333",
-                      "&:hover": {
-                        backgroundColor: "rgba(124, 179, 66, 0.1)",
-                      },
+                      px: 2,
+                      py: 1.25,
+                      transition: "background-color 0.15s ease",
+                      "&:hover": { backgroundColor: "rgba(124, 179, 66, 0.06)" },
                     }}
                   >
-                    <ListItemAvatar sx={{ minWidth: 96, mr: 2 }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: 80,
-                          height: "100%",
-                          minHeight: 80,
-                        }}
-                      >
+                    <Box
+                      sx={{
+                        flexShrink: 0,
+                        width: 72,
+                        height: 72,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        backgroundColor: "rgba(0, 0, 0, 0.28)",
+                      }}
+                    >
+                      <Box sx={{ width: "88%", maxWidth: 64 }}>
                         <FileshareFiletypeIcon
-                          fileShareGame={isReach ? "reach" : "halo3"}
+                          fileShareGame={fileShareGame}
                           filetype={ft}
-                          size={80}
+                          size="100%"
                           shareId={transfer.shareId}
                           slot={!isReach ? transfer.slot : undefined}
                           fileId={transfer.fileId}
-                          filename={
-                            (isReach && ft === 2) || (!isReach && ft === 13)
-                              ? transfer.fileName || undefined
-                              : undefined
-                          }
-                          description={
-                            (isReach && ft === 2) || (!isReach && ft === 13)
-                              ? transfer.fileDescription || undefined
-                              : undefined
-                          }
-                          author={
-                            (isReach && ft === 2) || (!isReach && ft === 13)
-                              ? transfer.fileAuthor || undefined
-                              : undefined
-                          }
+                          filename={isScreenshot ? transfer.fileName || undefined : undefined}
+                          description={isScreenshot ? transfer.fileDescription || undefined : undefined}
+                          author={isScreenshot ? transfer.fileAuthor || undefined : undefined}
                           mapId={
-                            isReach && (ft === 3 || ft === 4)
+                            isReach && (ft === 3 || ft === 4 || ft === 5)
                               ? (transfer as Extract<TransferRow, { game: "reach" }>).mapId ?? undefined
+                              : undefined
+                          }
+                          iconIndex={
+                            isReach
+                              ? (transfer as Extract<TransferRow, { game: "reach" }>).iconIndex ?? undefined
                               : undefined
                           }
                           gameEngineType={transfer.gameEngineType ?? undefined}
                         />
                       </Box>
-                    </ListItemAvatar>
-                    <ListItemText
-                      sx={{ flex: 1 }}
-                      primary={
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                          {primaryLink}
-                          <Typography
-                            component="span"
-                            variant="caption"
-                            sx={{
-                              color: isReach ? "#9CCC65" : "#64B5F6",
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            {isReach ? "Reach" : "H3"}
-                          </Typography>
-                        </Box>
-                      }
-                      secondary={
-                        <Box>
-                          <Typography variant="caption" sx={{ color: "#B0B0B0", display: "block" }}>
+                    </Box>
+
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 0.25 }}>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>{titleNode}</Box>
+                        <Chip
+                          label={gameLabel(game)}
+                          size="small"
+                          variant="outlined"
+                          sx={{
+                            height: 20,
+                            fontSize: "0.625rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.04em",
+                            flexShrink: 0,
+                          }}
+                        />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.3 }}>
+                        {transfer.fileAuthor ? (
+                          <>
                             by{" "}
-                            {transfer.fileAuthor ? (
-                              <Gamertag>{transfer.fileAuthor}</Gamertag>
-                            ) : (
-                              "Unknown"
-                            )}
-                          </Typography>
-                          {fileDate && !Number.isNaN(fileDate.getTime()) && (
-                            <Typography variant="caption" sx={{ color: "#888", display: "block" }}>
-                              <DateTimeDisplay date={fileDate} formatString="MMM d, yyyy" />
-                            </Typography>
-                          )}
-                        </Box>
-                      }
-                    />
+                            <GamertagLink
+                              gamertag={transfer.fileAuthor}
+                              variant="caption"
+                              underline="hover"
+                              sx={{ display: "inline" }}
+                            />
+                          </>
+                        ) : (
+                          "Unknown author"
+                        )}
+                      </Typography>
+                      {fileDate && !Number.isNaN(fileDate.getTime()) && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.3 }}>
+                          <DateTimeDisplay date={fileDate} formatString="MMM d, yyyy" />
+                        </Typography>
+                      )}
+                    </Box>
+
                     <IconButton
                       size="small"
-                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                        e.stopPropagation();
-                        void handleDelete(transfer);
-                      }}
-                      disabled={deleteH3.isPending || deleteReach.isPending}
+                      aria-label={`Cancel transfer for ${title}`}
+                      onClick={() => void handleDelete(transfer)}
+                      disabled={isDeleting}
                       sx={{
-                        color: "#888",
+                        flexShrink: 0,
+                        color: "text.secondary",
                         "&:hover": {
-                          color: "#ff4444",
-                          backgroundColor: "rgba(255, 68, 68, 0.1)",
+                          color: "error.main",
+                          backgroundColor: "rgba(239, 83, 80, 0.1)",
                         },
                       }}
                     >
-                      <DeleteIcon fontSize="small" />
+                      <DeleteOutlineIcon fontSize="small" />
                     </IconButton>
-                  </ListItem>
-                );
-              })}
-            </List>
+                  </Stack>
+                </Box>
+              );
+            })
           ) : (
-            <Box sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
+            <Box sx={{ px: 2, py: 3, textAlign: "center" }}>
+              <Typography variant="body2" color="text.secondary">
                 No active transfers
               </Typography>
             </Box>
           )}
-        </Paper>
+        </Box>
       </Popover>
-    </Box>
+    </>
   );
 };

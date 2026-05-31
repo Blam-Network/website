@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Fixedsys";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  font-smooth: never;
+  src: url("/fonts/fixedsys-excelsior.woff2") format("woff2");
+}

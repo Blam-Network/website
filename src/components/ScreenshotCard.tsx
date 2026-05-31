@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Paper, Box, Typography } from "@mui/material";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
-import Link from "next/link";
 import { ScreenshotModal } from "./ScreenshotModal";
 import { DateTimeDisplay } from "./DateTimeDisplay";
+import { GamertagLink } from "./Gamertag";
 
 interface ScreenshotCardProps {
   screenshotId: string;
@@ -88,14 +88,12 @@ export const ScreenshotCard = ({
         }}
         sx={{
           overflow: 'hidden',
-          background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
-          border: '1px solid #333',
           cursor: imageError ? 'default' : 'pointer',
-          '&:hover': {
-            borderColor: imageError ? '#333' : '#7CB342',
-            boxShadow: imageError ? 'none' : '0 0 10px rgba(124, 179, 66, 0.2)',
+          borderRadius: 0,
+          '&:hover': imageError ? {} : {
+            borderColor: 'primary.main',
           },
-          transition: 'all 0.3s ease',
+          transition: 'all 0.2s ease',
         }}
       >
         <Box
@@ -103,7 +101,7 @@ export const ScreenshotCard = ({
             position: 'relative',
             width: '100%',
             paddingBottom: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
-            backgroundColor: '#0F0F0F',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
             overflow: 'hidden',
           }}
         >
@@ -178,29 +176,18 @@ export const ScreenshotCard = ({
           )}
         </Box>
         <Box sx={{ p: 1 }}>
-          <Typography variant='body2' sx={{ fontWeight: 500, color: '#E0E0E0' }}>
+          <Typography variant='body2' sx={{ fontWeight: 600 }}>
             {filename}
           </Typography>
           <Typography variant='caption' color='text.secondary' sx={{ display: 'block' }}>
             {author ? (
               <>
-                by{' '}
-                <Link
-                  href={`/halo3/player/${author}`}
+                by{" "}
+                <GamertagLink
+                  gamertag={author}
+                  linkSx={{ color: "#4A90E2" }}
                   onClick={(e) => e.stopPropagation()}
-                  style={{
-                    color: '#4A90E2',
-                    textDecoration: 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.textDecoration = 'underline';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.textDecoration = 'none';
-                  }}
-                >
-                  {author}
-                </Link>
+                />
               </>
             ) : (
               description

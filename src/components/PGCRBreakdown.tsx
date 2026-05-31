@@ -12,7 +12,7 @@ import type { Medals } from "../api/halo3/carnage-report/players";
 import { getDamageSourceCategory, getDamageSourceName } from "../api/halo3/carnage-report/players";
 import { RouterOutputs } from "../api/router";
 import { Medal } from "./Medal";
-import { isGuestXuid } from "../utils/xuid";
+import { formatGamertag, isLinkableGamertag } from "./Gamertag";
 
 type CarnageReport =
   | RouterOutputs["sunrise2"]["getCarnageReport"]
@@ -133,7 +133,20 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                             }} 
                                             size={25} 
                                         />
-                                        {isGuestXuid(player.player_xuid) ? (
+                                        {isLinkableGamertag(player.player_name, { authorXuid: player.player_xuid }) ? (
+                                            <Link 
+                                                href={`/halo3/player/${encodeURIComponent(player.player_name)}`}
+                                                style={{
+                                                    color: rowColor.textColor,
+                                                    textDecoration: 'none',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.875rem',
+                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                                }}
+                                            >
+                                                {formatGamertag(player.player_name)}
+                                            </Link>
+                                        ) : (
                                             <Typography
                                                 component="span"
                                                 sx={{
@@ -145,21 +158,8 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                                     opacity: 0.7,
                                                 }}
                                             >
-                                                {player.player_name}
+                                                {formatGamertag(player.player_name)}
                                             </Typography>
-                                        ) : (
-                                            <Link 
-                                                href={`/halo3/player/${encodeURIComponent(player.player_name)}`}
-                                                style={{
-                                                    color: rowColor.textColor,
-                                                    textDecoration: 'none',
-                                                    fontWeight: 600,
-                                                    fontSize: '0.875rem',
-                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
-                                                }}
-                                            >
-                                                {player.player_name}
-                                            </Link>
                                         )}
                                     </Box>
                                     <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>

@@ -14,6 +14,7 @@ const ReachPendingTransferSchema = z.object({
   shareId: z.string(),
   slot: z.number(),
   gameEngineType: z.number().nullable(),
+  iconIndex: z.number().nullable().optional(),
   mapId: z.number().nullable().optional(),
 });
 

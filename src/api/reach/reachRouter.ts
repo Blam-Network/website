@@ -40,8 +40,9 @@ const fileshareFiles = publicProcedure
   .input(
     z.object({
       page: z.number().min(1).default(1),
-      pageSize: z.number().min(1).max(100).default(48),
+      pageSize: z.number().min(1).max(100).default(50),
       fileType: z.enum(["maps", "gametypes", "films", "screenshots"]).optional(),
+      search: z.string().optional(),
     }),
   )
   .query(async ({ input }) => {
@@ -50,6 +51,9 @@ const fileshareFiles = publicProcedure
     params.set("pageSize", String(input.pageSize));
     if (input.fileType) {
       params.set("fileType", input.fileType);
+    }
+    if (input.search?.trim()) {
+      params.set("search", input.search.trim());
     }
     const response = await reachAxios.get(`/haloreach/fileshare/files?${params.toString()}`);
     const parsed = FileshareFilesResponseSchema.safeParse(response.data);

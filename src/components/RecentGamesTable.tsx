@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 
@@ -63,13 +63,23 @@ interface RecentGamesTableProps {
 
 export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/halo3" }: RecentGamesTableProps) {
     return (
-        <TableContainer component={Paper} sx={{ background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333', overflow: 'hidden', flex: stickyHeader ? 1 : undefined }}>
+        <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{
+                flex: stickyHeader ? 1 : undefined,
+                minHeight: stickyHeader ? 0 : undefined,
+                border: "1px solid",
+                borderColor: "divider",
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }}
+        >
             <Table size="small" stickyHeader={stickyHeader} sx={{ '& .MuiTableCell-root': { py: 0.75, px: 1.5 } }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Game</TableCell>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Type</TableCell>
-                        <TableCell sx={{ color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', backgroundColor: stickyHeader ? '#1A1A1A' : undefined, py: 1, fontSize: '0.875rem' }}>Date</TableCell>
+                        <TableCell sx={{ backgroundColor: stickyHeader ? 'background.paper' : undefined, color: 'primary.main', fontWeight: 700, borderColor: 'divider' }}>Game</TableCell>
+                        <TableCell sx={{ backgroundColor: stickyHeader ? 'background.paper' : undefined, color: 'primary.main', fontWeight: 700, borderColor: 'divider' }}>Type</TableCell>
+                        <TableCell sx={{ backgroundColor: stickyHeader ? 'background.paper' : undefined, color: 'primary.main', fontWeight: 700, borderColor: 'divider' }}>Date</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -82,48 +92,38 @@ export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/ha
                         const hopperName = 'hopper_name' in game ? game.hopper_name : null;
                         const campaignDifficulty = 'campaign_difficulty' in game ? game.campaign_difficulty : undefined;
                         
-                        // Determine game type
                         let gameType: string;
                         if (isCampaign) {
                             gameType = 'Campaign';
                         } else if (hopperName) {
                             gameType = 'Matchmaking';
                         } else {
-                            // Check if it's a Forge map (Forge canvas maps have specific IDs)
-                            // Forge canvas maps: 700 (Foundry), 701 (Sandbox)
                             const isForgeMap = game.map_id === 700 || game.map_id === 701;
                             gameType = isForgeMap ? 'Forge' : 'Custom Games';
                         }
 
-
                         return (
-                            <TableRow
-                                key={game.id}
-                                sx={{
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(124, 179, 66, 0.1)',
-                                    },
-                                }}
-                            >
-                                <TableCell sx={{ color: '#E0E0E0' }}>
-                                    <Link href={reportUrl} style={{ textDecoration: 'underline', color: '#4A90E2' }}>
+                            <TableRow key={game.id}>
+                                <TableCell>
+                                    <MuiLink
+                                        component={Link}
+                                        href={reportUrl}
+                                        underline="hover"
+                                        sx={{ fontWeight: 600, fontSize: '0.8125rem' }}
+                                    >
                                         {isCampaign ? (
-                                            <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                                                {getMissionName(game.map_id)} on {getDifficultyName(campaignDifficulty)}
-                                            </Typography>
+                                            `${getMissionName(game.map_id)} on ${getDifficultyName(campaignDifficulty)}`
                                         ) : (
-                                            <Typography variant='body2' sx={{ display: 'inline', fontWeight: 600, color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                                                {gameVariantName ?? 'Gametype'} on {mapVariantName ?? 'Unknown Map'}
-                                            </Typography>
+                                            `${gameVariantName ?? 'Gametype'} on ${mapVariantName ?? 'Unknown Map'}`
                                         )}
-                                    </Link>
+                                    </MuiLink>
                                 </TableCell>
-                                <TableCell sx={{ color: '#B0B0B0' }}>
-                                    <Typography variant='body2' sx={{ color: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4 }}>
+                                <TableCell sx={{ color: 'text.secondary' }}>
+                                    <Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>
                                         {gameType}
                                     </Typography>
                                 </TableCell>
-                                <TableCell sx={{ color: '#B0B0B0', fontSize: '0.8125rem' }}>
+                                <TableCell sx={{ color: 'text.secondary', fontSize: '0.8125rem' }}>
                                     <DateTimeDisplay date={game.finish_time} />
                                 </TableCell>
                             </TableRow>
@@ -134,4 +134,3 @@ export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/ha
         </TableContainer>
     );
 }
-
