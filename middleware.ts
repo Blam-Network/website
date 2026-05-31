@@ -3,6 +3,17 @@ import type { NextRequest } from "next/server";
 import { getParsedToken } from "@/server/auth/jwt";
 
 export async function middleware(req: NextRequest) {
+  const host = req.headers.get("host");
+  if (host === "www.blam.network") {
+    const url = req.nextUrl.clone();
+    url.host = "blam.network";
+    return NextResponse.redirect(url, 308);
+  }
+
+  if (!req.nextUrl.pathname.startsWith("/reach/admin")) {
+    return NextResponse.next();
+  }
+
   const secret = process.env.NEXTAUTH_SECRET;
   if (!secret) {
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
@@ -17,5 +28,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/reach/admin", "/reach/admin/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
