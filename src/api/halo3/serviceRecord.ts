@@ -36,6 +36,7 @@ const ServiceRecordSchema = jsonStringifySchema(z.object({
     firstPlayed: z.coerce.date().optional(),
     lastPlayed: z.coerce.date().optional(),
     gamesCompleted: z.number().optional(),
+    roadToReconCompleted: z.boolean().optional(),
 }));
 
 export type ServiceRecord = z.infer<typeof ServiceRecordSchema>;

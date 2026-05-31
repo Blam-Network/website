@@ -1,32 +1,15 @@
-import { z } from "zod";
 import { protectedProcedure } from "../trpc";
 import { reachAxios } from "./reachAxios";
-import { jsonStringifySchema } from "@/src/zod";
 import { xuidToHex } from "@/src/utils/xuid";
+import { assertAxiosOk } from "../http/axiosError";
+import {
+  PendingTransfersResponseSchema,
+  type PendingTransferItem,
+  type PendingTransfersResponse,
+} from "../fileshare/pendingTransferSchema";
 
-const ReachPendingTransferSchema = z.object({
-  fileId: z.string(),
-  fileName: z.string().nullable(),
-  fileDescription: z.string().nullable(),
-  fileAuthor: z.string().nullable(),
-  fileType: z.number().nullable(),
-  fileDate: z.union([z.string(), z.coerce.date()]).nullable(),
-  shareId: z.string(),
-  slot: z.number(),
-  gameEngineType: z.number().nullable(),
-  iconIndex: z.number().nullable().optional(),
-  mapId: z.number().nullable().optional(),
-});
-
-const ReachPendingTransfersResponseSchema = jsonStringifySchema(
-  z.object({
-    transfers: z.array(ReachPendingTransferSchema),
-    maxTransfers: z.number(),
-  }),
-);
-
-export type ReachPendingTransfer = z.infer<typeof ReachPendingTransferSchema>;
-export type ReachPendingTransfersResponse = z.infer<typeof ReachPendingTransfersResponseSchema>;
+export type ReachPendingTransfer = PendingTransferItem;
+export type { PendingTransfersResponse as ReachPendingTransfersResponse };
 
 export const reachPendingTransfers = protectedProcedure.query(async (opts) => {
   const response = await reachAxios.get("/haloreach/fileshare/transfers", {
@@ -36,11 +19,13 @@ export const reachPendingTransfers = protectedProcedure.query(async (opts) => {
       Authorization: opts.ctx.auth.tokens.xsts,
     },
   });
+  assertAxiosOk(response);
+
   let data = response.data;
   if (typeof data === "string") {
     data = JSON.parse(data);
   }
-  const parsed = ReachPendingTransfersResponseSchema.safeParse(data);
+  const parsed = PendingTransfersResponseSchema.safeParse(data);
   if (!parsed.success) {
     console.error(
       "[reachPendingTransfers] Schema validation failed:",

@@ -2,6 +2,7 @@
 
 import { Button, Stack } from "@mui/material";
 import { FILES_GAMES, FilesGame, parseFilesGame } from "@/src/components/files/filesPageTypes";
+import { GameIcon } from "@/src/components/GameIcon";
 
 interface ScreenshotsPageFiltersProps {
   game: FilesGame;
@@ -22,7 +23,10 @@ export function ScreenshotsPageFilters({ game, onGameChange }: ScreenshotsPageFi
             ...(index > 0 && { ml: "-1px" }),
           }}
         >
-          {label}
+          <Stack direction="row" alignItems="center" spacing={0.75}>
+            <GameIcon game={value} size={16} aria-hidden />
+            <span>{label}</span>
+          </Stack>
         </Button>
       ))}
     </Stack>

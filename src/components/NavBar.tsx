@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useQuery } from '@tanstack/react-query';
 import { api } from "../trpc/client";
 import { useNightmap } from "../contexts/NightmapContext";
+import { GameIcon } from "./GameIcon";
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -108,33 +109,43 @@ export const NavBar = ({ session }: { session: Session | null }) => {
                     ))}
                 </Stack>
                 {playerCount && (
-                    <Typography
-                        variant="caption"
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={0.75}
                         sx={{
                             color: 'text.secondary',
-                            fontWeight: 600,
-                            whiteSpace: 'nowrap',
-                            display: { xs: 'none', md: 'block' },
-                            letterSpacing: '0.03em',
-                            '&::before': {
-                                content: '""',
-                                display: 'inline-block',
+                            display: { xs: 'none', md: 'flex' },
+                            flexShrink: 0,
+                        }}
+                    >
+                        <Box
+                            sx={{
                                 width: 6,
                                 height: 6,
-                                borderRadius: 0,
+                                flexShrink: 0,
                                 backgroundColor: 'primary.main',
-                                mr: 1,
                                 boxShadow: '0 0 6px rgba(124, 179, 66, 0.8)',
                                 animation: 'pulse 2s ease-in-out infinite',
                                 '@keyframes pulse': {
                                     '0%, 100%': { opacity: 1 },
                                     '50%': { opacity: 0.4 },
                                 },
-                            },
-                        }}
-                    >
-                        {playerCount}
-                    </Typography>
+                            }}
+                        />
+                        <GameIcon game="halo3" size={18} aria-hidden />
+                        <Typography
+                            variant="caption"
+                            component="span"
+                            sx={{
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                letterSpacing: '0.03em',
+                            }}
+                        >
+                            {playerCount}
+                        </Typography>
+                    </Stack>
                 )}
             </Stack>
         </Box>

@@ -49,7 +49,7 @@ export const PendingTransfersIcon = () => {
   const queryClient = useQueryClient();
 
   const h3Query = useQuery({
-    queryKey: ["pendingTransfers"],
+    queryKey: ["halo3PendingTransfers"],
     queryFn: () => api.sunrise2.pendingTransfers.query(),
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
@@ -75,10 +75,6 @@ export const PendingTransfersIcon = () => {
   const h3Transfers = h3Query.data?.transfers ?? [];
   const reachTransfers = reachQuery.data?.transfers ?? [];
   const odstTransfers = odstQuery.data?.transfers ?? [];
-  const h3Max = h3Query.data?.maxTransfers ?? 8;
-  const reachMax = reachQuery.data?.maxTransfers ?? 8;
-  const odstMax = odstQuery.data?.maxTransfers ?? 8;
-
   const rows: TransferRow[] = [
     ...h3Transfers.map((t: PendingTransfer) => ({ ...t, game: "halo3" as const })),
     ...odstTransfers.map((t: OdstPendingTransfer) => ({ ...t, game: "odst" as const })),
@@ -113,6 +109,7 @@ export const PendingTransfersIcon = () => {
   });
 
   function invalidateTransferQueries() {
+    queryClient.invalidateQueries({ queryKey: ["halo3PendingTransfers"] });
     queryClient.invalidateQueries({ queryKey: ["pendingTransfers"] });
     queryClient.invalidateQueries({ queryKey: ["reachPendingTransfers"] });
     queryClient.invalidateQueries({ queryKey: ["odstPendingTransfers"] });
@@ -238,18 +235,16 @@ export const PendingTransfersIcon = () => {
           }}
         >
           <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
-            <Box>
-              <Typography variant="h6" sx={{ color: "text.primary", lineHeight: 1.2 }}>
-                Active transfers
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                Halo 3 {h3Transfers.length}/{h3Max} · ODST {odstTransfers.length}/{odstMax} · Reach {reachTransfers.length}/{reachMax}
-              </Typography>
-            </Box>
+            <Typography variant="h6" sx={{ color: "text.primary", lineHeight: 1.2 }}>
+              Active transfers
+            </Typography>
             <IconButton size="small" onClick={handleClose} aria-label="Close transfers">
               <CloseIcon fontSize="small" />
             </IconButton>
           </Stack>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75, lineHeight: 1.4, pr: 1 }}>
+            These files will be transferred to your Xbox 360 console next time you play Halo
+          </Typography>
         </Box>
 
         <Box sx={{ overflow: "auto", flex: 1 }}>

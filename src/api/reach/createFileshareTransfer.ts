@@ -2,6 +2,7 @@ import { protectedProcedure } from "../trpc";
 import { reachAxios } from "./reachAxios";
 import { z } from "zod";
 import { xuidToHex } from "@/src/utils/xuid";
+import { assertAxiosOk } from "../http/axiosError";
 
 export const reachCreateFileshareTransfer = protectedProcedure
   .input(z.object({ fileId: z.string().min(1) }))
@@ -18,9 +19,5 @@ export const reachCreateFileshareTransfer = protectedProcedure
         },
       },
     );
-    if (response.status && response.status >= 400) {
-      const body =
-        typeof response.data === "string" ? response.data : JSON.stringify(response.data ?? "");
-      throw new Error(`reachCreateFileshareTransfer: ${response.status} ${body.slice(0, 200)}`);
-    }
+    assertAxiosOk(response);
   });

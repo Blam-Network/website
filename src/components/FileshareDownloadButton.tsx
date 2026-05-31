@@ -3,6 +3,7 @@
 import { Typography, Box, Stack } from "@mui/material";
 import Image from "next/image";
 import { api } from "../trpc/client";
+import { useToast } from "@/src/contexts/ToastContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -11,6 +12,15 @@ import type { OdstPendingTransfer } from "@/src/api/odst/pendingTransfers";
 import type { ReachPendingTransfer } from "@/src/api/reach/pendingTransfers";
 
 export type FileshareDownloadGame = "halo3" | "reach" | "odst";
+
+function getTransferErrorMessage(err: unknown): string {
+  if (err instanceof Error && err.message) return err.message;
+  return "Failed to create transfer";
+}
+
+function getCapacityMessage(used: number, max: number, gameTitle: string): string {
+  return `Maximum transfers reached (${used}/${max}). Please complete Active Transfers by playing ${gameTitle} on your Xbox 360, or cancel existing transfers before adding new ones.`;
+}
 
 export const FileshareDownloadButton = ({
   fileId,
@@ -25,15 +35,15 @@ export const FileshareDownloadButton = ({
   const { data: session } = useSession();
   const loggedIn = !!session?.user?.xuid;
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const { showError: showErrorToast } = useToast();
 
   const pendingKey =
     game === "reach"
       ? (["reachPendingTransfers"] as const)
       : game === "odst"
         ? (["odstPendingTransfers"] as const)
-        : (["pendingTransfers"] as const);
+        : (["halo3PendingTransfers"] as const);
 
   const { data: pendingTransfersData } = useQuery({
     queryKey: pendingKey,
@@ -50,8 +60,11 @@ export const FileshareDownloadButton = ({
   const pendingTransfers = pendingTransfersData?.transfers ?? [];
   const maxTransfers = pendingTransfersData?.maxTransfers ?? 8;
 
-  const isPending = pendingTransfers.some((t: PendingTransfer | ReachPendingTransfer | OdstPendingTransfer) => t.fileId === fileId);
+  const isPending = pendingTransfers.some(
+    (t: PendingTransfer | ReachPendingTransfer | OdstPendingTransfer) => t.fileId === fileId,
+  );
   const isAtCapacity = pendingTransfers.length >= maxTransfers;
+  const isDisabled = isAtCapacity && !isPending;
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -65,8 +78,8 @@ export const FileshareDownloadButton = ({
     },
     onSuccess: () => {
       setSuccess(true);
-      setError(null);
       setTimeout(() => setSuccess(false), 3000);
+      queryClient.invalidateQueries({ queryKey: ["halo3PendingTransfers"] });
       queryClient.invalidateQueries({ queryKey: ["pendingTransfers"] });
       queryClient.invalidateQueries({ queryKey: ["reachPendingTransfers"] });
       queryClient.invalidateQueries({ queryKey: ["odstPendingTransfers"] });
@@ -78,91 +91,66 @@ export const FileshareDownloadButton = ({
       });
     },
     onError: (err: unknown) => {
-      const errorMessage =
-        err && typeof err === "object" && "message" in err
-          ? String((err as { message?: string }).message)
-          : "Failed to create transfer";
-      setError(errorMessage);
-      setTimeout(() => setError(null), 5000);
+      showErrorToast(getTransferErrorMessage(err), "Transfer failed");
     },
   });
 
   const gameTitle = game === "reach" ? "Halo: Reach" : game === "odst" ? "Halo 3: ODST" : "Halo 3";
   const downloadLabel = compact
-    ? "Download"
+    ? "Download to Xbox 360"
     : game === "reach"
       ? "Download to Halo: Reach"
       : game === "odst"
         ? "Download to Halo 3: ODST"
         : "Download to Halo 3";
-  const downloadTitle = compact ? downloadLabel.replace(/^Download$/, `Download to ${gameTitle}`) : undefined;
-
-  if (error) {
-    return (
-      <Box>
-        <Typography variant="body2" color="error.main" sx={{ mb: 0.5 }}>
-          {error}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          Please complete or cancel existing transfers in-game before adding new ones.
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (success) {
-    return <Typography variant="body2" color="success.main">Transfer created!</Typography>;
-  }
-
-  if (isPending) {
-    return (
-      <Stack
-        direction="row"
-        alignItems="center"
-        spacing={0.5}
-        sx={{
-          opacity: 0.5,
-          cursor: "not-allowed",
-          whiteSpace: "nowrap",
-          flexShrink: 0,
-        }}
-      >
-        <Typography variant="caption" sx={{ color: "text.secondary" }}>
-          Pending…
-        </Typography>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Image src="/img/download_icon.png" alt="" width={14} height={14} style={{ opacity: 0.5 }} />
-        </Box>
-      </Stack>
-    );
-  }
-
-  if (!loggedIn) {
-    return null;
-  }
+  const downloadTitle = compact ? `Download to ${gameTitle} on your Xbox 360` : undefined;
 
   const handleClick = () => {
-    if (isAtCapacity && !isPending) {
-      alert(
-        `Maximum transfers reached (${pendingTransfers.length}/${maxTransfers})\n\nPlease complete Active Transfers by playing ${gameTitle} on your Xbox 360 Console or cancel existing transfers before adding new ones.`,
+    if (isDisabled) {
+      showErrorToast(
+        getCapacityMessage(pendingTransfers.length, maxTransfers, gameTitle),
+        "Transfer failed",
       );
       return;
     }
     mutation.mutate();
   };
 
-  return (
+  const downloadControl = !loggedIn ? null : isPending ? (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={0.5}
+      sx={{
+        opacity: 0.5,
+        cursor: "not-allowed",
+        whiteSpace: "nowrap",
+        flexShrink: 0,
+      }}
+    >
+      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+        Pending…
+      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Image src="/img/download_icon.png" alt="" width={14} height={14} style={{ opacity: 0.5 }} />
+      </Box>
+    </Stack>
+  ) : success ? (
+    <Typography variant="body2" color="success.main">
+      Transfer created!
+    </Typography>
+  ) : (
     <Stack
       direction="row"
       alignItems="center"
       spacing={0.5}
       title={downloadTitle}
       sx={{
-        cursor: isAtCapacity && !isPending ? "not-allowed" : "pointer",
-        opacity: isAtCapacity && !isPending ? 0.6 : 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+        opacity: isDisabled ? 0.6 : 1,
         whiteSpace: "nowrap",
         flexShrink: 0,
-        "&:hover .download-text": { color: isAtCapacity && !isPending ? "inherit" : "primary.main" },
+        "&:hover .download-text": { color: isDisabled ? "inherit" : "primary.main" },
       }}
       onClick={handleClick}
     >
@@ -178,4 +166,6 @@ export const FileshareDownloadButton = ({
       </Box>
     </Stack>
   );
+
+  return downloadControl;
 };
