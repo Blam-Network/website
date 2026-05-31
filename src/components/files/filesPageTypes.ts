@@ -52,19 +52,8 @@ export function isValidFilesGame(value: string): value is FilesGame {
   return value === "halo3" || value === "odst" || value === "reach";
 }
 
-export function getFileshareFileHref(
-  game: FilesGame,
-  fileId: string,
-  options?: { filesListQuery?: FilesListQuery; returnTo?: string },
-): string {
-  const base = `/files/${game}/${fileId}`;
-  const returnTo =
-    options?.returnTo ??
-    (options?.filesListQuery ? buildFilesListHref(options.filesListQuery) : undefined);
-  if (!returnTo) {
-    return base;
-  }
-  return `${base}?returnTo=${encodeURIComponent(returnTo)}`;
+export function getFileshareFileHref(game: FilesGame, fileId: string): string {
+  return `/files/${game}/${fileId}`;
 }
 
 export type FilesListQuery = {
@@ -87,20 +76,6 @@ export function buildFilesListHref(query: FilesListQuery): string {
     params.set("search", query.search.trim());
   }
   return `/files?${params.toString()}`;
-}
-
-export function parseFilesReturnTo(
-  value: string | string[] | undefined,
-  fallbackGame: FilesGame,
-): string {
-  const raw = Array.isArray(value) ? value[0] : value;
-  if (raw?.startsWith("/files")) {
-    const pathname = raw.split("?")[0];
-    if (pathname === "/files") {
-      return raw;
-    }
-  }
-  return buildFilesListHref({ game: fallbackGame });
 }
 
 export function getFilesGameLabel(game: FilesGame): string {

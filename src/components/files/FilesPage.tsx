@@ -19,7 +19,6 @@ import {
   getFilesGameLabel,
   isValidFileTypeForGame,
   parseFilesGame,
-  type FilesListQuery,
 } from "@/src/components/files/filesPageTypes";
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
@@ -152,21 +151,14 @@ export function FilesPage({ defaultGame = "halo3" }: FilesPageProps) {
       ? "Sign in with Xbox LIVE to queue files for download on your Xbox 360 (Halo: Reach)."
       : "Sign in with Xbox LIVE to download files to your Xbox 360 console";
 
-  const filesListQuery: FilesListQuery = {
-    game,
-    ...(page > 1 ? { page: String(page) } : {}),
-    ...(fileType ? { fileType } : {}),
-    ...(search.trim() ? { search: search.trim() } : {}),
-  };
-
   const renderFileCard = (file: FileshareFile) => {
     switch (game) {
       case "odst":
-        return <OdstFileshareFileCard key={file.id} file={file} filesListQuery={filesListQuery} />;
+        return <OdstFileshareFileCard key={file.id} file={file} />;
       case "reach":
-        return <ReachFileshareFileCard key={file.id} file={file} filesListQuery={filesListQuery} />;
+        return <ReachFileshareFileCard key={file.id} file={file} />;
       default:
-        return <Halo3FileshareFileCard key={file.id} file={file} filesListQuery={filesListQuery} />;
+        return <Halo3FileshareFileCard key={file.id} file={file} />;
     }
   };
 

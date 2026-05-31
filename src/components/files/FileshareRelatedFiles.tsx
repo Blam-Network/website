@@ -8,23 +8,21 @@ import type { FilesGame } from "@/src/components/files/filesPageTypes";
 interface FileshareRelatedFilesProps {
   game: FilesGame;
   files: FileshareFile[];
-  filesReturnTo?: string;
 }
 
-export function FileshareRelatedFiles({ game, files, filesReturnTo }: FileshareRelatedFilesProps) {
+export function FileshareRelatedFiles({ game, files }: FileshareRelatedFilesProps) {
   if (files.length === 0) {
     return null;
   }
 
   const renderFileCard = (file: FileshareFile) => {
-    const linkOptions = filesReturnTo ? { returnTo: filesReturnTo } : undefined;
     switch (game) {
       case "odst":
-        return <OdstFileshareFileCard key={file.id} file={file} linkOptions={linkOptions} />;
+        return <OdstFileshareFileCard key={file.id} file={file} />;
       case "reach":
-        return <ReachFileshareFileCard key={file.id} file={file} linkOptions={linkOptions} />;
+        return <ReachFileshareFileCard key={file.id} file={file} />;
       default:
-        return <Halo3FileshareFileCard key={file.id} file={file} linkOptions={linkOptions} />;
+        return <Halo3FileshareFileCard key={file.id} file={file} />;
     }
   };
 

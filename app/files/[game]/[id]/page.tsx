@@ -1,16 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Button, Container, Stack } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Container, Stack } from "@mui/material";
 import { api } from "@/src/trpc/server";
 import { FileshareFileDetail } from "@/src/components/files/FileshareFileDetail";
 import { FileshareRelatedFiles } from "@/src/components/files/FileshareRelatedFiles";
 import { FileshareSourceGameSection } from "@/src/components/files/FileshareSourceGameSection";
+import { FileshareBackButton } from "@/src/components/files/FileshareBackButton";
 import {
   getFilesGameLabel,
   isValidFilesGame,
-  parseFilesReturnTo,
   type FilesGame,
 } from "@/src/components/files/filesPageTypes";
 import { getSiteUrl } from "@/src/utils/siteUrl";
@@ -22,7 +21,6 @@ import type { FileshareSourceGame } from "@/src/api/files/fileshareSourceGameSch
 
 interface PageProps {
   params: { game: string; id: string };
-  searchParams: { returnTo?: string | string[] };
 }
 
 async function loadFile(game: FilesGame, fileId: string) {
@@ -89,7 +87,7 @@ async function loadSourceGame(
   }
 }
 
-export default async function FileshareFilePage({ params, searchParams }: PageProps) {
+export default async function FileshareFilePage({ params }: PageProps) {
   if (!isValidFilesGame(params.game)) {
     notFound();
   }
@@ -98,8 +96,6 @@ export default async function FileshareFilePage({ params, searchParams }: PagePr
   if (!file) {
     notFound();
   }
-
-  const filesReturnTo = parseFilesReturnTo(searchParams.returnTo, params.game);
 
   const relatedFiles = await loadRelatedFiles(params.game, file.id);
   const sourceGame = await loadSourceGame(params.game, file.id, file.header.filetype);
@@ -112,14 +108,7 @@ export default async function FileshareFilePage({ params, searchParams }: PagePr
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       <Stack spacing={3}>
-        <Button
-          component={Link}
-          href={filesReturnTo}
-          startIcon={<ArrowBackIcon />}
-          sx={{ alignSelf: "flex-start", textTransform: "none" }}
-        >
-          Back to Files
-        </Button>
+        <FileshareBackButton />
 
         <FileshareFileDetail game={params.game} file={file} />
 
@@ -134,7 +123,7 @@ export default async function FileshareFilePage({ params, searchParams }: PagePr
           <FileshareSourceGameSection game={params.game} sourceGame={sourceGame} />
         ) : null}
 
-        <FileshareRelatedFiles game={params.game} files={relatedFiles} filesReturnTo={filesReturnTo} />
+        <FileshareRelatedFiles game={params.game} files={relatedFiles} />
       </Stack>
     </Container>
   );

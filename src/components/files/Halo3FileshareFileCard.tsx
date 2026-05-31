@@ -5,16 +5,14 @@ import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { GamertagLink } from "@/src/components/Gamertag";
-import { getFileshareFileHref, type FilesListQuery } from "@/src/components/files/filesPageTypes";
+import { getFileshareFileHref } from "@/src/components/files/filesPageTypes";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
 
 interface Halo3FileshareFileCardProps {
   file: FileshareFile;
-  filesListQuery?: FilesListQuery;
-  linkOptions?: { filesListQuery?: FilesListQuery; returnTo?: string };
 }
 
-export function Halo3FileshareFileCard({ file, filesListQuery, linkOptions }: Halo3FileshareFileCardProps) {
+export function Halo3FileshareFileCard({ file }: Halo3FileshareFileCardProps) {
   const isScreenshot = file.header.filetype === 13;
   const formattedDescription = formatFileshareDescription(file.header.description);
 
@@ -32,7 +30,7 @@ export function Halo3FileshareFileCard({ file, filesListQuery, linkOptions }: Ha
       }}
     >
       <Link
-        href={getFileshareFileHref("halo3", file.id, linkOptions ?? { filesListQuery })}
+        href={getFileshareFileHref("halo3", file.id)}
         style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
       >
         <Box

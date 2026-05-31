@@ -5,16 +5,14 @@ import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { GamertagLink } from "@/src/components/Gamertag";
-import { getFileshareFileHref, type FilesListQuery } from "@/src/components/files/filesPageTypes";
+import { getFileshareFileHref } from "@/src/components/files/filesPageTypes";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
 
 interface ReachFileshareFileCardProps {
   file: FileshareFile;
-  filesListQuery?: FilesListQuery;
-  linkOptions?: { filesListQuery?: FilesListQuery; returnTo?: string };
 }
 
-export function ReachFileshareFileCard({ file, filesListQuery, linkOptions }: ReachFileshareFileCardProps) {
+export function ReachFileshareFileCard({ file }: ReachFileshareFileCardProps) {
   const isScreenshot = file.header.filetype === 2;
   const formattedDescription = formatFileshareDescription(file.header.description);
 
@@ -32,7 +30,7 @@ export function ReachFileshareFileCard({ file, filesListQuery, linkOptions }: Re
       }}
     >
       <Link
-        href={getFileshareFileHref("reach", file.id, linkOptions ?? { filesListQuery })}
+        href={getFileshareFileHref("reach", file.id)}
         style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
       >
         <Box
