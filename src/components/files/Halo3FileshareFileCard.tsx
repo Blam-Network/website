@@ -5,14 +5,16 @@ import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { GamertagLink } from "@/src/components/Gamertag";
-import { getFileshareFileHref } from "@/src/components/files/filesPageTypes";
+import { getFileshareFileHref, type FilesListQuery } from "@/src/components/files/filesPageTypes";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
 
 interface Halo3FileshareFileCardProps {
   file: FileshareFile;
+  filesListQuery?: FilesListQuery;
+  linkOptions?: { filesListQuery?: FilesListQuery; returnTo?: string };
 }
 
-export function Halo3FileshareFileCard({ file }: Halo3FileshareFileCardProps) {
+export function Halo3FileshareFileCard({ file, filesListQuery, linkOptions }: Halo3FileshareFileCardProps) {
   const isScreenshot = file.header.filetype === 13;
   const formattedDescription = formatFileshareDescription(file.header.description);
 
@@ -30,7 +32,7 @@ export function Halo3FileshareFileCard({ file }: Halo3FileshareFileCardProps) {
       }}
     >
       <Link
-        href={getFileshareFileHref("halo3", file.id)}
+        href={getFileshareFileHref("halo3", file.id, linkOptions ?? { filesListQuery })}
         style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
       >
         <Box
@@ -53,10 +55,6 @@ export function Halo3FileshareFileCard({ file }: Halo3FileshareFileCardProps) {
               size="100%"
               shareId={isScreenshot ? file.shareId : undefined}
               slot={isScreenshot ? file.slotNumber : undefined}
-              fileId={isScreenshot ? file.id : undefined}
-              filename={isScreenshot ? file.header.filename : undefined}
-              description={isScreenshot ? formattedDescription : undefined}
-              author={isScreenshot ? file.header.author : undefined}
               mapId={
                 file.header.filetype === 10 ||
                 file.header.filetype === 11 ||

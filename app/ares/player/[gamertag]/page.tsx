@@ -390,10 +390,6 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                             size="100%"
                             shareId={slot.header.filetype === 13 ? fileShare.id : undefined}
                             slot={slot.header.filetype === 13 ? slot.slotNumber : undefined}
-                            fileId={slot.header.filetype === 13 ? slot.id : undefined}
-                            filename={slot.header.filetype === 13 ? slot.header.filename : undefined}
-                            description={slot.header.filetype === 13 ? slot.header.description : undefined}
-                            author={slot.header.filetype === 13 ? slot.header.author : undefined}
                           />
                         </Box>
                         <Typography variant='body1' sx={{ fontWeight: 600, color: '#9CCC65', mb: 0.5 }}>

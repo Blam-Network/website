@@ -9,10 +9,12 @@ import { games } from "./games";
 import { playerPreviousGames } from "./previousGames";
 import { playerStatistics } from "./playerStatistics";
 import { activityHeatmap } from "./activityHeatmap";
+import { getRelatedFiles } from "./relatedFiles";
 
 export const aresRouter = createTRPCRouter({
   getCarnageReport,
   getCampaignCarnageReport,
+  getRelatedFiles,
   serviceRecord,
   serviceRecords,
   screenshot,

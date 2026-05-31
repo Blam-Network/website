@@ -5,14 +5,16 @@ import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
 import { GamertagLink } from "@/src/components/Gamertag";
-import { getFileshareFileHref } from "@/src/components/files/filesPageTypes";
+import { getFileshareFileHref, type FilesListQuery } from "@/src/components/files/filesPageTypes";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
 
 interface ReachFileshareFileCardProps {
   file: FileshareFile;
+  filesListQuery?: FilesListQuery;
+  linkOptions?: { filesListQuery?: FilesListQuery; returnTo?: string };
 }
 
-export function ReachFileshareFileCard({ file }: ReachFileshareFileCardProps) {
+export function ReachFileshareFileCard({ file, filesListQuery, linkOptions }: ReachFileshareFileCardProps) {
   const isScreenshot = file.header.filetype === 2;
   const formattedDescription = formatFileshareDescription(file.header.description);
 
@@ -30,7 +32,7 @@ export function ReachFileshareFileCard({ file }: ReachFileshareFileCardProps) {
       }}
     >
       <Link
-        href={getFileshareFileHref("reach", file.id)}
+        href={getFileshareFileHref("reach", file.id, linkOptions ?? { filesListQuery })}
         style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
       >
         <Box
@@ -52,11 +54,7 @@ export function ReachFileshareFileCard({ file }: ReachFileshareFileCardProps) {
               iconIndex={file.header.iconIndex}
               size="100%"
               shareId={isScreenshot ? file.shareId : undefined}
-              slot={isScreenshot ? file.slotNumber : undefined}
               fileId={isScreenshot ? file.id : undefined}
-              filename={isScreenshot ? file.header.filename : undefined}
-              description={isScreenshot ? formattedDescription : undefined}
-              author={isScreenshot ? file.header.author : undefined}
               mapId={
                 file.header.filetype === 3 ||
                 file.header.filetype === 4 ||

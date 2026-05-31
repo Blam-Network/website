@@ -66,9 +66,10 @@ export function FileshareFileDetail({ game, file }: FileshareFileDetailProps) {
       </Box>
 
       <Stack
-        direction={{ xs: "column", sm: "row" }}
+        direction={{ xs: "column", sm: isScreenshot ? "column" : "row" }}
         sx={{ alignItems: { sm: "stretch" } }}
       >
+        {!isScreenshot && (
         <Box
           sx={{
             flexShrink: 0,
@@ -90,16 +91,11 @@ export function FileshareFileDetail({ game, file }: FileshareFileDetailProps) {
               gameEngineType={file.header.gameEngineType}
               iconIndex={iconIndex}
               size="100%"
-              shareId={isScreenshot ? file.shareId : undefined}
-              slot={isScreenshot ? file.slotNumber : undefined}
-              fileId={isScreenshot ? file.id : undefined}
-              filename={isScreenshot ? file.header.filename : undefined}
-              description={isScreenshot ? formattedDescription : undefined}
-              author={isScreenshot ? file.header.author : undefined}
               mapId={mapId}
             />
           </Box>
         </Box>
+        )}
 
         <Stack sx={{ flex: 1, p: { xs: 2, sm: 3 }, gap: 2, minWidth: 0 }}>
           <Box>

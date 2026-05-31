@@ -219,10 +219,6 @@ export default function FilesPage() {
                             size={124}
                             shareId={file.header.filetype === 13 ? file.shareId : undefined}
                             slot={file.header.filetype === 13 ? file.slotNumber : undefined}
-                            fileId={file.header.filetype === 13 ? file.id : undefined}
-                            filename={file.header.filetype === 13 ? file.header.filename : undefined}
-                            description={file.header.filetype === 13 ? file.header.description : undefined}
-                            author={file.header.filetype === 13 ? file.header.author : undefined}
                             mapId={
                               file.header.filetype === 10 ||
                               file.header.filetype === 11 ||

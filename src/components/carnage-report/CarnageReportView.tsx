@@ -46,8 +46,12 @@ export function CarnageReportView({ game, report, relatedFiles }: CarnageReportV
         {relatedFiles &&
         (relatedFiles.fileshare.length > 0 || relatedFiles.screenshots.length > 0) ? (
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
               Related Files
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2 }}>
+              Related files are other files created from the same match, including the map and
+              gametype variants used.
             </Typography>
             <CarnageReportRelatedFiles relatedFiles={relatedFiles} />
           </Box>

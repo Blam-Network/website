@@ -331,9 +331,6 @@ export const PendingTransfersIcon = () => {
                           shareId={isScreenshot ? transfer.shareId : undefined}
                           slot={!isReach && isScreenshot ? transfer.slot : undefined}
                           fileId={isScreenshot ? transfer.fileId : undefined}
-                          filename={isScreenshot ? transfer.fileName || undefined : undefined}
-                          description={isScreenshot ? transfer.fileDescription || undefined : undefined}
-                          author={isScreenshot ? transfer.fileAuthor || undefined : undefined}
                           mapId={mapId}
                           iconIndex={
                             isReach

@@ -56,7 +56,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function CarnageReportPage({ params }: { params: { id: string } }) {
-  const carnageReport = await api.ares.getCarnageReport.query({ id: params.id });
+  const [carnageReport, relatedFiles] = await Promise.all([
+    api.ares.getCarnageReport.query({ id: params.id }),
+    api.ares.getRelatedFiles.query({ id: params.id }),
+  ]);
 
-  return <CarnageReportView game="ares" report={carnageReport} />;
+  return <CarnageReportView game="ares" report={carnageReport} relatedFiles={relatedFiles} />;
 }

@@ -3,7 +3,6 @@ import type { FileShare } from "@/src/api/halo3/fileShare";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { GamertagLink } from "@/src/components/Gamertag";
-import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
 
 type Slot = FileShare["slots"][number];
 
@@ -46,7 +45,6 @@ export function PlayerFileshareSlot({
     slot.header.filetype === 12
       ? slot.header.mapId
       : undefined;
-  const formattedDescription = formatFileshareDescription(slot.header.description);
 
   return (
     <Paper
@@ -81,10 +79,6 @@ export function PlayerFileshareSlot({
             size="100%"
             shareId={isScreenshot ? shareId : undefined}
             slot={isScreenshot ? slot.slotNumber : undefined}
-            fileId={isScreenshot ? slot.id : undefined}
-            filename={isScreenshot ? slot.header.filename : undefined}
-            description={isScreenshot ? formattedDescription : undefined}
-            author={isScreenshot ? slot.header.author : undefined}
             mapId={mapId}
           />
         </Box>

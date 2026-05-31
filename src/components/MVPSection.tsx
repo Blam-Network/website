@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
+import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import { Emblem } from './Emblem';
 import Link from 'next/link';
 import { formatGamertag, isLinkableGamertag } from './Gamertag';
@@ -107,20 +108,53 @@ export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSec
         <Paper sx={{ overflow: 'hidden' }}>
             <Box
                 sx={{
-                    px: 2,
-                    py: 1.25,
+                    display: 'flex',
+                    alignItems: 'stretch',
                     borderBottom: '1px solid',
                     borderColor: 'divider',
-                    background:
-                        'radial-gradient(ellipse at left, rgba(124, 179, 66, 0.12) 0%, transparent 60%)',
                 }}
             >
-                <Typography
-                    variant="overline"
-                    sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: 1.2 }}
+                <Box
+                    sx={{
+                        width: 3,
+                        flexShrink: 0,
+                        background: (theme) =>
+                            `linear-gradient(180deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
+                    }}
+                />
+                <Box
+                    sx={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        px: 2,
+                        py: 1.5,
+                        background:
+                            'linear-gradient(90deg, rgba(124, 179, 66, 0.1) 0%, rgba(124, 179, 66, 0.02) 45%, transparent 100%)',
+                    }}
                 >
-                    MVP
-                </Typography>
+                    <EmojiEventsOutlinedIcon
+                        sx={{
+                            fontSize: 18,
+                            color: 'primary.main',
+                        }}
+                        aria-hidden
+                    />
+                    <Typography
+                        component="span"
+                        sx={{
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                            letterSpacing: '0.08em',
+                            lineHeight: 1,
+                            textTransform: 'uppercase',
+                            color: 'primary.main',
+                        }}
+                    >
+                        MVP
+                    </Typography>
+                </Box>
             </Box>
 
             <Stack
@@ -130,16 +164,14 @@ export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSec
             >
                 <Box
                     sx={{
-                        width: 88,
-                        height: 88,
                         flexShrink: 0,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        p: 0.75,
                         borderRadius: 1,
                         border: '1px solid',
-                        borderColor: 'divider',
-                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                        borderColor: 'rgba(255, 255, 255, 0.12)',
                     }}
                 >
                     <Emblem

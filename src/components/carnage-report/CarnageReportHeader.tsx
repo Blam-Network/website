@@ -4,6 +4,7 @@ import { GameIcon } from "@/src/components/GameIcon";
 import { getTeamName } from "@/src/utils/teams";
 import { formatSeconds } from "@/src/utils/gametype";
 import { CarnageReportMapImage } from "./CarnageReportMapImage";
+import { BARLOW_FAMILY } from "@/src/theme/fonts";
 import type { RouterOutputs } from "@/src/api/router";
 
 type CarnageReport =
@@ -76,6 +77,7 @@ export function CarnageReportHeader({ game, report }: CarnageReportHeaderProps) 
             <Typography
               variant="h4"
               sx={{
+                fontFamily: BARLOW_FAMILY,
                 fontWeight: 800,
                 lineHeight: 1.15,
                 mb: 0.75,
@@ -87,7 +89,10 @@ export function CarnageReportHeader({ game, report }: CarnageReportHeaderProps) 
             >
               {headline}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 600, color: "text.primary" }}>
+            <Typography
+              variant="h6"
+              sx={{ fontFamily: BARLOW_FAMILY, fontWeight: 600, color: "text.primary" }}
+            >
               {report.game_variant.name} on {report.map_variant_name}
             </Typography>
           </Box>

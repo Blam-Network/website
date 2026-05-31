@@ -10,6 +10,7 @@ import { FileshareSourceGameSection } from "@/src/components/files/FileshareSour
 import {
   getFilesGameLabel,
   isValidFilesGame,
+  parseFilesReturnTo,
   type FilesGame,
 } from "@/src/components/files/filesPageTypes";
 import { getSiteUrl } from "@/src/utils/siteUrl";
@@ -21,6 +22,7 @@ import type { FileshareSourceGame } from "@/src/api/files/fileshareSourceGameSch
 
 interface PageProps {
   params: { game: string; id: string };
+  searchParams: { returnTo?: string | string[] };
 }
 
 async function loadFile(game: FilesGame, fileId: string) {
@@ -87,7 +89,7 @@ async function loadSourceGame(
   }
 }
 
-export default async function FileshareFilePage({ params }: PageProps) {
+export default async function FileshareFilePage({ params, searchParams }: PageProps) {
   if (!isValidFilesGame(params.game)) {
     notFound();
   }
@@ -96,6 +98,8 @@ export default async function FileshareFilePage({ params }: PageProps) {
   if (!file) {
     notFound();
   }
+
+  const filesReturnTo = parseFilesReturnTo(searchParams.returnTo, params.game);
 
   const relatedFiles = await loadRelatedFiles(params.game, file.id);
   const sourceGame = await loadSourceGame(params.game, file.id, file.header.filetype);
@@ -110,7 +114,7 @@ export default async function FileshareFilePage({ params }: PageProps) {
       <Stack spacing={3}>
         <Button
           component={Link}
-          href={`/files?game=${params.game}`}
+          href={filesReturnTo}
           startIcon={<ArrowBackIcon />}
           sx={{ alignSelf: "flex-start", textTransform: "none" }}
         >
@@ -130,7 +134,7 @@ export default async function FileshareFilePage({ params }: PageProps) {
           <FileshareSourceGameSection game={params.game} sourceGame={sourceGame} />
         ) : null}
 
-        <FileshareRelatedFiles game={params.game} files={relatedFiles} />
+        <FileshareRelatedFiles game={params.game} files={relatedFiles} filesReturnTo={filesReturnTo} />
       </Stack>
     </Container>
   );
