@@ -46,9 +46,8 @@ export function FilesPageTypeTotals({ game, total, fileType, totalsByType }: Fil
   }
 
   const typeFilters = getFileTypeFiltersForGame(game).filter(
-    (filter): filter is { value: Exclude<FileTypeFilter, "">; label: string } =>
-      filter.value !== "",
-  );
+    (filter) => filter.value !== "",
+  ) as Array<{ value: Exclude<FileTypeFilter, "">; label: string }>;
 
   const activeFilter = typeFilters.find((filter) => filter.value === fileType);
 
