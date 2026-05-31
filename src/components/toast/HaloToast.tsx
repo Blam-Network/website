@@ -60,7 +60,7 @@ export function HaloToast({
         width: "auto",
       }}
     >
-      {toast && (
+      {toast ? (
         <Box
           role="alert"
           aria-live="assertive"
@@ -106,7 +106,7 @@ export function HaloToast({
             </Typography>
           </Box>
         </Box>
-      )}
+      ) : undefined}
     </Snackbar>
   );
 }
