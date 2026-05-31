@@ -14,6 +14,7 @@ const PendingTransferSchema = z.object({
   shareId: z.string(),
   slot: z.number(),
   gameEngineType: z.number().nullable(),
+  mapId: z.number().nullable().optional(),
 });
 
 const PendingTransfersResponseSchema = jsonStringifySchema(

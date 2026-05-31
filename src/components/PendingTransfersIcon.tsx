@@ -3,7 +3,6 @@
 import {
   Badge,
   Button,
-  Chip,
   IconButton,
   Popover,
   Typography,
@@ -13,7 +12,6 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/src/trpc/client";
@@ -21,7 +19,12 @@ import { DateTimeDisplay } from "./DateTimeDisplay";
 import { GamertagLink, isLinkableGamertag } from "./Gamertag";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
+import { GameIcon } from "./GameIcon";
 import { LoadingSpinner } from "./LoadingSpinner";
+import {
+  halo3FiletypeShowsMapImage,
+  reachFiletypeShowsMapImage,
+} from "@/src/constants/fileshareIcons";
 import type { PendingTransfer } from "@/src/api/halo3/pendingTransfers";
 import type { OdstPendingTransfer } from "@/src/api/odst/pendingTransfers";
 import type { ReachPendingTransfer } from "@/src/api/reach/pendingTransfers";
@@ -33,17 +36,6 @@ type TransferRow =
   | ({ game: "halo3" } & PendingTransfer)
   | ({ game: "odst" } & OdstPendingTransfer)
   | ({ game: "reach" } & ReachPendingTransfer);
-
-function gameLabel(game: TransferGame): string {
-  switch (game) {
-    case "reach":
-      return "Reach";
-    case "odst":
-      return "ODST";
-    default:
-      return "Halo 3";
-  }
-}
 
 function isScreenshotTransfer(game: TransferGame, fileType: number): boolean {
   if (game === "reach") return fileType === 2;
@@ -304,6 +296,12 @@ export const PendingTransfersIcon = () => {
                 );
 
               const fileShareGame = game === "reach" ? "reach" : game === "odst" ? "odst" : "halo3";
+              const mapId =
+                isReach && reachFiletypeShowsMapImage(ft)
+                  ? (transfer as Extract<TransferRow, { game: "reach" }>).mapId ?? undefined
+                  : !isReach && halo3FiletypeShowsMapImage(ft)
+                    ? transfer.mapId ?? undefined
+                    : undefined;
 
               return (
                 <Box key={`${transfer.game}-${transfer.fileId}`}>
@@ -319,35 +317,29 @@ export const PendingTransfersIcon = () => {
                       "&:hover": { backgroundColor: "rgba(124, 179, 66, 0.06)" },
                     }}
                   >
+                    <GameIcon game={fileShareGame} size={18} />
                     <Box
                       sx={{
                         flexShrink: 0,
-                        width: 72,
-                        height: 72,
+                        width: 96,
+                        height: 54,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        border: "1px solid",
-                        borderColor: "divider",
-                        backgroundColor: "rgba(0, 0, 0, 0.28)",
                       }}
                     >
-                      <Box sx={{ width: "88%", maxWidth: 64 }}>
+                      <Box sx={{ width: "90%", maxWidth: 88 }}>
                         <FileshareFiletypeIcon
                           fileShareGame={fileShareGame}
                           filetype={ft}
                           size="100%"
-                          shareId={transfer.shareId}
-                          slot={!isReach ? transfer.slot : undefined}
-                          fileId={transfer.fileId}
+                          shareId={isScreenshot ? transfer.shareId : undefined}
+                          slot={!isReach && isScreenshot ? transfer.slot : undefined}
+                          fileId={isScreenshot ? transfer.fileId : undefined}
                           filename={isScreenshot ? transfer.fileName || undefined : undefined}
                           description={isScreenshot ? transfer.fileDescription || undefined : undefined}
                           author={isScreenshot ? transfer.fileAuthor || undefined : undefined}
-                          mapId={
-                            isReach && (ft === 3 || ft === 4 || ft === 5)
-                              ? (transfer as Extract<TransferRow, { game: "reach" }>).mapId ?? undefined
-                              : undefined
-                          }
+                          mapId={mapId}
                           iconIndex={
                             isReach
                               ? (transfer as Extract<TransferRow, { game: "reach" }>).iconIndex ?? undefined
@@ -359,21 +351,7 @@ export const PendingTransfersIcon = () => {
                     </Box>
 
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 0.25 }}>
-                        <Box sx={{ flex: 1, minWidth: 0 }}>{titleNode}</Box>
-                        <Chip
-                          label={gameLabel(game)}
-                          size="small"
-                          variant="outlined"
-                          sx={{
-                            height: 20,
-                            fontSize: "0.625rem",
-                            fontWeight: 700,
-                            letterSpacing: "0.04em",
-                            flexShrink: 0,
-                          }}
-                        />
-                      </Stack>
+                      {titleNode}
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.3 }}>
                         {transfer.fileAuthor ? (
                           <>
@@ -410,7 +388,7 @@ export const PendingTransfersIcon = () => {
                         },
                       }}
                     >
-                      <DeleteOutlineIcon fontSize="small" />
+                      <CloseIcon fontSize="small" />
                     </IconButton>
                   </Stack>
                 </Box>

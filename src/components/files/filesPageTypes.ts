@@ -8,6 +8,16 @@ export const FILES_GAMES = [
   { value: "reach" as const, label: "Halo: Reach" },
 ];
 
+const GAME_ICON_URLS: Record<FilesGame, string> = {
+  halo3: "/img/game_icons/game_h3.svg",
+  odst: "/img/game_icons/game_odst.svg",
+  reach: "/img/game_icons/game_reach.svg",
+};
+
+export function getGameIconUrl(game: FilesGame): string {
+  return GAME_ICON_URLS[game];
+}
+
 export const FILE_TYPE_FILTERS = [
   { value: "", label: "All" },
   { value: "maps", label: "Maps" },

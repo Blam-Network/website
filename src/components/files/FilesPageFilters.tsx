@@ -2,17 +2,31 @@
 
 import { Box, Button, Divider, Stack, TextField } from "@mui/material";
 import { getFileTypeMiniIconUrl } from "@/src/constants/fileshareIcons";
-import { getFileTypeFiltersForGame, FILES_GAMES, FileTypeFilter, FilesGame, parseFilesGame } from "./filesPageTypes";
+import {
+  getFileTypeFiltersForGame,
+  FILES_GAMES,
+  FileTypeFilter,
+  FilesGame,
+} from "./filesPageTypes";
+import { GameIcon } from "../GameIcon";
 
-function MiniFilterIcon({ src }: { src: string }) {
+function MiniFilterIcon({
+  src,
+  width = 18,
+  height = 14,
+}: {
+  src: string;
+  width?: number;
+  height?: number;
+}) {
   return (
     <Box
       component="span"
       aria-hidden
       sx={{
         display: "inline-block",
-        width: 18,
-        height: 14,
+        width,
+        height,
         flexShrink: 0,
         bgcolor: "currentColor",
         WebkitMaskImage: `url(${src})`,
@@ -28,20 +42,20 @@ function MiniFilterIcon({ src }: { src: string }) {
   );
 }
 
-function FilterGroup({
+function GameFilterGroup({
   options,
   value,
   onChange,
 }: {
-  options: readonly { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
+  options: typeof FILES_GAMES;
+  value: FilesGame;
+  onChange: (value: FilesGame) => void;
 }) {
   return (
     <Stack direction="row" sx={{ flexWrap: "wrap" }}>
       {options.map(({ value: optionValue, label: optionLabel }, index) => (
         <Button
-          key={optionValue || "__all__"}
+          key={optionValue}
           variant={value === optionValue ? "contained" : "outlined"}
           size="small"
           onClick={() => onChange(optionValue)}
@@ -50,7 +64,10 @@ function FilterGroup({
             ...(index > 0 && { ml: "-1px" }),
           }}
         >
-          {optionLabel}
+          <Stack direction="row" alignItems="center" spacing={0.75}>
+            <GameIcon game={optionValue} size={16} aria-hidden />
+            <span>{optionLabel}</span>
+          </Stack>
         </Button>
       ))}
     </Stack>
@@ -118,10 +135,10 @@ export function FilesPageFilters({
         divider={<Divider orientation="vertical" flexItem sx={{ mx: 1.5 }} />}
         sx={{ flexWrap: "wrap", rowGap: 1.5 }}
       >
-        <FilterGroup
+        <GameFilterGroup
           options={FILES_GAMES}
           value={game}
-          onChange={(value) => onGameChange(parseFilesGame(value))}
+          onChange={onGameChange}
         />
         <FileTypeFilterGroup
           options={getFileTypeFiltersForGame(game)}
