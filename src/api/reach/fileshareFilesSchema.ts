@@ -25,12 +25,29 @@ const FileHeaderSchema = z.object({
   campaignSurvivalEnabled: z.boolean(),
 });
 
-const FileShareFileSchema = z.object({
+export const FileShareFileSchema = z.object({
   id: z.string(),
   uniqueId: z.string(),
   slotNumber: z.number(),
   shareId: z.string(),
+  uploader: z.string().optional(),
+  uploaderXuid: z.string().optional(),
   header: FileHeaderSchema,
+});
+
+export const FileshareFileResponseSchema = jsonStringifySchema(FileShareFileSchema);
+
+export const FileshareRelatedFilesResponseSchema = jsonStringifySchema(
+  z.object({
+    data: z.array(FileShareFileSchema),
+  }),
+);
+
+export const FileshareTypeTotalsSchema = z.object({
+  maps: z.number(),
+  gametypes: z.number(),
+  films: z.number(),
+  screenshots: z.number(),
 });
 
 export const FileshareFilesResponseSchema = jsonStringifySchema(
@@ -40,7 +57,10 @@ export const FileshareFilesResponseSchema = jsonStringifySchema(
     page: z.number(),
     pageSize: z.number(),
     totalPages: z.number(),
+    totalsByType: FileshareTypeTotalsSchema.optional(),
   }),
 );
+
+export type FileshareTypeTotals = z.infer<typeof FileshareTypeTotalsSchema>;
 
 export type FileshareFile = z.infer<typeof FileShareFileSchema>;

@@ -11,6 +11,7 @@ import { OdstFileshareFileCard } from "@/src/components/files/OdstFileshareFileC
 import { ReachFileshareFileCard } from "@/src/components/files/ReachFileshareFileCard";
 import type { FileshareFile } from "@/src/api/halo3/fileshareFiles";
 import { FilesPageFilters } from "@/src/components/files/FilesPageFilters";
+import { FilesPageTypeTotals } from "@/src/components/files/FilesPageTypeTotals";
 import {
   FileTypeFilter,
   FilesGame,
@@ -164,10 +165,13 @@ export function FilesPage({ defaultGame = "halo3" }: FilesPageProps) {
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
       <SectionHeader title="Files">
-        {data && data.total > 0 && (
-          <Typography variant="caption" color="text.secondary">
-            {data.total.toLocaleString()} files
-          </Typography>
+        {data && (
+          <FilesPageTypeTotals
+            game={game}
+            total={data.total}
+            fileType={fileType}
+            totalsByType={data.totalsByType}
+          />
         )}
       </SectionHeader>
 

@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { PlayerStatistics } from "@/src/components/PlayerStatistics";
 import { FileshareQuotaMeters } from "@/src/components/player/FileshareQuotaMeters";
 import { PlayerFileshareSlot } from "@/src/components/player/PlayerFileshareSlot";
-import { PlayerPageSection, PlayerPageSectionsGrid } from "@/src/components/player/PlayerPageSection";
+import { PlayerPageSectionsGrid } from "@/src/components/player/PlayerPageSection";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -134,7 +134,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
     fileShare = await api.sunrise.fileShare.query({ gamertag });
   } catch {}
   try {
-    screenshots = await api.sunrise.playerScreenshots.query({ gamertag });
+    screenshots = await api.sunrise.playerScreenshots.query({ gamertag, pageSize: 12 });
   } catch {}
   const hasPlayed = previousGames.length > 0 || !!serviceRecord?.playerName;
 
@@ -212,7 +212,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
       
         {hasPlayed && (
           <PlayerPageSectionsGrid>
-            <PlayerPageSection sx={{ minHeight: { lg: 480 } }}>
+            <Box sx={{ minHeight: { lg: 480 }, display: "flex", flexDirection: "column" }}>
               <SectionHeader
                 title="Recent Games"
                 href={`/halo3/games?gamertag=${encodeURIComponent(gamertag)}`}
@@ -225,9 +225,9 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                   No games found.
                 </Typography>
               )}
-            </PlayerPageSection>
+            </Box>
 
-            <PlayerPageSection>
+            <Box>
               <SectionHeader title="File Share" sx={{ mb: 2, flexWrap: "wrap", gap: 1 }}>
                 {fileShare && <FileshareQuotaMeters fileShare={fileShare} />}
               </SectionHeader>
@@ -261,12 +261,12 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                   No file share data available.
                 </Typography>
               )}
-            </PlayerPageSection>
+            </Box>
           </PlayerPageSectionsGrid>
         )}
 
         {hasPlayed && (
-          <PlayerPageSection sx={{ mt: 4 }}>
+          <Box sx={{ mt: 4 }}>
             <SectionHeader
               title="Recent Screenshots"
               href={screenshots.length > 0 ? `/screenshots?gamertag=${encodeURIComponent(gamertag)}` : undefined}
@@ -303,7 +303,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                 {gamertag} hasn&apos;t uploaded any screenshots yet.
               </Typography>
             )}
-          </PlayerPageSection>
+          </Box>
         )}
 
         {hasPlayed && (

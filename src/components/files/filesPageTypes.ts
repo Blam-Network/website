@@ -48,6 +48,14 @@ export function parseFilesGame(value: string | undefined): FilesGame {
   return "halo3";
 }
 
+export function isValidFilesGame(value: string): value is FilesGame {
+  return value === "halo3" || value === "odst" || value === "reach";
+}
+
+export function getFileshareFileHref(game: FilesGame, fileId: string): string {
+  return `/files/${game}/${fileId}`;
+}
+
 export function getFilesGameLabel(game: FilesGame): string {
   return FILES_GAMES.find((g) => g.value === game)?.label ?? "Halo 3";
 }

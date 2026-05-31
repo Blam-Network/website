@@ -1,25 +1,57 @@
 'use client';
 
-import { Stack, Box, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, tableCellClasses, Tabs, Tab, Link } from "@mui/material";
-import { getColor, getColorName, getCssColor, getTextColor } from "../colors";
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
-import { RankBadge, ServiceRecordPlaceholder } from "./ServiceRecordPlaceholder";
+import { Box, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Tabs, Tab, Link } from "@mui/material";
+import { getColor, getColorName } from "../colors";
+import { Fragment, ReactNode, useState } from "react";
 import { Emblem } from "./Emblem";
-import { text } from "stream/consumers";
-import { getTeamColor, getTeamName, getTeamTextColor } from "../utils/teams";
-import { formatSeconds, getGametypeName } from "../utils/gametype";
+import { RankBadge } from "./ServiceRecordPlaceholder";
+import { getTeamColor, getTeamName } from "../utils/teams";
+import { formatSeconds } from "../utils/gametype";
 import type { Medals } from "../api/halo3/carnage-report/players";
 import { getDamageSourceCategory, getDamageSourceName } from "../api/halo3/carnage-report/players";
 import { RouterOutputs } from "../api/router";
 import { Medal } from "./Medal";
 import { formatGamertag, isLinkableGamertag } from "./Gamertag";
+import { BARLOW_FAMILY } from "@/src/theme/fonts";
 
 type CarnageReport =
   | RouterOutputs["sunrise2"]["getCarnageReport"]
   | RouterOutputs["ares"]["getCarnageReport"];
 
+type CarnageReportPlayer = CarnageReport["players"][number];
 
-export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
+function getSortedPlayers(report: CarnageReport): CarnageReportPlayer[] {
+  const players = [...report.players];
+
+  if (report.team_game && report.teams.length > 0) {
+    const teamOrder = [...report.teams]
+      .sort((a, b) => a.standing - b.standing)
+      .map((team) => team.team_index);
+
+    const teamSortKey = (teamIndex: number) => {
+      const order = teamOrder.indexOf(teamIndex);
+      return order === -1 ? teamIndex + 100 : order;
+    };
+
+    return players.sort((a, b) => {
+      const byTeam = teamSortKey(a.player_team) - teamSortKey(b.player_team);
+      if (byTeam !== 0) {
+        return byTeam;
+      }
+      return a.standing - b.standing;
+    });
+  }
+
+  return players.sort((a, b) => a.standing - b.standing);
+}
+
+export const PGCRBreakdown = ({
+    report,
+    playerRouteBase = "/halo3/player",
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     const [value, setValue] = useState("CARNAGE");
 
     return (
@@ -28,15 +60,21 @@ export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
                 value={value} 
                 onChange={(e, v) => setValue(v)} 
                 sx={{
-                    mb: 3,
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
                     '& .MuiTab-root': {
-                        color: '#B0B0B0',
+                        minHeight: 44,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        color: 'text.secondary',
                         '&.Mui-selected': {
-                            color: '#7CB342',
+                            color: 'primary.main',
                         },
                     },
                     '& .MuiTabs-indicator': {
-                        backgroundColor: '#7CB342',
+                        backgroundColor: 'primary.main',
+                        height: 3,
+                        borderRadius: '3px 3px 0 0',
                     },
                 }}
             >
@@ -46,81 +84,154 @@ export const PGCRBreakdown = ({report}: {report: CarnageReport}) => {
                 <Tab label="Medals" value="MEDALS" />
             </Tabs>
             <Box sx={{ minHeight: '200px' }}>
-                {value === "CARNAGE" && <Carnage report={report} />}
-                {value === "GAMETYPE" && <KOTH report={report} />}
-                {value === "FIELD_STATS" && <FieldStats report={report} />}
-                {value === "KILL_BREAKDOWN" && <KillBreakdown report={report} />}
-                {value === "MEDALS" && <Medals report={report} />}
+                {value === "CARNAGE" && <Carnage report={report} playerRouteBase={playerRouteBase} />}
+                {value === "GAMETYPE" && <KOTH report={report} playerRouteBase={playerRouteBase} />}
+                {value === "FIELD_STATS" && <FieldStats report={report} playerRouteBase={playerRouteBase} />}
+                {value === "KILL_BREAKDOWN" && <KillBreakdown report={report} playerRouteBase={playerRouteBase} />}
+                {value === "MEDALS" && <Medals report={report} playerRouteBase={playerRouteBase} />}
             </Box>
         </Box>
     )
 }
 
-const BreakdownTable = ({report, headings, players}: {report: CarnageReport, headings: string[], players: Record<number, (string | number | ReactNode)[]>}) => {
+const PLAYER_NAME_COLUMN_SX = {
+  minWidth: 150,
+  width: "18%",
+} as const;
+
+const BreakdownTable = ({
+    report,
+    headings,
+    players,
+    playerRouteBase = "/halo3/player",
+}: {
+    report: CarnageReport;
+    headings: string[];
+    players: Record<number, (string | number | ReactNode)[]>;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     const getPlayerRowColor = (player: CarnageReport['players'][0]) => {
-        let color;
-        let textColor;
-        
-        if (report.team_game) {
-            color = getTeamColor(player.player_team);
-            textColor = getTeamTextColor(player.player_team);
-        } else {
-            color = getColor(getColorName(player.primary_color));
-            textColor = getTextColor(getColorName(player.primary_color));
-        }
-        
+        const color = report.team_game
+            ? getTeamColor(player.player_team)
+            : getColor(getColorName(player.primary_color));
+
         return {
-            backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
-            textColor: `rgb(${textColor.r}, ${textColor.g}, ${textColor.b})`,
+            accentColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+            backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.48)`,
+            hoverBackgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.58)`,
         };
     };
+
+    const sortedPlayers = getSortedPlayers(report);
     
     return (
         <TableContainer>
-            <Table size="small" sx={{
+            <Table
+              size="small"
+              sx={{
                 '& .MuiTableCell-root': {
-                    borderColor: '#333',
+                    borderColor: 'divider',
                 },
-            }}>
+                '& .MuiTableBody-root .MuiTableRow-root .MuiTableCell-root:not(:first-of-type)': {
+                    fontFamily: BARLOW_FAMILY,
+                    fontSize: '0.9375rem',
+                    fontWeight: 600,
+                    py: 0.5,
+                    px: 1.25,
+                    textAlign: 'center',
+                    verticalAlign: 'middle',
+                },
+                '& .MuiTableBody-root .MuiTableRow-root .MuiTableCell-root:first-of-type': {
+                    py: 0.5,
+                    px: 1.25,
+                    verticalAlign: 'middle',
+                },
+              }}
+            >
               <colgroup>
-                <col width="1"/>
+                <col style={{ minWidth: 150, width: "18%" }} />
                 {headings.map((_, index) => <col key={index} />)}
               </colgroup>
               <TableHead>
                 <TableRow sx={{
                     '& .MuiTableCell-root': {
-                        backgroundColor: '#1A1A1A',
-                        color: '#7CB342',
+                        fontFamily: BARLOW_FAMILY,
+                        fontSize: '0.875rem',
                         fontWeight: 700,
-                        borderBottom: '2px solid #7CB342',
+                        letterSpacing: 'normal',
+                        textTransform: 'none',
+                        WebkitFontSmoothing: 'auto',
+                        MozOsxFontSmoothing: 'auto',
+                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                        color: 'primary.main',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
                     },
                 }}>
-                    <TableCell>Player Name</TableCell>
+                    <TableCell sx={PLAYER_NAME_COLUMN_SX}>Player Name</TableCell>
                     {headings.map((headings) => (
                         <TableCell key={headings}>{headings}</TableCell>
                     ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {report.players.map((player: typeof report.players[0], index: number) => {
+                {sortedPlayers.map((player, index) => {
                     const rowColor = getPlayerRowColor(player);
+                    const isFirstOnTeam =
+                      report.team_game &&
+                      (index === 0 || player.player_team !== sortedPlayers[index - 1].player_team);
+                    const showTeamDivider = report.team_game && isFirstOnTeam && index > 0;
+
                     return (
+                        <Fragment key={player.player_index}>
+                            {isFirstOnTeam ? (
+                              <TableRow>
+                                <TableCell
+                                  colSpan={headings.length + 1}
+                                  sx={{
+                                    py: 0.5,
+                                    px: 1.25,
+                                    borderBottom: "none",
+                                    backgroundColor: "rgba(0, 0, 0, 0.35)",
+                                    boxShadow: `inset 3px 0 0 ${rowColor.accentColor}`,
+                                    ...(showTeamDivider
+                                      ? {
+                                          borderTop: "2px solid",
+                                          borderColor: "divider",
+                                        }
+                                      : {}),
+                                  }}
+                                >
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      fontWeight: 700,
+                                      color: rowColor.accentColor,
+                                      textTransform: "uppercase",
+                                      letterSpacing: 0.5,
+                                    }}
+                                  >
+                                    {getTeamName(player.player_team)} Team
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            ) : null}
                         <TableRow 
-                            key={index}
                             sx={{
                                 backgroundColor: rowColor.backgroundColor,
+                                boxShadow: `inset 3px 0 0 ${rowColor.accentColor}`,
+                                transition: 'background-color 0.15s ease',
                                 '& .MuiTableCell-root': {
-                                    color: rowColor.textColor,
-                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                    color: 'text.primary',
                                 },
                                 '&:hover': {
-                                    backgroundColor: `${rowColor.backgroundColor.replace('0.4', '0.6')}`,
+                                    backgroundColor: rowColor.hoverBackgroundColor,
                                 },
                             }}
                         >
-                            <TableCell>
-                                <Box gap={1} sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                            <TableCell sx={PLAYER_NAME_COLUMN_SX}>
+                                <Box gap={1} sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0}}>
+                                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, flex: 1}}>
                                         <Emblem 
                                             emblem={{
                                                 primary: player.foreground_emblem,
@@ -135,13 +246,13 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                         />
                                         {isLinkableGamertag(player.player_name, { authorXuid: player.player_xuid }) ? (
                                             <Link 
-                                                href={`/halo3/player/${encodeURIComponent(player.player_name)}`}
+                                                href={`${playerRouteBase}/${encodeURIComponent(player.player_name)}`}
                                                 style={{
-                                                    color: rowColor.textColor,
+                                                    color: 'inherit',
                                                     textDecoration: 'none',
                                                     fontWeight: 600,
-                                                    fontSize: '0.875rem',
-                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                                    fontSize: '0.9375rem',
+                                                    whiteSpace: 'nowrap',
                                                 }}
                                             >
                                                 {formatGamertag(player.player_name)}
@@ -150,10 +261,10 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                             <Typography
                                                 component="span"
                                                 sx={{
-                                                    color: rowColor.textColor,
+                                                    color: 'text.primary',
                                                     fontWeight: 600,
-                                                    fontSize: '0.875rem',
-                                                    textShadow: '1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000',
+                                                    fontSize: '0.9375rem',
+                                                    whiteSpace: 'nowrap',
                                                     cursor: 'default',
                                                     opacity: 0.7,
                                                 }}
@@ -163,17 +274,18 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
                                         )}
                                     </Box>
                                     <Box sx={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row', gap: 1}}>
-                                        <Typography variant="body2" sx={{ color: rowColor.textColor, opacity: 0.8 }}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary', opacity: 0.9 }}>
                                             {player.global_statistics_highest_skill}
                                         </Typography>
                                         <RankBadge rank={player.host_stats_global_rank} grade={player.host_stats_global_grade} size={25}/>
                                     </Box>
                                 </Box>
                             </TableCell>
-                            {players[player.player_index].map((cell, index) => (
-                                <TableCell key={index}>{cell}</TableCell>
+                            {players[player.player_index].map((cell, cellIndex) => (
+                                <TableCell key={cellIndex}>{cell}</TableCell>
                             ))}
                         </TableRow>
+                        </Fragment>
                     );
                 })}
               </TableBody>
@@ -182,10 +294,17 @@ const BreakdownTable = ({report, headings, players}: {report: CarnageReport, hea
     );
 }
 
-const Carnage = ({report}: {report: CarnageReport}) => {
+const Carnage = ({
+    report,
+    playerRouteBase,
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     return (
         <BreakdownTable 
-            report={report} 
+            report={report}
+            playerRouteBase={playerRouteBase}
             headings={[
                 "Kills", 
                 "Assists", 
@@ -210,10 +329,17 @@ const Carnage = ({report}: {report: CarnageReport}) => {
     )
 }
 
-const KillBreakdown = ({report}: {report: CarnageReport}) => {
+const KillBreakdown = ({
+    report,
+    playerRouteBase,
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     return (
         <BreakdownTable 
-            report={report} 
+            report={report}
+            playerRouteBase={playerRouteBase}
             headings={[
                 "Weapon", 
                 "Melee", 
@@ -244,10 +370,17 @@ const KillBreakdown = ({report}: {report: CarnageReport}) => {
     )
 }
 
-const FieldStats = ({report}: {report: CarnageReport}) => {
+const FieldStats = ({
+    report,
+    playerRouteBase,
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     return (
         <BreakdownTable 
-            report={report} 
+            report={report}
+            playerRouteBase={playerRouteBase}
             headings={[
                 "Headshots", 
                 "Best Spree", 
@@ -285,10 +418,17 @@ const FieldStats = ({report}: {report: CarnageReport}) => {
     )
 }
 
-const KOTH = ({report}: {report: CarnageReport}) => {
+const KOTH = ({
+    report,
+    playerRouteBase,
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     return (
         <BreakdownTable 
-            report={report} 
+            report={report}
+            playerRouteBase={playerRouteBase}
             headings={[
                 "Time on Hill", 
                 "Uncontested Time", 
@@ -305,20 +445,45 @@ const KOTH = ({report}: {report: CarnageReport}) => {
     )
 }
 
-const getMedals = (player: CarnageReport['players'][0]) => Object.entries(player.medals)
-    .flatMap(([type, count]) =>
-        Array.from({ length: count as number }, (_: unknown, i: number) => 
-            <span key={`${type}-${i}`} style={{position: 'relative', top: 2}}>
-                <Medal type={type as keyof Medals} size={32} />
-            </span>
-        )
-    )
+const MEDAL_TAB_ICON_SIZE = 25;
+
+const getMedals = (player: CarnageReport['players'][0]) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexWrap: "nowrap",
+      gap: "3px",
+      alignItems: "center",
+      overflowX: "auto",
+      maxWidth: "100%",
+      scrollbarWidth: "thin",
+      "&::-webkit-scrollbar": {
+        height: 4,
+      },
+    }}
+  >
+    {Object.entries(player.medals).flatMap(([type, count]) =>
+      Array.from({ length: count as number }, (_: unknown, i: number) => (
+        <Box component="span" key={`${type}-${i}`} sx={{ display: "inline-flex", flexShrink: 0 }}>
+          <Medal type={type as keyof Medals} size={MEDAL_TAB_ICON_SIZE} />
+        </Box>
+      )),
+    )}
+  </Box>
+);
 
 
-const Medals = ({report}: {report: CarnageReport}) => {
+const Medals = ({
+    report,
+    playerRouteBase,
+}: {
+    report: CarnageReport;
+    playerRouteBase?: "/halo3/player" | "/ares/player";
+}) => {
     return (
         <BreakdownTable 
-            report={report} 
+            report={report}
+            playerRouteBase={playerRouteBase}
             headings={[
                 "Medals", 
             ]}

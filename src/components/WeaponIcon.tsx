@@ -5,7 +5,8 @@ import { getWeaponIconPath } from "@/src/constants/weaponIcons";
 
 type WeaponIconProps = {
   weapon: string;
-  size?: number;
+  size?: number | string;
+  maxHeight?: number;
   highlighted?: boolean;
   variant?: "inline" | "backdrop";
   backdropAlign?: "left" | "center";
@@ -14,6 +15,7 @@ type WeaponIconProps = {
 export function WeaponIcon({
   weapon,
   size = 32,
+  maxHeight,
   highlighted = false,
   variant = "inline",
   backdropAlign = "left",
@@ -56,6 +58,8 @@ export function WeaponIcon({
     );
   }
 
+  const isFluidSize = typeof size === "string";
+
   return (
     <Box
       component="img"
@@ -63,10 +67,12 @@ export function WeaponIcon({
       alt=""
       draggable={false}
       sx={{
-        width: size,
-        height: size,
+        width: isFluidSize ? size : size,
+        height: isFluidSize ? "auto" : size,
+        maxWidth: isFluidSize ? "100%" : undefined,
+        maxHeight,
         objectFit: "contain",
-        flexShrink: 0,
+        flexShrink: isFluidSize ? 1 : 0,
         filter: colorFilter,
         opacity: highlighted ? 1 : 0.85,
         transition: "filter 0.2s ease, opacity 0.2s ease",

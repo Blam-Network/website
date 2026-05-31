@@ -21,8 +21,8 @@ const LAYERS = {
   // center: "/img/loading/loading_spinner.svg",
 } as const;
 
-/** Neutral grey look for light-blue SVG art (#becfe3). */
-const GREY_FILTER = "grayscale(1) brightness(0.30) contrast(1.02)";
+/** Muted blue aligned with theme palette text.secondary (#8B9BB4). */
+const MUTED_BLUE_FILTER = "brightness(0.58) saturate(0.78) hue-rotate(-2deg)";
 
 const imgSx = {
   width: "100%",
@@ -79,7 +79,7 @@ export function LoadingSpinner({
         width: size,
         height: size,
         flexShrink: 0,
-        filter: GREY_FILTER,
+        filter: MUTED_BLUE_FILTER,
         ...sx,
       }}
     >

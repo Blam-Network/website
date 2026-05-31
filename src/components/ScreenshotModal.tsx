@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Modal, Box, Typography, IconButton } from "@mui/material";
+import { Modal, Box, IconButton } from "@mui/material";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
+import { ScreenshotPolaroid } from "@/src/components/ScreenshotPolaroid";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface ScreenshotModalProps {
@@ -22,199 +23,81 @@ export const ScreenshotModal = ({
   description,
   author,
 }: ScreenshotModalProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
-  // Preload image when open prop changes
   useEffect(() => {
     if (open) {
-      setImageLoaded(false);
       setShouldShowModal(false);
-      
+
       const img = new Image();
       img.onload = () => {
-        setImageLoaded(true);
         setShouldShowModal(true);
       };
       img.onerror = () => {
-        // Even on error, show the modal so user can see there was an issue
-        setImageLoaded(true);
         setShouldShowModal(true);
       };
       img.src = screenshotUrl;
     } else {
-      setImageLoaded(false);
       setShouldShowModal(false);
     }
   }, [open, screenshotUrl]);
+
   return (
     <Modal
       open={open}
       onClose={onClose}
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backdropFilter: 'blur(4px)',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backdropFilter: "blur(4px)",
       }}
     >
       <Box
         sx={{
-          position: 'relative',
-          maxWidth: '95vw',
-          maxHeight: '95vh',
-          outline: 'none',
-          padding: '20px',
+          position: "relative",
+          maxWidth: "95vw",
+          maxHeight: "95vh",
+          outline: "none",
+          padding: "20px",
           ...(!shouldShowModal && {
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }),
         }}
       >
-        {!shouldShowModal && (
-          <LoadingSpinner size={120} />
-        )}
+        {!shouldShowModal && <LoadingSpinner size={120} />}
         {shouldShowModal && (
           <>
             <IconButton
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            top: -10,
-            right: -10,
-            color: '#fff',
-            zIndex: 1,
-            width: 40,
-            height: 40,
-            '&:hover': {
-              color: '#7CB342',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            },
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Box
-          sx={{
-            background: '#fff',
-            padding: '30px',
-            borderRadius: '2px',
-            boxShadow: 'inset 0 0 15px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1), 0 10px 40px rgba(0, 0, 0, 0.6)',
-            transform: 'rotate(-1deg)',
-            '&:hover': {
-              transform: 'rotate(0deg)',
-            },
-            transition: 'transform 0.3s ease',
-            maxWidth: '1200px',
-            minWidth: '0px',
-            width: 'fit-content',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `
-                repeating-linear-gradient(
-                  45deg,
-                  transparent,
-                  transparent 5px,
-                  rgba(0, 0, 0, 0.02) 5px,
-                  rgba(0, 0, 0, 0.02) 6px
-                ),
-                repeating-linear-gradient(
-                  135deg,
-                  transparent,
-                  transparent 5px,
-                  rgba(0, 0, 0, 0.02) 5px,
-                  rgba(0, 0, 0, 0.02) 6px
-                )
-              `,
-              pointerEvents: 'none',
-              borderRadius: '2px',
-              zIndex: 0,
-            },
-            '& > *': {
-              position: 'relative',
-              zIndex: 1,
-            },
-          }}
-        >
-          <Box
-            sx={{
-              mb: 3,
-              position: 'relative',
-              display: 'inline-block',
-              overflow: 'hidden',
-              maxWidth: '100%',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                boxShadow: 'inset 0px 0px 15px 0px rgba(0, 0, 0, 0.5)',
-                pointerEvents: 'none',
-                zIndex: 2,
-              },
-            }}
-          >
-            <img
-              src={screenshotUrl}
-              alt={description}
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                maxHeight: '65vh',
-                objectFit: 'contain',
+              onClick={onClose}
+              sx={{
+                position: "absolute",
+                top: -10,
+                right: -10,
+                color: "#fff",
+                zIndex: 1,
+                width: 40,
+                height: 40,
+                "&:hover": {
+                  color: "#7CB342",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                },
               }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <ScreenshotPolaroid
+              screenshotUrl={screenshotUrl}
+              filename={filename}
+              description={description}
+              author={author}
+              imageMaxHeight="65vh"
             />
-          </Box>
-          <Box>
-            <Typography
-              sx={{
-                fontFamily: '"Permanent Marker", "Comic Sans MS", cursive',
-                fontSize: '1.8rem',
-                color: '#222',
-                mb: 1,
-                lineHeight: 1.2,
-              }}
-            >
-              {filename}
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: '"Permanent Marker", "Comic Sans MS", cursive',
-                fontSize: '1.2rem',
-                color: '#555',
-                lineHeight: 1.3,
-              }}
-            >
-              {description}
-            </Typography>
-            {author && (
-              <Typography
-                sx={{
-                  fontFamily: '"Permanent Marker", "Comic Sans MS", cursive',
-                  fontSize: '1rem',
-                  color: '#888',
-                  mt: 1.5,
-                }}
-              >
-                by {author}
-              </Typography>
-            )}
-          </Box>
-        </Box>
           </>
         )}
       </Box>
     </Modal>
   );
 };
-

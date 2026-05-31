@@ -1,4 +1,5 @@
 import { aresRouter } from "./ares/aresRouter";
+import { filesRouter } from "./files/filesRouter";
 import { odstRouter } from "./odst/odstRouter";
 import { reachRouter } from "./reach/reachRouter";
 import { sunrise2Router } from "./halo3/sunrise2Router";
@@ -13,5 +14,6 @@ export const apiRouter = createTRPCRouter({
   reach: reachRouter,
   ares: aresRouter,
   odst: odstRouter,
+  files: filesRouter,
   xbox: xboxRouter,
 });

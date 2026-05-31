@@ -25,12 +25,19 @@ const ScreenshotsResponseSchema = jsonStringifySchema(z.object({
 }));
 
 export const playerScreenshots = publicProcedure.input(
-  z.object({ xuid: z.string().min(1).optional(), gamertag: z.string().min(1).optional() }),
+  z.object({
+    xuid: z.string().min(1).optional(),
+    gamertag: z.string().min(1).optional(),
+    pageSize: z.number().min(1).max(48).default(48).optional(),
+  }),
 ).query(async ({ input }) => {
   if (!input.xuid && !input.gamertag) throw new Error("playerScreenshots: either xuid or gamertag is required");
+  const pageSize = input.pageSize ?? 48;
+  const params = new URLSearchParams();
+  params.set("pageSize", String(pageSize));
   const url = input.xuid
-    ? `/ares/players/${/^[0-9A-F]{16}$/i.test(input.xuid) ? BigInt(`0x${input.xuid}`).toString(10) : input.xuid}/screenshots`
-    : `/ares/players/by-gamertag/${encodeURIComponent(input.gamertag!)}/screenshots`;
+    ? `/ares/players/${/^[0-9A-F]{16}$/i.test(input.xuid) ? BigInt(`0x${input.xuid}`).toString(10) : input.xuid}/screenshots?${params.toString()}`
+    : `/ares/players/by-gamertag/${encodeURIComponent(input.gamertag!)}/screenshots?${params.toString()}`;
   const response = await aresAxios.get(url);
   const parsed = ScreenshotsSchema.safeParse(response.data);
   if (!parsed.success) throw new Error(`playerScreenshots: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);

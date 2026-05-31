@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Tooltip } from "@mui/material";
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Tooltip } from "@mui/material";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { keyframes } from "@mui/system";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from "recharts";
@@ -10,15 +10,55 @@ import { useQuery } from "@tanstack/react-query";
 import { ActivityHeatmap } from "./ActivityHeatmap";
 import { Medal } from "./Medal";
 import { Emblem } from "./Emblem";
+import { SectionHeader } from "./SectionHeader";
 import { getCssColor, getColor, getTextColor, getColorName } from "../colors";
 import NextLink from "next/link";
 import { formatGamertag, isLinkableGamertag } from "./Gamertag";
 import { getWeaponNameFromString } from "@/src/constants/weaponIcons";
 import { WeaponIcon } from "./WeaponIcon";
+import { BARLOW_FAMILY } from "@/src/theme/fonts";
+import type { SxProps, Theme } from "@mui/material/styles";
 
 interface PlayerStatisticsProps {
   gamertag: string;
   source?: "sunrise2" | "ares";
+}
+
+function StatisticsCard({
+  title,
+  children,
+  contentSx,
+}: {
+  title: string;
+  children: React.ReactNode;
+  contentSx?: SxProps<Theme>;
+}) {
+  return (
+    <Box
+      sx={{
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 1,
+        overflow: "hidden",
+        backgroundColor: "rgba(0, 0, 0, 0.18)",
+      }}
+    >
+      <Box
+        sx={{
+          px: 2,
+          py: 1.25,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          backgroundColor: "rgba(0, 0, 0, 0.22)",
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          {title}
+        </Typography>
+      </Box>
+      <Box sx={{ p: 2, ...contentSx }}>{children}</Box>
+    </Box>
+  );
 }
 
 const COLORS: Record<string, string> = {
@@ -337,19 +377,8 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
   });
 
   return (
-    <Box sx={{ mt: 6 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-          pb: 1,
-          borderBottom: "2px solid #7CB342",
-        }}
-      >
-        <Typography variant="h4">Statistics</Typography>
-      </Box>
+    <Box>
+      <SectionHeader title="Statistics" sx={{ mb: 2 }} />
 
       {isLoading ? (
         <Box
@@ -363,7 +392,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
           }}
         >
           <LoadingSpinner size={96} />
-          <Typography variant="body1" sx={{ color: "#B0B0B0" }}>
+          <Typography variant="body1" color="text.secondary">
             Loading statistics
           </Typography>
         </Box>
@@ -373,27 +402,12 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
-              gap: 4,
-              mt: 3,
+              gap: 3,
             }}
           >
-          {/* Game History Chart */}
-          <Paper
-            elevation={4}
-            sx={{
-              p: 3,
-              background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-              border: "1px solid #333",
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-            >
-              Game History
-            </Typography>
+          <StatisticsCard title="Game History">
             {gameTypeData.length > 0 ? (
-            <Box sx={{ fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
+            <Box sx={{ fontFamily: BARLOW_FAMILY }}>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -453,25 +467,11 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
               </Typography>
             </Box>
           )}
-        </Paper>
+          </StatisticsCard>
 
-          {/* Kills vs Deaths Chart */}
-        <Paper
-          elevation={4}
-          sx={{
-            p: 3,
-            background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-            border: "1px solid #333",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-          >
-            Kills vs Deaths
-          </Typography>
+          <StatisticsCard title="Kills vs Deaths">
           {killsDeathsData.length > 0 ? (
-            <Box sx={{ fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
+            <Box sx={{ fontFamily: BARLOW_FAMILY }}>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -531,48 +531,46 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
               </Typography>
             </Box>
           )}
-        </Paper>
+          </StatisticsCard>
         </Box>
 
-        {/* Activity Heatmap */}
         {heatmapData && (
-          <Box sx={{ mt: 4 }}>
-            <ActivityHeatmap data={heatmapData.data} />
+          <Box sx={{ mt: 3 }}>
+            <StatisticsCard title="Games Played" contentSx={{ px: { xs: 1, sm: 1.5 }, py: 1.5, pb: 2 }}>
+              <ActivityHeatmap data={heatmapData.data} />
+            </StatisticsCard>
           </Box>
         )}
 
-        {/* Most Killed and Most Killed By */}
         {(mostKilled.length > 0 || mostKilledBy.length > 0) && (
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
-            gap: 4,
-            mt: 4,
+            gap: 3,
+            mt: 3,
           }}
         >
-          {/* Most Killed */}
           {mostKilled.length > 0 && (
-            <Paper
-              elevation={4}
-              sx={{
-                background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-                border: "1px solid #333",
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-              >
-                Most Killed
-              </Typography>
+            <StatisticsCard title="Most Killed" contentSx={{ p: 0 }}>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333", width: "1px" }}></TableCell>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333" }}>Player</TableCell>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333" }} align="right">Kills</TableCell>
+                    <TableRow sx={{
+                      '& .MuiTableCell-root': {
+                        fontFamily: BARLOW_FAMILY,
+                        fontSize: '0.875rem',
+                        fontWeight: 700,
+                        textTransform: 'none',
+                        WebkitFontSmoothing: 'auto',
+                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                        color: 'primary.main',
+                        borderColor: 'divider',
+                      },
+                    }}>
+                      <TableCell sx={{ width: "1px" }} />
+                      <TableCell>Player</TableCell>
+                      <TableCell align="right">Kills</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -591,7 +589,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                             "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(124, 179, 66, 0.1)" }
                           }}
                         >
-                          <TableCell sx={{ borderColor: "#333", width: "1px", py: 0.5, px: 1 }}>
+                          <TableCell sx={{ borderColor: "divider", width: "1px", py: 0.5, px: 1 }}>
                             <Emblem
                               size={32}
                               emblem={{
@@ -605,10 +603,10 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                               }}
                             />
                           </TableCell>
-                          <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
+                          <TableCell sx={{ color: cellTextColor, borderColor: "divider", py: 0.5, px: 1 }}>
                             {renderRivalPlayerName(entry)}
                           </TableCell>
-                          <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
+                          <TableCell sx={{ color: cellTextColor, borderColor: "divider", py: 0.5, px: 1 }} align="right">
                             {Number(entry.count)}
                           </TableCell>
                         </TableRow>
@@ -617,31 +615,29 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                   </TableBody>
                 </Table>
               </TableContainer>
-            </Paper>
+            </StatisticsCard>
           )}
 
-          {/* Most Killed By */}
           {mostKilledBy.length > 0 && (
-            <Paper
-              elevation={4}
-              sx={{
-                background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-                border: "1px solid #333",
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-              >
-                Most Killed By
-              </Typography>
+            <StatisticsCard title="Most Killed By" contentSx={{ p: 0 }}>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333", width: "1px" }}></TableCell>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333" }}>Player</TableCell>
-                      <TableCell sx={{ color: "#7CB342", borderColor: "#333" }} align="right">Deaths</TableCell>
+                    <TableRow sx={{
+                      '& .MuiTableCell-root': {
+                        fontFamily: BARLOW_FAMILY,
+                        fontSize: '0.875rem',
+                        fontWeight: 700,
+                        textTransform: 'none',
+                        WebkitFontSmoothing: 'auto',
+                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                        color: 'primary.main',
+                        borderColor: 'divider',
+                      },
+                    }}>
+                      <TableCell sx={{ width: "1px" }} />
+                      <TableCell>Player</TableCell>
+                      <TableCell align="right">Deaths</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -660,7 +656,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                             "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(124, 179, 66, 0.1)" }
                           }}
                         >
-                          <TableCell sx={{ borderColor: "#333", width: "1px", py: 0.5, px: 1 }}>
+                          <TableCell sx={{ borderColor: "divider", width: "1px", py: 0.5, px: 1 }}>
                             <Emblem
                               size={32}
                               emblem={{
@@ -674,10 +670,10 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                               }}
                             />
                           </TableCell>
-                          <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }}>
+                          <TableCell sx={{ color: cellTextColor, borderColor: "divider", py: 0.5, px: 1 }}>
                             {renderRivalPlayerName(entry)}
                           </TableCell>
-                          <TableCell sx={{ color: cellTextColor, borderColor: "#333", py: 0.5, px: 1 }} align="right">
+                          <TableCell sx={{ color: cellTextColor, borderColor: "divider", py: 0.5, px: 1 }} align="right">
                             {Number(entry.count)}
                           </TableCell>
                         </TableRow>
@@ -686,53 +682,29 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                   </TableBody>
                 </Table>
               </TableContainer>
-            </Paper>
+            </StatisticsCard>
           )}
         </Box>
         )}
 
-        {/* Medal Chest and Weapon Kills - Side by Side */}
         {(validMedalTypes.length > 0 || weaponKills.length > 0) && (
         <Box
           sx={{
-            mt: 4,
+            mt: 3,
             display: "grid",
             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 4,
+            gap: 3,
           }}
         >
-          {/* Medal Chest */}
           {validMedalTypes.length > 0 && (
-            <Paper
-              elevation={4}
-              sx={{
-                p: 3,
-                background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-                border: "1px solid #333",
-                height: 'fit-content'
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-              >
-                Medal Chest
-              </Typography>
+            <StatisticsCard title="Medal Chest">
               <Box
                 sx={{
-                  border: "1px solid #444",
-                  borderRadius: 1,
-                  p: 2,
-                  backgroundColor: "#0A0A0A",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1.5,
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                  }}
-                >
                   {medalRows.map((row, rowIndex) => {
                     const rowMedals = row.map(medalType => ({
                       type: medalType,
@@ -798,7 +770,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                                 <Typography 
                                   variant="caption" 
                                   sx={{ 
-                                    color: isEarned ? "#7CB342" : "#666", 
+                                    color: isEarned ? "primary.main" : "text.disabled", 
                                     fontWeight: "bold",
                                     mt: 0.5,
                                     fontSize: "0.7rem",
@@ -814,35 +786,27 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                     );
                   })}
                 </Box>
-              </Box>
-            </Paper>
+            </StatisticsCard>
           )}
 
-          {/* Weapon Kills */}
           {weaponKills.length > 0 && (
-          <Paper
-            elevation={4}
-            sx={{
-              p: 3,
-              background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-              border: "1px solid #333",
-            }}
-          >
+          <StatisticsCard title="Weapon Statistics">
             {weaponOfChoice && (
               <Box
                 sx={{
                   position: "relative",
-                  mb: 3,
-                  p: 2.5,
-                  minHeight: 120,
+                  mb: 2.5,
+                  p: 2,
+                  minHeight: 112,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
                   textAlign: "center",
                   border: "1px solid",
-                  borderColor: "primary.main",
-                  background: "linear-gradient(180deg, rgba(124, 179, 66, 0.12) 0%, rgba(124, 179, 66, 0.04) 100%)",
+                  borderColor: "divider",
+                  borderRadius: 1,
+                  backgroundColor: "rgba(0, 0, 0, 0.25)",
                   overflow: "hidden",
                 }}
               >
@@ -877,7 +841,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                   sx={{
                     position: "relative",
                     zIndex: 1,
-                    color: "#E0E0E0",
+                    color: "text.primary",
                     fontWeight: 700,
                     mt: 0.5,
                     textShadow: "0 1px 12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 0, 0, 0.6)",
@@ -900,13 +864,6 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
               </Box>
             )}
 
-            <Typography
-              variant="h6"
-              sx={{ mb: 2, color: "#7CB342", textAlign: "center" }}
-            >
-              Weapon Statistics
-            </Typography>
-
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
               {(() => {
                 const maxKills = Math.max(...weaponKills.map((e: { kills: number }) => e.kills), 1);
@@ -928,7 +885,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                         minHeight: 56,
                         border: "1px solid",
                         borderColor: isWeaponOfChoice ? "primary.main" : "divider",
-                        backgroundColor: "rgba(0, 0, 0, 0.25)",
+                        backgroundColor: "rgba(0, 0, 0, 0.18)",
                         overflow: "hidden",
                         transition: "border-color 0.2s ease",
                         "&:hover": {
@@ -971,7 +928,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                           sx={{
                             position: "relative",
                             zIndex: 1,
-                            color: isWeaponOfChoice ? "primary.light" : "#E0E0E0",
+                            color: isWeaponOfChoice ? "primary.light" : "text.primary",
                             fontWeight: isWeaponOfChoice ? 700 : 600,
                             textShadow: "0 1px 8px rgba(0, 0, 0, 0.9), 0 0 16px rgba(0, 0, 0, 0.5)",
                           }}
@@ -1000,7 +957,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                 });
               })()}
             </Box>
-          </Paper>
+          </StatisticsCard>
           )}
         </Box>
         )}

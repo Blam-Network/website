@@ -1,41 +1,44 @@
 "use client";
 
-import { Box, Paper, Typography, Tooltip } from "@mui/material";
+import { Box, Typography, Tooltip } from "@mui/material";
 import { useMemo } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
+import { BARLOW_FAMILY } from "@/src/theme/fonts";
 
 interface ActivityHeatmapProps {
   data: Record<string, number>;
 }
 
-export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
-  // Convert data to format expected by react-calendar-heatmap
-  const heatmapValues = useMemo(() => {
-    return Object.entries(data).map(([date, count]) => ({
-      date,
-      count,
-    }));
-  }, [data]);
+const HEAT_COLORS = {
+  empty: "rgba(255, 255, 255, 0.05)",
+  scale1: "rgba(124, 179, 66, 0.22)",
+  scale2: "rgba(124, 179, 66, 0.42)",
+  scale3: "rgba(124, 179, 66, 0.68)",
+  scale4: "#7CB342",
+} as const;
 
-  // Calculate date range (last year)
+export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
+  const heatmapValues = useMemo(
+    () => Object.entries(data).map(([date, count]) => ({ date, count })),
+    [data],
+  );
+
+  const totalGames = useMemo(
+    () => Object.values(data).reduce((sum, count) => sum + count, 0),
+    [data],
+  );
+
   const today = new Date();
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  // Set to start of day
   oneYearAgo.setHours(0, 0, 0, 0);
   today.setHours(23, 59, 59, 999);
 
-  // Find max count for color scaling
-  const maxCount = useMemo(() => {
-    return Math.max(...Object.values(data), 1);
-  }, [data]);
+  const maxCount = useMemo(() => Math.max(...Object.values(data), 1), [data]);
 
-  // Class function for color scaling
   const classForValue = (value: { date: string; count: number } | null) => {
-    if (!value || value.count === 0) {
-      return "color-empty";
-    }
+    if (!value || value.count === 0) return "color-empty";
     const intensity = value.count / maxCount;
     if (intensity < 0.25) return "color-scale-1";
     if (intensity < 0.5) return "color-scale-2";
@@ -43,91 +46,72 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
     return "color-scale-4";
   };
 
-  // Format date for tooltip
-  const formatDateForTooltip = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
+  const formatDateForTooltip = (dateStr: string): string =>
+    new Date(dateStr).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
 
-  // Transform day element to wrap with MUI Tooltip
-  const transformDayElement = (rect: React.ReactElement, value: { date: string; count: number } | null, index: number) => {
-    if (!value || value.count === 0) {
-      return (
-        <Tooltip
-          key={index}
-          title={
-            <Box sx={{ fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-              <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-                No games
-              </Typography>
-              <Typography variant="caption" sx={{ color: "#B0B0B0", fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-                {value ? formatDateForTooltip(value.date) : ""}
-              </Typography>
-            </Box>
-          }
-          arrow
-        >
-          {rect}
-        </Tooltip>
-      );
-    }
+  const transformDayElement = (
+    rect: React.ReactElement,
+    value: { date: string; count: number } | null,
+    index: number,
+  ) => {
+    const tooltipContent = (
+      <Box sx={{ fontFamily: BARLOW_FAMILY }}>
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {!value || value.count === 0
+            ? "No games"
+            : `${value.count} ${value.count === 1 ? "game" : "games"}`}
+        </Typography>
+        {value && (
+          <Typography variant="caption" color="text.secondary">
+            {formatDateForTooltip(value.date)}
+          </Typography>
+        )}
+      </Box>
+    );
 
     return (
-      <Tooltip
-        key={index}
-        title={
-          <Box sx={{ fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-              {value.count} {value.count === 1 ? "game" : "games"}
-            </Typography>
-            <Typography variant="caption" sx={{ color: "#B0B0B0", fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
-              {formatDateForTooltip(value.date)}
-            </Typography>
-          </Box>
-        }
-        arrow
-      >
+      <Tooltip key={index} title={tooltipContent} arrow>
         {rect}
       </Tooltip>
     );
   };
 
   return (
-    <Paper
-      elevation={4}
+    <Box
       sx={{
-        p: 3,
-        background: "linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)",
-        border: "1px solid #333",
-        fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif',
+        fontFamily: BARLOW_FAMILY,
         "& .react-calendar-heatmap": {
-          fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif',
+          fontFamily: BARLOW_FAMILY,
         },
         "& .react-calendar-heatmap text": {
           fontSize: "10px",
-          fill: "#B0B0B0",
-          fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif',
+          fill: "#8B9BB4",
+          fontFamily: BARLOW_FAMILY,
         },
         "& .react-calendar-heatmap .react-calendar-heatmap-small-text": {
           fontSize: "10px",
-          fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif',
+          fontFamily: BARLOW_FAMILY,
+        },
+        "& .react-calendar-heatmap rect": {
+          rx: 3,
+          ry: 3,
+          stroke: "transparent",
+          strokeWidth: 1,
+          transition: "stroke 0.15s ease, filter 0.15s ease",
         },
         "& .react-calendar-heatmap rect:hover": {
           stroke: "#7CB342",
-          strokeWidth: 1,
+          filter: "brightness(1.12)",
         },
       }}
     >
-      <Typography
-        variant="h6"
-        sx={{ mb: 2, color: "#7CB342", textAlign: "center", fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}
-      >
-        Games Played
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {totalGames.toLocaleString()} {totalGames === 1 ? "game" : "games"} in the last 12 months
       </Typography>
 
       <Box
@@ -136,38 +120,38 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
           overflowX: "auto",
           display: "flex",
           gap: 1,
+          pb: 0.5,
           "& .react-calendar-heatmap": {
             flex: 1,
-            minWidth: "800px",
+            minWidth: 720,
           },
         }}
       >
-        {/* Day of week legend */}
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             alignItems: "flex-end",
-            pr: 1,
-            minWidth: "20px",
+            pr: 0.75,
+            minWidth: 16,
             mt: 3.5,
-            "& .day-label": {
-              fontSize: "10px",
-              color: "#B0B0B0",
-              fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif',
-              lineHeight: "8px",
-              mb: "2px",
-            },
+            color: "text.secondary",
+            fontSize: "10px",
+            fontFamily: BARLOW_FAMILY,
+            lineHeight: "11px",
+            userSelect: "none",
           }}
         >
-          <Typography className="day-label" component="span">S</Typography>
-          <Typography className="day-label" component="span">M</Typography>
-          <Typography className="day-label" component="span">T</Typography>
-          <Typography className="day-label" component="span">W</Typography>
-          <Typography className="day-label" component="span">T</Typography>
-          <Typography className="day-label" component="span">F</Typography>
-          <Typography className="day-label" component="span">S</Typography>
+          {["S", "M", "T", "W", "T", "F", "S"].map((label, i) => (
+            <Typography
+              key={i}
+              component="span"
+              sx={{ fontSize: "inherit", fontFamily: "inherit", color: "inherit", lineHeight: "inherit" }}
+            >
+              {label}
+            </Typography>
+          ))}
         </Box>
 
         <CalendarHeatmap
@@ -179,48 +163,58 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
         />
       </Box>
 
-      {/* Legend */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 1, mt: 2 }}>
-        <Typography variant="caption" sx={{ color: "#B0B0B0", mr: 1, fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: 1,
+          mt: 2,
+          pt: 1.5,
+          borderTop: "1px solid",
+          borderColor: "divider",
+        }}
+      >
+        <Typography variant="caption" color="text.secondary" sx={{ mr: 0.5 }}>
           Less
         </Typography>
         <Box sx={{ display: "flex", gap: 0.5 }}>
-          <Box sx={{ width: 12, height: 12, backgroundColor: "#161b22", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "2px" }} />
-          <Box sx={{ width: 12, height: 12, backgroundColor: "#0e4429", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "2px" }} />
-          <Box sx={{ width: 12, height: 12, backgroundColor: "#006d32", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "2px" }} />
-          <Box sx={{ width: 12, height: 12, backgroundColor: "#26a641", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "2px" }} />
-          <Box sx={{ width: 12, height: 12, backgroundColor: "#39d353", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "2px" }} />
+          {[
+            HEAT_COLORS.empty,
+            HEAT_COLORS.scale1,
+            HEAT_COLORS.scale2,
+            HEAT_COLORS.scale3,
+            HEAT_COLORS.scale4,
+          ].map((color, i) => (
+            <Box
+              key={i}
+              sx={{
+                width: 13,
+                height: 13,
+                backgroundColor: color,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: "3px",
+              }}
+            />
+          ))}
         </Box>
-        <Typography variant="caption" sx={{ color: "#B0B0B0", ml: 1, fontFamily: '"Segoe UI", "Arial", "Helvetica", sans-serif' }}>
+        <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
           More
         </Typography>
       </Box>
 
-      {/* Custom CSS for colors */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          .react-calendar-heatmap .color-empty {
-            fill: #161b22;
-          }
-          .react-calendar-heatmap .color-scale-1 {
-            fill: #0e4429;
-          }
-          .react-calendar-heatmap .color-scale-2 {
-            fill: #006d32;
-          }
-          .react-calendar-heatmap .color-scale-3 {
-            fill: #26a641;
-          }
-          .react-calendar-heatmap .color-scale-4 {
-            fill: #39d353;
-          }
-          .react-calendar-heatmap rect {
-            rx: 2;
-            ry: 2;
-          }
-        `
-      }} />
-    </Paper>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .react-calendar-heatmap .color-empty { fill: ${HEAT_COLORS.empty}; }
+            .react-calendar-heatmap .color-scale-1 { fill: ${HEAT_COLORS.scale1}; }
+            .react-calendar-heatmap .color-scale-2 { fill: ${HEAT_COLORS.scale2}; }
+            .react-calendar-heatmap .color-scale-3 { fill: ${HEAT_COLORS.scale3}; }
+            .react-calendar-heatmap .color-scale-4 { fill: ${HEAT_COLORS.scale4}; }
+          `,
+        }}
+      />
+    </Box>
   );
 }
-

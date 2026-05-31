@@ -79,3 +79,14 @@ export function getWeaponIconPath(damageSource: string): string | undefined {
 export function getWeaponNameFromString(damageSource: string): string {
   return getWeaponInfo(damageSource).displayName;
 }
+
+export function getPlayerToolOfDestruction(
+  damageStatistics: ReadonlyArray<{ kills: number; damage_source: string }> | undefined,
+): string | null {
+  if (!damageStatistics?.length) {
+    return null;
+  }
+
+  const top = damageStatistics.reduce((best, stat) => (stat.kills > best.kills ? stat : best));
+  return top.kills > 0 ? top.damage_source : null;
+}

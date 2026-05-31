@@ -1,6 +1,10 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
+import {
+  getHalo3DifficultyName,
+  getHalo3MissionName,
+} from "@/src/utils/halo3CampaignDisplay";
 
 /** Row shape for recent/previous games (Halo 3 or Ares); avoids coupling this UI to a specific API package. */
 export type RecentGamesTableRow = {
@@ -13,46 +17,6 @@ export type RecentGamesTableRow = {
   map_variant_name?: string | null;
   hopper_name?: string | null;
   campaign_difficulty?: number;
-};
-
-const getMissionName = (mapId: number): string => {
-    switch (mapId) {
-        case 3005:
-            return 'Arrival';
-        case 3010:
-            return 'Sierra 117';
-        case 3020:
-            return 'Crow\'s Nest';
-        case 3030:
-            return 'Tsavo Highway';
-        case 3040:
-            return 'The Storm';
-        case 3050:
-            return 'Floodgate';
-        case 3070:
-            return 'The Ark';
-        case 3100:
-            return 'The Covenant';
-        case 3110:
-            return 'Cortana';
-        case 3120:
-            return 'Halo';
-        case 3130:
-            return 'Epilogue';
-        default:
-            return 'Unknown Mission';
-    }
-};
-
-const getDifficultyName = (difficulty: number | undefined): string => {
-    if (difficulty === undefined) return "Unknown";
-    switch (difficulty) {
-        case 0: return "Easy";
-        case 1: return "Normal";
-        case 2: return "Heroic";
-        case 3: return "Legendary";
-        default: return "Unknown";
-    }
 };
 
 interface RecentGamesTableProps {
@@ -112,7 +76,7 @@ export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/ha
                                         sx={{ fontWeight: 600, fontSize: '0.8125rem' }}
                                     >
                                         {isCampaign ? (
-                                            `${getMissionName(game.map_id)} on ${getDifficultyName(campaignDifficulty)}`
+                                            `${getHalo3MissionName(game.map_id)} on ${getHalo3DifficultyName(campaignDifficulty)}`
                                         ) : (
                                             `${gameVariantName ?? 'Gametype'} on ${mapVariantName ?? 'Unknown Map'}`
                                         )}

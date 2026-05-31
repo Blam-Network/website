@@ -18,6 +18,7 @@ import { RecentGamesTable } from "@/src/components/RecentGamesTable";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
 import { PlayerStatistics } from "@/src/components/PlayerStatistics";
+import { SectionHeader } from "@/src/components/SectionHeader";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -139,7 +140,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
     fileShare = await api.ares.fileShare.query({ gamertag });
   } catch {}
   try {
-    screenshots = await api.ares.playerScreenshots.query({ gamertag });
+    screenshots = await api.ares.playerScreenshots.query({ gamertag, pageSize: 12 });
   } catch {}
   const hasPlayed = previousGames.length > 0 || !!serviceRecord?.playerName;
 
@@ -419,24 +420,15 @@ export default async function Home({params}: {params: { gamertag: string }}) {
         </Box>
       )}
       {hasPlayed && (
-        <Box sx={{ mt: 6 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1, borderBottom: '2px solid #7CB342' }}>
-            <Typography variant='h4'>Recent Screenshots</Typography>
-            {screenshots.length > 0 && (
-              <MuiLink 
-                component={Link}
-                href={`/ares/screenshots?gamertag=${encodeURIComponent(gamertag)}`}
-                underline="always"
-              >
-                <Typography variant="body2" component="span">
-                  View All
-                </Typography>
-              </MuiLink>
-            )}
-          </Box>
+        <Box sx={{ mt: 4 }}>
+          <SectionHeader
+            title="Recent Screenshots"
+            href={screenshots.length > 0 ? `/ares/screenshots?gamertag=${encodeURIComponent(gamertag)}` : undefined}
+            sx={{ mb: 2 }}
+          />
           {screenshots.length > 0 ? (
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 2, width: '100%' }}>
-              {screenshots?.map((screenshot: Screenshots[number]) => (
+              {screenshots.map((screenshot: Screenshots[number]) => (
                 <ScreenshotCard
                     key={screenshot.id}
                   screenshotId={screenshot.id}
@@ -456,7 +448,9 @@ export default async function Home({params}: {params: { gamertag: string }}) {
         </Box>
       )}
       {hasPlayed && (
-        <PlayerStatistics gamertag={gamertag} source="ares" />
+        <Box sx={{ mt: 4 }}>
+          <PlayerStatistics gamertag={gamertag} source="ares" />
+        </Box>
       )}
       </Container>
     </>

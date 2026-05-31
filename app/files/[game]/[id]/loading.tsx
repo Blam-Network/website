@@ -4,9 +4,9 @@ import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 export default function Loading() {
   return (
     <Container
-      maxWidth="lg"
+      maxWidth="md"
       sx={{
-        py: { xs: 4, md: 5 },
+        py: 4,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -16,7 +16,7 @@ export default function Loading() {
     >
       <LoadingSpinner size={96} sx={{ mb: 2 }} />
       <Typography variant="body1" color="text.secondary">
-        Loading carnage report...
+        Loading file...
       </Typography>
     </Container>
   );
