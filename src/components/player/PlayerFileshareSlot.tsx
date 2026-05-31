@@ -39,6 +39,12 @@ export function PlayerFileshareSlot({
 
   const isScreenshot = slot.header.filetype === 13;
   const fileShareGame = slot.isOdst ? "odst" as const : "halo3" as const;
+  const mapId =
+    slot.header.filetype === 10 ||
+    slot.header.filetype === 11 ||
+    slot.header.filetype === 12
+      ? slot.header.mapId
+      : undefined;
 
   return (
     <Paper
@@ -77,6 +83,7 @@ export function PlayerFileshareSlot({
             filename={isScreenshot ? slot.header.filename : undefined}
             description={isScreenshot ? slot.header.description : undefined}
             author={isScreenshot ? slot.header.author : undefined}
+            mapId={mapId}
           />
         </Box>
       </Box>
