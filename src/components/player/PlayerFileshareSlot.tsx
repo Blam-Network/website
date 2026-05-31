@@ -38,6 +38,7 @@ export function PlayerFileshareSlot({
   }
 
   const isScreenshot = slot.header.filetype === 13;
+  const fileShareGame = slot.isOdst ? "odst" as const : "halo3" as const;
 
   return (
     <Paper
@@ -68,6 +69,7 @@ export function PlayerFileshareSlot({
           <FileshareFiletypeIcon
             filetype={slot.header.filetype}
             gameEngineType={slot.header.gameEngineType}
+            fileShareGame={fileShareGame}
             size="100%"
             shareId={isScreenshot ? shareId : undefined}
             slot={isScreenshot ? slot.slotNumber : undefined}
@@ -101,7 +103,7 @@ export function PlayerFileshareSlot({
         />
         {loggedIn && (
           <Box sx={{ pt: 0.5, mt: "auto", display: "flex", justifyContent: "flex-end" }}>
-            <FileshareDownloadButton fileId={slot.id} compact />
+            <FileshareDownloadButton fileId={slot.id} game={fileShareGame} compact />
           </Box>
         )}
       </Stack>

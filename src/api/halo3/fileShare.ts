@@ -30,6 +30,7 @@ const FileHeaderSchema = z.object({
     id: z.string(),
     uniqueId: z.string(),
     slotNumber: z.number(),
+    isOdst: z.boolean().optional(),
     header: FileHeaderSchema,
   });
   
