@@ -7,6 +7,10 @@ import { reachAxios } from "./reachAxios";
 import { reachPendingTransfers } from "./pendingTransfers";
 import { reachCreateFileshareTransfer } from "./createFileshareTransfer";
 import { reachDeleteFileshareTransfer } from "./deleteFileshareTransfer";
+import { onlinePlayers } from "./onlinePlayers";
+import { onlinePlayers24h } from "./onlinePlayers24h";
+import { lobbies } from "./lobbies";
+import { hoppers } from "./hoppers";
 
 const screenshots = publicProcedure
   .input(
@@ -64,6 +68,10 @@ const fileshareFiles = publicProcedure
   });
 
 export const reachRouter = createTRPCRouter({
+  onlinePlayers,
+  onlinePlayers24h,
+  hoppers,
+  lobbies,
   screenshots,
   fileshareFiles,
   pendingTransfers: reachPendingTransfers,

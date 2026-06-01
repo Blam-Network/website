@@ -6,8 +6,57 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQuery } from '@tanstack/react-query';
 import { api } from "../trpc/client";
-import { useNightmap } from "../contexts/NightmapContext";
 import { GameIcon } from "./GameIcon";
+import type { FilesGame } from "./files/filesPageTypes";
+
+function OnlinePopulationBadge({
+    game,
+    label,
+    pulseSeconds = 2,
+}: {
+    game: FilesGame;
+    label: string;
+    /** Green dot pulse cycle duration (Reach uses a faster pulse than Halo 3). */
+    pulseSeconds?: number;
+}) {
+    const pulseName = `population-pulse-${pulseSeconds}`;
+
+    return (
+        <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.75}
+            sx={{ color: 'text.secondary', flexShrink: 0 }}
+        >
+            <Box
+                sx={{
+                    width: 6,
+                    height: 6,
+                    flexShrink: 0,
+                    backgroundColor: 'primary.main',
+                    boxShadow: '0 0 6px rgba(124, 179, 66, 0.8)',
+                    animation: `${pulseName} ${pulseSeconds}s ease-in-out infinite`,
+                    [`@keyframes ${pulseName}`]: {
+                        '0%, 100%': { opacity: 1 },
+                        '50%': { opacity: 0.4 },
+                    },
+                }}
+            />
+            <GameIcon game={game} size={18} aria-hidden />
+            <Typography
+                variant="caption"
+                component="span"
+                sx={{
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.03em',
+                }}
+            >
+                {label}
+            </Typography>
+        </Stack>
+    );
+}
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -19,8 +68,6 @@ const navLinks = [
 export const NavBar = ({ session }: { session: Session | null }) => {
     const pathname = usePathname();
     const loggedIn = !!session?.user?.xuid;
-    const { show24h } = useNightmap();
-
     const { data: onlinePlayers } = useQuery({
         queryKey: ['onlinePlayers'],
         queryFn: () => api.sunrise2.onlinePlayers.query(),
@@ -28,11 +75,11 @@ export const NavBar = ({ session }: { session: Session | null }) => {
         staleTime: 60000,
     });
 
-    const { data: onlinePlayers24h } = useQuery({
-        queryKey: ['onlinePlayers24h'],
-        queryFn: () => api.sunrise2.onlinePlayers24h.query(),
-        refetchInterval: 30000,
-        staleTime: 60000,
+    const { data: reachOnlinePlayers } = useQuery({
+        queryKey: ['reachOnlinePlayers'],
+        queryFn: () => api.reach.onlinePlayers.query(),
+        refetchInterval: 5_000,
+        staleTime: 5_000,
     });
 
     const isActive = (href: string) => {
@@ -48,11 +95,15 @@ export const NavBar = ({ session }: { session: Session | null }) => {
         ...(session?.user?.is_admin ? [{ href: '/reach/admin', label: 'Admin' }] : []),
     ];
 
-    const playerCount = show24h && onlinePlayers24h
-        ? `${onlinePlayers24h.count} players online (24h)`
-        : onlinePlayers
-            ? `${onlinePlayers.count} players online`
-            : null;
+    const halo3PlayerCount = onlinePlayers
+        ? `${onlinePlayers.count} players online`
+        : null;
+
+    const reachPlayerCount = reachOnlinePlayers
+        ? `${reachOnlinePlayers.count} players online`
+        : null;
+
+    const showPopulation = halo3PlayerCount || reachPlayerCount;
 
     return (
         <Box
@@ -108,43 +159,30 @@ export const NavBar = ({ session }: { session: Session | null }) => {
                         </Link>
                     ))}
                 </Stack>
-                {playerCount && (
+                {showPopulation && (
                     <Stack
                         direction="row"
                         alignItems="center"
-                        spacing={0.75}
+                        spacing={2}
                         sx={{
-                            color: 'text.secondary',
                             display: { xs: 'none', md: 'flex' },
                             flexShrink: 0,
                         }}
                     >
-                        <Box
-                            sx={{
-                                width: 6,
-                                height: 6,
-                                flexShrink: 0,
-                                backgroundColor: 'primary.main',
-                                boxShadow: '0 0 6px rgba(124, 179, 66, 0.8)',
-                                animation: 'pulse 2s ease-in-out infinite',
-                                '@keyframes pulse': {
-                                    '0%, 100%': { opacity: 1 },
-                                    '50%': { opacity: 0.4 },
-                                },
-                            }}
-                        />
-                        <GameIcon game="halo3" size={18} aria-hidden />
-                        <Typography
-                            variant="caption"
-                            component="span"
-                            sx={{
-                                fontWeight: 600,
-                                whiteSpace: 'nowrap',
-                                letterSpacing: '0.03em',
-                            }}
-                        >
-                            {playerCount}
-                        </Typography>
+                        {halo3PlayerCount && (
+                            <OnlinePopulationBadge
+                                game="halo3"
+                                label={halo3PlayerCount}
+                                pulseSeconds={2}
+                            />
+                        )}
+                        {reachPlayerCount && (
+                            <OnlinePopulationBadge
+                                game="reach"
+                                label={reachPlayerCount}
+                                pulseSeconds={2}
+                            />
+                        )}
                     </Stack>
                 )}
             </Stack>

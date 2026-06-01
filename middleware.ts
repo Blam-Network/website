@@ -10,7 +10,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  if (!req.nextUrl.pathname.startsWith("/reach/admin")) {
+  const isReachAdminRoute =
+    req.nextUrl.pathname.startsWith("/reach/admin") ||
+    req.nextUrl.pathname.startsWith("/reach/lobbies");
+
+  if (!isReachAdminRoute) {
     return NextResponse.next();
   }
 

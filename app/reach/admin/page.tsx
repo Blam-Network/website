@@ -9,6 +9,11 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 
 const ADMIN_LINKS = [
+    {
+        href: "/reach/lobbies",
+        label: "Live Lobbies",
+        description: "Players online grouped by session from LSP presence",
+    },
     { href: "/datamine", label: "View the Datamine", description: "Browse datamine sessions and event logs" },
     {
         href: "/reach/admin/fileshare/blamnetwork",
