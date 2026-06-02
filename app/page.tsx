@@ -9,34 +9,12 @@ import { getScreenshotViewUrl } from "@/src/components/home/getScreenshotViewUrl
 import { buildPageMetadata } from "@/src/utils/metadata";
 import type { Metadata } from "next";
 
-export async function generateMetadata(): Promise<Metadata> {
-  let images: { url: string; width: number; height: number; alt: string }[] | undefined;
-  try {
-    const recent = await api.home.recentScreenshotsAcrossGames.query();
-    const first = recent[0];
-    if (first) {
-      images = [
-        {
-          url: getScreenshotViewUrl(first.game, first.id),
-          width: 1280,
-          height: 720,
-          alt: first.header.filename || "Recent screenshot",
-        },
-      ];
-    }
-  } catch {
-    images = undefined;
-  }
-
-  return buildPageMetadata({
-    title: "Blam Network",
-    description:
-      "Halo 3, ODST, and Reach service records, carnage reports, file share, screenshots, and more on Blam Network.",
-    path: "/",
-    images,
-    twitterCard: images ? "summary_large_image" : "summary",
-  });
-}
+export const metadata: Metadata = buildPageMetadata({
+  title: "Blam Network",
+  description:
+    "Halo 3, ODST, and Reach service records, carnage reports, file share, screenshots, and more on Blam Network.",
+  path: "/",
+});
 
 export default async function Home() {
   const [recentGames, recentScreenshots, recentFiles] = await Promise.all([
