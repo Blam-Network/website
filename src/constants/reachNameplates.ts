@@ -130,7 +130,7 @@ export const REACH_NAMEPLATE_ROW_LAYOUT: {
   bottom: ReachNameplateEquipId[];
 } = {
   top: ["marathon", "halo1", "halo2", "halo3", "odst", "halo"],
-  bottom: ["column", "ar", "dmr", "helmet", "star", "bungie"],
+  bottom: ["column", "ar", "dmr", "helmet", "star", "bungie", "none"],
 };
 
 /** Hidden in the picker until unlocked (omitted from the row until then). */
@@ -146,7 +146,7 @@ export function isReachNameplateVisibleInPicker(
   unlocks: Record<ReachNameplateId, boolean>,
 ): boolean {
   if (id === "none") {
-    return false;
+    return true;
   }
   if (!REACH_NAMEPLATES_HIDDEN_WHEN_LOCKED.includes(id)) {
     return true;

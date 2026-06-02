@@ -167,7 +167,7 @@ function NameplateFlexRow({
         <Box key={id} sx={nameplateSlotSx}>
           <NameplateTile
             nameplateId={id}
-            unlocked={id !== "none" && (data.unlocks[id] ?? false)}
+            unlocked={id === "none" || (data.unlocks[id] ?? false)}
             selected={data.selectedNameplate === id}
             equipPending={equipPending}
             onEquip={onEquip}
