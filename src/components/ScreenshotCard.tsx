@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/src/components/LoadingSpinner";
 import { ScreenshotModal } from "./ScreenshotModal";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { GamertagLink } from "./Gamertag";
+import type { FilesGame } from "@/src/components/files/filesPageTypes";
 
 interface ScreenshotCardProps {
   screenshotId: string;
@@ -15,6 +16,7 @@ interface ScreenshotCardProps {
   description: string;
   author?: string;
   date?: Date | string;
+  profileGame?: FilesGame;
 }
 
 export const ScreenshotCard = ({
@@ -24,6 +26,7 @@ export const ScreenshotCard = ({
   description,
   author,
   date,
+  profileGame,
 }: ScreenshotCardProps) => {
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -185,6 +188,7 @@ export const ScreenshotCard = ({
                 by{" "}
                 <GamertagLink
                   gamertag={author}
+                  profileGame={profileGame}
                   linkSx={{ color: "#4A90E2" }}
                   onClick={(e) => e.stopPropagation()}
                 />

@@ -40,6 +40,7 @@ export function ReachFileshareIcon({
   const frameKind = getReachFileshareFrameKind(filetype);
   const overlayUrl = getFileshareOverlayUrl(frameKind);
   const { maxWidthValue, maxHeightValue } = getIconSizeProps(size);
+  const fixedWidth = typeof size === "number" ? maxWidthValue : undefined;
 
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -65,10 +66,11 @@ export function ReachFileshareIcon({
     <Box
       sx={{
         position: "relative",
-        width: "100%",
+        width: fixedWidth ?? "100%",
         maxWidth: maxWidthValue,
         maxHeight: maxHeightValue,
         display: "inline-block",
+        flexShrink: 0,
         aspectRatio: "16 / 9",
       }}
     >

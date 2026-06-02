@@ -9,6 +9,7 @@ const JWTSchema = z.object({
         email: z.string(),
         datamine_access: z.boolean().default(false),
         is_admin: z.boolean().default(false),
+        is_uploader: z.boolean().default(false),
     }),
     tokens: z.object({
         microsoft: z.string(),

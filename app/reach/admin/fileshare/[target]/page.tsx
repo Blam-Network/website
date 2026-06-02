@@ -1,15 +1,14 @@
-import { notFound } from "next/navigation";
-import { ReachFileshareUploadPage } from "@/src/components/reach/ReachFileshareUploadPage";
+import { notFound, redirect } from "next/navigation";
 import { isReachAdminFileshareTarget } from "@/src/constants/reachAdminFileshare";
 
-export default function ReachAdminFileshareUploadPage({
-    params,
+export default function LegacyReachAdminFilesharePage({
+  params,
 }: {
-    params: { target: string };
+  params: { target: string };
 }) {
-    if (!isReachAdminFileshareTarget(params.target)) {
-        notFound();
-    }
+  if (!isReachAdminFileshareTarget(params.target)) {
+    notFound();
+  }
 
-    return <ReachFileshareUploadPage fileshareTarget={params.target} />;
+  redirect(`/admin/fileshare/${params.target}`);
 }

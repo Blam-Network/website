@@ -3,11 +3,18 @@
 import { Stack, Box, Typography, Button } from "@mui/material";
 import { Session } from "next-auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useQuery } from '@tanstack/react-query';
 import { api } from "../trpc/client";
+import { playerProfilePath } from "@/src/components/Gamertag";
 import { GameIcon } from "./GameIcon";
 import type { FilesGame } from "./files/filesPageTypes";
+
+function usePreferReachServiceRecord(): boolean {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    return pathname.startsWith("/haloreach") || searchParams.get("game") === "reach";
+}
 
 function OnlinePopulationBadge({
     game,
@@ -67,6 +74,7 @@ const navLinks = [
 
 export const NavBar = ({ session }: { session: Session | null }) => {
     const pathname = usePathname();
+    const preferReachServiceRecord = usePreferReachServiceRecord();
     const loggedIn = !!session?.user?.xuid;
     const { data: onlinePlayers } = useQuery({
         queryKey: ['onlinePlayers'],
@@ -87,12 +95,23 @@ export const NavBar = ({ session }: { session: Session | null }) => {
         return pathname.startsWith(href);
     };
 
+    const serviceRecordHref =
+        loggedIn && session?.user?.gamertag
+            ? playerProfilePath(
+                  session.user.gamertag,
+                  preferReachServiceRecord ? "/haloreach/player" : "/halo3/player",
+              )
+            : null;
+
     const links = [
         ...navLinks,
-        ...(loggedIn && session?.user?.gamertag
-            ? [{ href: `/halo3/player/${session.user.gamertag}`, label: 'Service Record' }]
+        ...(serviceRecordHref
+            ? [{ href: serviceRecordHref, label: "Service Record" }]
             : []),
-        ...(session?.user?.is_admin ? [{ href: '/reach/admin', label: 'Admin' }] : []),
+        ...(session?.user?.is_admin ? [{ href: "/admin", label: "Admin" }] : []),
+        ...(session?.user?.is_uploader && !session?.user?.is_admin
+            ? [{ href: "/admin/fileshare/blamnetwork", label: "Upload" }]
+            : []),
     ];
 
     const halo3PlayerCount = onlinePlayers

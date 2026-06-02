@@ -11,6 +11,10 @@ import { onlinePlayers } from "./onlinePlayers";
 import { onlinePlayers24h } from "./onlinePlayers24h";
 import { lobbies } from "./lobbies";
 import { hoppers } from "./hoppers";
+import { serviceRecord } from "./serviceRecord";
+import { fileShare } from "./fileShare";
+import { getNameplates } from "./getNameplates";
+import { setReachNameplate } from "./setReachNameplate";
 
 const screenshots = publicProcedure
   .input(
@@ -74,7 +78,11 @@ export const reachRouter = createTRPCRouter({
   lobbies,
   screenshots,
   fileshareFiles,
+  serviceRecord,
+  fileShare,
   pendingTransfers: reachPendingTransfers,
   createFileshareTransfer: reachCreateFileshareTransfer,
   deleteFileshareTransfer: reachDeleteFileshareTransfer,
+  getNameplates,
+  setReachNameplate,
 });

@@ -35,6 +35,7 @@ export const AuthWindow = () => {
             }
             ImGui.Text(`datamine_access: ${session.user.datamine_access}`)
             ImGui.Text(`is_admin: ${session.user.is_admin}`)
+            ImGui.Text(`is_uploader: ${session.user.is_uploader}`)
             ImGui.SeparatorText("Tokens")
         
             if (session.tokens?.microsoft) {

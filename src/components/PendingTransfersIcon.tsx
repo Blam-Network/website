@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/src/trpc/client";
 import { DateTimeDisplay } from "./DateTimeDisplay";
-import { GamertagLink, isLinkableGamertag } from "./Gamertag";
+import { GamertagLink, isLinkableGamertag, playerProfilePathForGame } from "./Gamertag";
 import Link from "next/link";
 import { FileshareFiletypeIcon } from "./FileshareFiletypeIcon";
 import { GameIcon } from "./GameIcon";
@@ -273,7 +273,7 @@ export const PendingTransfersIcon = () => {
                   </Typography>
                 ) : (
                   <Link
-                    href={`/halo3/player/${encodeURIComponent(transfer.fileAuthor)}`}
+                    href={playerProfilePathForGame(transfer.fileAuthor, game)}
                     style={{ textDecoration: "none", color: "inherit" }}
                     onClick={handleClose}
                   >
@@ -350,6 +350,7 @@ export const PendingTransfersIcon = () => {
                             by{" "}
                             <GamertagLink
                               gamertag={transfer.fileAuthor}
+                              profileGame={game}
                               variant="caption"
                               underline="hover"
                               sx={{ display: "inline" }}

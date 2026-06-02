@@ -28,7 +28,7 @@ export const ServiceRecordComponent = ({ serviceRecord }: ServiceRecordProps) =>
         boxShadow: "none",
       }}
     >
-      <Box sx={{ py: { xs: 1, md: 2 } }}>
+      <Box sx={{ pt: 0, pb: { xs: 1, md: 2 } }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={3} alignItems={{ md: "center" }}>
           <Stack direction="row" spacing={2.5} flex={1} alignItems="center">
             <Emblem

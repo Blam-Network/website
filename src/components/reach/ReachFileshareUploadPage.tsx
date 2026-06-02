@@ -28,6 +28,10 @@ import {
     REACH_ADMIN_FILESHARE_TARGETS,
     type ReachAdminFileshareTarget,
 } from "@/src/constants/reachAdminFileshare";
+import {
+    canDeleteFromAdminFileshare,
+    canUploadToAdminFileshareTarget,
+} from "@/src/lib/reachFileshareAccess";
 import { ReachAdminFileshareFilesTables } from "@/src/components/reach/ReachAdminFileshareFilesTables";
 import {
     fileEntryKey,
@@ -463,12 +467,15 @@ export function ReachFileshareUploadPage({
         });
     };
 
+    const canAccess = canUploadToAdminFileshareTarget(session?.user, fileshareTarget);
+    const canDelete = canDeleteFromAdminFileshare(session?.user);
+
     useEffect(() => {
         if (status === "loading") return;
-        if (!session?.user?.is_admin) {
+        if (!canAccess) {
             router.push("/");
         }
-    }, [session, status, router]);
+    }, [canAccess, status, router]);
 
     const fileSelectDisabled =
         isUploading ||
@@ -592,7 +599,7 @@ export function ReachFileshareUploadPage({
         setUploadedFilesRefreshKey((key) => key + 1);
     };
 
-    if (status === "loading" || !session?.user?.is_admin) {
+    if (status === "loading" || !canAccess) {
         return (
             <Box sx={{ width: "100%", minHeight: "50vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <LoadingSpinner size={96} />
@@ -602,14 +609,16 @@ export function ReachFileshareUploadPage({
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Button
-                component={Link}
-                href="/reach/admin"
-                startIcon={<ArrowBackIcon />}
-                sx={{ mb: 2, color: "#B0B0B0", "&:hover": { color: "#7CB342" } }}
-            >
-                Admin
-            </Button>
+            {session?.user?.is_admin ? (
+                <Button
+                    component={Link}
+                    href="/admin"
+                    startIcon={<ArrowBackIcon />}
+                    sx={{ mb: 2, color: "#B0B0B0", "&:hover": { color: "#7CB342" } }}
+                >
+                    Admin
+                </Button>
+            ) : null}
 
             <Typography variant="h4" sx={{ mb: 1, color: "#E0E0E0" }}>
                 Halo: Reach File Share - {fileshareLabel}
@@ -731,6 +740,7 @@ export function ReachFileshareUploadPage({
             <ReachAdminFileshareFilesTables
                 fileshareTarget={fileshareTarget}
                 refreshKey={uploadedFilesRefreshKey}
+                canDelete={canDelete}
             />
 
             <UploadNameEditModal

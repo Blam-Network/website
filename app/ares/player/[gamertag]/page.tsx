@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { api } from "@/src/trpc/server";
 import { ServiceRecordComponent } from "@/src/components/ServiceRecord";
+import { ServiceRecordBannerGameSelector } from "@/src/components/ServiceRecordBannerGameSelector";
 import { Stack, Box, Typography, Divider, Paper, Container, Link as MuiLink } from "@mui/material";
 import { Screenshots } from "@/src/api/ares/screenshots";
 import { authOptions } from "@/src/api/auth";
@@ -180,9 +181,14 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             },
           }}
         >
-          <Container maxWidth="lg" sx={{ width: '100%' }}>
+          <Container maxWidth="lg" sx={{ width: "100%", position: "relative", zIndex: 1 }}>
             <ServiceRecordComponent serviceRecord={serviceRecord} />
           </Container>
+          <ServiceRecordBannerGameSelector
+            gamertag={gamertag}
+            currentGame="halo3"
+            primaryColor={getCssColor(serviceRecord.primaryColor)}
+          />
         </Box>
       )}
       {serviceRecord && (

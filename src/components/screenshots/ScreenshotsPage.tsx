@@ -141,6 +141,7 @@ export function ScreenshotsPage({ defaultGame = "halo3" }: ScreenshotsPageProps)
                 description={screenshot.header.description || ""}
                 author={screenshot.author || undefined}
                 date={screenshot.date}
+                profileGame={game}
               />
             ))}
           </Box>

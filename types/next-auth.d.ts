@@ -15,6 +15,7 @@ declare module "next-auth" {
         email: string,
         datamine_access: boolean,
         is_admin: boolean,
+        is_uploader: boolean,
     };
     tokens?: {
       microsoft: string,

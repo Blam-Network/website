@@ -121,6 +121,7 @@ export function FileshareFileDetail({ game, file }: FileshareFileDetailProps) {
                   <GamertagLink
                     gamertag={file.header.author}
                     authorXuid={file.header.authorXuid}
+                    profileGame={game}
                     sx={{ display: "inline" }}
                   />{" "}
                   on <DateTimeDisplay date={file.header.date} />
@@ -138,6 +139,7 @@ export function FileshareFileDetail({ game, file }: FileshareFileDetailProps) {
                   <GamertagLink
                     gamertag={file.uploader}
                     authorXuid={file.uploaderXuid}
+                    profileGame={game}
                     sx={{ display: "inline" }}
                   />{" "}
                   on <DateTimeDisplay date={file.header.date} />

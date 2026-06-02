@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Box,
   Button,
@@ -15,15 +15,13 @@ import FolderOffOutlinedIcon from "@mui/icons-material/FolderOffOutlined";
 import { GameIcon } from "@/src/components/GameIcon";
 import {
   getFilesGameLabel,
-  isValidFilesGame,
+  parseFilesGameFromFilePagePathname,
   type FilesGame,
 } from "@/src/components/files/filesPageTypes";
 
 export function FileshareFileNotFound() {
-  const params = useParams<{ game?: string }>();
-  const gameParam = typeof params.game === "string" ? params.game : undefined;
-  const game: FilesGame | null =
-    gameParam && isValidFilesGame(gameParam) ? gameParam : null;
+  const pathname = usePathname();
+  const game: FilesGame | null = parseFilesGameFromFilePagePathname(pathname);
   const gameLabel = game ? getFilesGameLabel(game) : null;
 
   const filesHref = game ? `/files?game=${game}` : "/files";

@@ -100,6 +100,7 @@ export function ReachFileshareFileCard({ file }: ReachFileshareFileCardProps) {
             <GamertagLink
               gamertag={file.header.author ?? ""}
               authorXuid={file.header.authorXuid}
+              profileGame="reach"
             />
             <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2 }}>
               <DateTimeDisplay date={file.header.date} />

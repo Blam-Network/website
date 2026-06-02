@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getParsedToken } from "@/server/auth/jwt";
+import { isBlamnetworkFileshareUploadPath } from "@/server/auth/userFlags";
 
 export async function middleware(req: NextRequest) {
   const host = req.headers.get("host");
@@ -10,9 +11,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  const pathname = req.nextUrl.pathname;
   const isReachAdminRoute =
-    req.nextUrl.pathname.startsWith("/reach/admin") ||
-    req.nextUrl.pathname.startsWith("/reach/lobbies");
+    pathname.startsWith("/reach/lobbies") ||
+    pathname.startsWith("/reach/admin") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/");
 
   if (!isReachAdminRoute) {
     return NextResponse.next();
@@ -24,7 +28,16 @@ export async function middleware(req: NextRequest) {
   }
 
   const token = await getParsedToken({ req, secret });
-  if (!token?.user.is_admin) {
+  const user = token?.user;
+
+  if (isBlamnetworkFileshareUploadPath(pathname)) {
+    if (user?.is_admin || user?.is_uploader) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  if (!user?.is_admin) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 

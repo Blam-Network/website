@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { jsonStringifySchema } from "@/src/zod";
 
-const FileHeaderSchema = z.object({
+export const ReachFileshareHeaderSchema = z.object({
   buildNumber: z.number(),
   mapVersion: z.number(),
   uniqueId: z.string(),
@@ -32,7 +32,7 @@ export const FileShareFileSchema = z.object({
   shareId: z.string(),
   uploader: z.string().optional(),
   uploaderXuid: z.string().optional(),
-  header: FileHeaderSchema,
+  header: ReachFileshareHeaderSchema,
 });
 
 export const FileshareFileResponseSchema = jsonStringifySchema(FileShareFileSchema);

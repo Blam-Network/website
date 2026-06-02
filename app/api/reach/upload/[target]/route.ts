@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { encode } from "next-auth/jwt";
 import { env } from "@/src/env";
-import { requireAdmin } from "@/server/auth/requireAdmin";
+import { requireFileshareUploadAccess } from "@/server/auth/requireFileshareUpload";
 import { getParsedToken } from "@/server/auth/jwt";
 import {
     isReachAdminFileshareTarget,
@@ -18,8 +18,8 @@ export async function POST(
         return NextResponse.json({ error: "Invalid fileshare target" }, { status: 400 });
     }
 
-    const authError = await requireAdmin(req);
-    if (authError) return authError;
+    const auth = await requireFileshareUploadAccess(req, params.target);
+    if ("error" in auth) return auth.error;
 
     const session = await getParsedToken({ req, secret: env.NEXTAUTH_SECRET });
     if (!session) {

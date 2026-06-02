@@ -4,6 +4,7 @@ import { xuidToHex } from "@/src/utils/xuid";
 export type BnetUserFlags = {
     datamine_access: boolean;
     is_admin: boolean;
+    is_uploader: boolean;
 };
 
 export async function fetchBnetUserFlags(
@@ -21,10 +22,11 @@ export async function fetchBnetUserFlags(
 
     if (response.status !== 200) {
         console.warn(`[auth] GET /user failed: ${response.status}`, response.data);
-        return { datamine_access: false, is_admin: false };
+        return { datamine_access: false, is_admin: false, is_uploader: false };
     }
 
-    let data: { datamine_access?: boolean; is_admin?: boolean } = response.data;
+    let data: { datamine_access?: boolean; is_admin?: boolean; is_uploader?: boolean } =
+        response.data;
     if (typeof data === "string") {
         data = JSON.parse(data);
     }
@@ -32,5 +34,6 @@ export async function fetchBnetUserFlags(
     return {
         datamine_access: data.datamine_access === true,
         is_admin: data.is_admin === true,
+        is_uploader: data.is_uploader === true,
     };
 }

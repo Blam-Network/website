@@ -52,8 +52,34 @@ export function isValidFilesGame(value: string): value is FilesGame {
   return value === "halo3" || value === "odst" || value === "reach";
 }
 
+const FILES_GAME_PATH_SEGMENT: Record<FilesGame, string> = {
+  halo3: "halo3",
+  odst: "halo3odst",
+  reach: "haloreach",
+};
+
+export function getFilesGamePathSegment(game: FilesGame): string {
+  return FILES_GAME_PATH_SEGMENT[game];
+}
+
+export function parseFilesGameFromPathSegment(segment: string): FilesGame | null {
+  if (segment === "halo3odst") return "odst";
+  if (segment === "haloreach") return "reach";
+  if (segment === "halo3") return "halo3";
+  return null;
+}
+
+/** e.g. `/haloreach/file/abc` → `reach`; legacy `/files/odst/abc` → `odst` */
+export function parseFilesGameFromFilePagePathname(pathname: string): FilesGame | null {
+  const parts = pathname.split("/").filter(Boolean);
+  if (parts[0] === "files" && parts[1] && isValidFilesGame(parts[1])) {
+    return parts[1];
+  }
+  return parseFilesGameFromPathSegment(parts[0] ?? "");
+}
+
 export function getFileshareFileHref(game: FilesGame, fileId: string): string {
-  return `/files/${game}/${fileId}`;
+  return `/${getFilesGamePathSegment(game)}/file/${encodeURIComponent(fileId)}`;
 }
 
 export type FilesListQuery = {

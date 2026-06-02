@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter'
 import { ThemeProvider } from '@mui/material/styles';
 import theme from "@/src/theme";
@@ -55,7 +56,9 @@ export default async function RootLayout({
                 <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                   <DebugMenu/>
                   <Header session={session} />
-                  <NavBar session={session}/>
+                  <Suspense fallback={null}>
+                    <NavBar session={session} />
+                  </Suspense>
                   <Box sx={{ flex: 1 }}>
                     {children}
                   </Box>

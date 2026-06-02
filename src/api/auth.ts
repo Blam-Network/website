@@ -26,6 +26,7 @@ export const authOptions: AuthOptions = {
               email: user.email,
               datamine_access: bnetUser.datamine_access,
               is_admin: bnetUser.is_admin,
+              is_uploader: bnetUser.is_uploader,
             },
             tokens: {
               microsoft: account.access_token,

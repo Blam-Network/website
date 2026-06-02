@@ -1,6 +1,7 @@
 import { Typography, TypographyProps } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import Link from "next/link";
+import type { FilesGame } from "@/src/components/files/filesPageTypes";
 import { isGuestXuid } from "@/src/utils/xuid";
 export const BUNGIE_PLACEHOLDER_GAMERTAG = "\u00a6";
 
@@ -42,6 +43,23 @@ export function playerProfilePath(gamertag: string, basePath = "/halo3/player"):
   return `${basePath}/${encodeURIComponent(normalizeGamertag(gamertag))}`;
 }
 
+export function playerProfilePathForGame(gamertag: string, game: FilesGame): string {
+  return playerProfilePath(
+    gamertag,
+    game === "reach" ? "/haloreach/player" : "/halo3/player",
+  );
+}
+
+function resolvePlayerPathBase(
+  profileGame: FilesGame | undefined,
+  playerPathBase: string,
+): string {
+  if (profileGame === "reach") {
+    return "/haloreach/player";
+  }
+  return playerPathBase;
+}
+
 type GamertagProps = {
   children: string;
 };
@@ -53,6 +71,8 @@ export function Gamertag({ children }: GamertagProps) {
 type GamertagLinkProps = {
   gamertag: string;
   authorXuid?: string | null;
+  /** When set, links to that title's player service record page. */
+  profileGame?: FilesGame;
   playerPathBase?: string;
   variant?: TypographyProps["variant"];
   color?: TypographyProps["color"];
@@ -65,6 +85,7 @@ type GamertagLinkProps = {
 export function GamertagLink({
   gamertag,
   authorXuid,
+  profileGame,
   playerPathBase = "/halo3/player",
   variant = "caption",
   color,
@@ -87,7 +108,7 @@ export function GamertagLink({
 
   return (
     <Link
-      href={playerProfilePath(gamertag, playerPathBase)}
+      href={playerProfilePath(gamertag, resolvePlayerPathBase(profileGame, playerPathBase))}
       onClick={onClick}
       style={{ textDecoration: underline === "always" ? "underline" : "none" }}
     >
