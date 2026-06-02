@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import type { FileShare } from "@/src/api/halo3/fileShare";
 import { FileshareFiletypeIcon } from "@/src/components/FileshareFiletypeIcon";
 import { FileshareDownloadButton } from "@/src/components/FileshareDownloadButton";
 import { GamertagLink } from "@/src/components/Gamertag";
+import { getFileshareFileHref } from "@/src/components/files/filesPageTypes";
 
 type Slot = FileShare["slots"][number];
 
@@ -46,6 +48,8 @@ export function PlayerFileshareSlot({
       ? slot.header.mapId
       : undefined;
 
+  const fileHref = getFileshareFileHref(fileShareGame, slot.id);
+
   return (
     <Paper
       sx={{
@@ -59,57 +63,70 @@ export function PlayerFileshareSlot({
         },
       }}
     >
-      <Box
-        sx={{
-          height: 108,
-          flexShrink: 0,
+      <Link
+        href={fileHref}
+        style={{
+          textDecoration: "none",
+          color: "inherit",
+          flex: 1,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottom: "1px solid",
-          borderColor: "divider",
-          backgroundColor: "rgba(0, 0, 0, 0.28)",
+          flexDirection: "column",
+          minHeight: 0,
         }}
       >
-        <Box sx={{ width: "90%", maxWidth: 156 }}>
-          <FileshareFiletypeIcon
-            filetype={slot.header.filetype}
-            gameEngineType={slot.header.gameEngineType}
-            fileShareGame={fileShareGame}
-            size="100%"
-            shareId={isScreenshot ? shareId : undefined}
-            slot={isScreenshot ? slot.slotNumber : undefined}
-            mapId={mapId}
-          />
-        </Box>
-      </Box>
-
-      <Stack sx={{ flex: 1, p: 1.25, gap: 0.75, minHeight: 0 }}>
-        <Typography
-          variant="body2"
+        <Box
           sx={{
-            fontWeight: 600,
-            lineHeight: 1.25,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
+            height: 108,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            backgroundColor: "rgba(0, 0, 0, 0.28)",
           }}
         >
-          {slot.header.filename || "Untitled"}
-        </Typography>
-        <GamertagLink
-          gamertag={slot.header.author ?? ""}
-          variant="caption"
-          underline="hover"
-          linkSx={{ color: "#4A90E2" }}
-        />
-        {loggedIn && (
-          <Box sx={{ pt: 0.5, mt: "auto", display: "flex", justifyContent: "flex-end" }}>
-            <FileshareDownloadButton fileId={slot.id} game={fileShareGame} compact />
+          <Box sx={{ width: "90%", maxWidth: 156 }}>
+            <FileshareFiletypeIcon
+              filetype={slot.header.filetype}
+              gameEngineType={slot.header.gameEngineType}
+              fileShareGame={fileShareGame}
+              size="100%"
+              shareId={isScreenshot ? shareId : undefined}
+              slot={isScreenshot ? slot.slotNumber : undefined}
+              mapId={mapId}
+            />
           </Box>
-        )}
-      </Stack>
+        </Box>
+
+        <Stack sx={{ flex: 1, p: 1.25, gap: 0.75, minHeight: 0 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              lineHeight: 1.25,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {slot.header.filename || "Untitled"}
+          </Typography>
+          <GamertagLink
+            gamertag={slot.header.author ?? ""}
+            variant="caption"
+            underline="hover"
+            linkSx={{ color: "#4A90E2" }}
+          />
+        </Stack>
+      </Link>
+
+      {loggedIn && (
+        <Box sx={{ px: 1.25, pb: 1.25, display: "flex", justifyContent: "flex-end" }}>
+          <FileshareDownloadButton fileId={slot.id} game={fileShareGame} compact />
+        </Box>
+      )}
     </Paper>
   );
 }

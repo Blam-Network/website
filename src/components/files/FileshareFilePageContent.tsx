@@ -11,8 +11,9 @@ import {
   getFilesGameLabel,
   type FilesGame,
 } from "@/src/components/files/filesPageTypes";
-import { getSiteUrl } from "@/src/utils/siteUrl";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
+import { buildPageMetadata } from "@/src/utils/metadata";
+import { getFileshareOgImage } from "@/src/utils/fileshareOgImage";
 import { getFileshareScreenshotViewUrl } from "@/src/utils/fileshareScreenshotUrl";
 import { FileshareScreenshotPreview } from "@/src/components/files/FileshareScreenshotPreview";
 import { isFileshareSourceGameCandidate } from "@/src/utils/fileshareSourceGame";
@@ -61,24 +62,26 @@ export async function generateFileshareFileMetadata(
 ): Promise<Metadata> {
   const file = await loadFile(game, fileId);
   if (!file) {
-    return { title: "File Not Found - Blam Network" };
+    return buildPageMetadata({
+      title: "File Not Found",
+      description: "This file share item could not be found on Blam Network.",
+    });
   }
 
   const gameLabel = getFilesGameLabel(game);
   const filename = file.header.filename || "Untitled";
+  const author = file.header.author || "Unknown";
   const description =
     formatFileshareDescription(file.header.description) ||
-    `${filename} by ${file.header.author || "Unknown"} on ${gameLabel} File Share`;
+    `${filename} by ${author} on ${gameLabel} File Share`;
 
-  return {
-    title: `${filename} - ${gameLabel} - Blam Network`,
+  return buildPageMetadata({
+    title: `${filename} · ${gameLabel}`,
     description,
-    openGraph: {
-      title: `${filename} - ${gameLabel}`,
-      description,
-      url: `${getSiteUrl()}${getFileshareFileHref(game, fileId)}`,
-    },
-  };
+    path: getFileshareFileHref(game, fileId),
+    images: [getFileshareOgImage(game, file)],
+    twitterCard: "summary",
+  });
 }
 
 export async function FileshareFilePageContent({

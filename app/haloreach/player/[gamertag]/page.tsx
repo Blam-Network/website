@@ -1,5 +1,6 @@
 import { api } from "@/src/trpc/server";
 import { Box, Container, Typography } from "@mui/material";
+import { PlayerServiceRecordMissingIntel } from "@/src/components/player/PlayerServiceRecordMissingIntel";
 import { getColor, getColorName, getCssColor } from "@/src/colors";
 import { ReachServiceRecordBanner } from "@/src/components/reach/ReachServiceRecordBanner";
 import { ReachSpartanRender } from "@/src/components/reach/ReachSpartanRender";
@@ -9,6 +10,18 @@ import { ServiceRecordBannerGameSelector } from "@/src/components/ServiceRecordB
 import { SectionHeader } from "@/src/components/SectionHeader";
 import { ReachNameplates } from "@/src/components/reach/ReachNameplates";
 import { env } from "@/src/env";
+import type { Metadata } from "next";
+import { generateReachPlayerMetadata } from "@/src/utils/playerPageMetadata";
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: { gamertag: string };
+  searchParams: { viewScreenshot?: string };
+}): Promise<Metadata> {
+  return generateReachPlayerMetadata(decodeURIComponent(params.gamertag), searchParams);
+}
 
 export default async function HaloReachPlayerPage({ params }: { params: { gamertag: string } }) {
   const gamertag = decodeURIComponent(params.gamertag);
@@ -77,11 +90,11 @@ export default async function HaloReachPlayerPage({ params }: { params: { gamert
       )}
 
       {!serviceRecord && (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Typography variant="h5" color="text.secondary">
-            No Halo: Reach service record found for {gamertag}.
-          </Typography>
-        </Container>
+        <PlayerServiceRecordMissingIntel
+          gamertag={gamertag}
+          game="reach"
+          spartanRenderUrl={spartanRenderUrl}
+        />
       )}
 
       {serviceRecord && (

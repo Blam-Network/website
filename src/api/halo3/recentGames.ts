@@ -34,7 +34,7 @@ export type GamesResponse = z.infer<typeof GamesResponseSchema>;
 export const recentGames = publicProcedure
 	.output(z.array(RecentGameSchema))
 	.query(async () => {
-		const response = await halo3Axios.get(`/halo3/games?page=1&pageSize=25`);
+		const response = await halo3Axios.get(`/halo3/games?page=1&pageSize=22`);
 		
 		// Handle Axios response - data might be a string that needs parsing
 		let data = response.data;

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { rootLayoutMetadata } from "@/src/utils/metadata";
 import { Suspense } from "react";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter'
 import { ThemeProvider } from '@mui/material/styles';
@@ -16,21 +16,7 @@ import { NightmapProvider } from "@/src/contexts/NightmapContext";
 import "@/src/fonts.css";
 
 
-export const metadata: Metadata = {
-  title: "Blam Network",
-  description: "Unofficial Halo Web Services",
-  openGraph: {
-    title: "Blam Network",
-    description: "Unofficial Halo Web Services",
-    siteName: "Blam Network",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Blam Network",
-    description: "Unofficial Halo Web Services",
-  },
-};
+export const metadata = rootLayoutMetadata;
 
 export default async function RootLayout({
   children,

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { jsonStringifySchema } from "@/src/zod";
 
-const ScreenshotSchema = z.object({
+export const ReachScreenshotSchema = z.object({
   id: z.string().uuid(),
   header: z.object({
     filename: z.string(),
@@ -13,7 +13,7 @@ const ScreenshotSchema = z.object({
 
 export const ScreenshotsResponseSchema = jsonStringifySchema(
   z.object({
-    data: z.array(ScreenshotSchema),
+    data: z.array(ReachScreenshotSchema),
     total: z.number(),
     page: z.number(),
     pageSize: z.number(),
@@ -21,4 +21,6 @@ export const ScreenshotsResponseSchema = jsonStringifySchema(
   }),
 );
 
-export type Screenshot = z.infer<typeof ScreenshotSchema>;
+export type Screenshot = z.infer<typeof ReachScreenshotSchema>;
+
+export const ReachScreenshotResponseSchema = jsonStringifySchema(ReachScreenshotSchema);

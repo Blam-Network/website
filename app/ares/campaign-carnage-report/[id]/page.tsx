@@ -7,55 +7,34 @@ import { CampaignSkulls } from "@/src/components/CampaignSkulls";
 import { CampaignPlayerBreakdown } from "@/src/components/CampaignPlayerBreakdown";
 import { MVPSection } from "@/src/components/MVPSection";
 import type { Metadata } from "next";
-import { getSiteUrl } from "@/src/utils/siteUrl";
+import { buildMapOgImage, buildPageMetadata } from "@/src/utils/metadata";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const baseUrl = getSiteUrl();
-  
-  let carnageReport: any | undefined = undefined;
+  let carnageReport: Awaited<ReturnType<typeof api.ares.getCampaignCarnageReport.query>> | undefined;
   try {
     carnageReport = await api.ares.getCampaignCarnageReport.query({ id: params.id });
-  } catch {}
+  } catch {
+    carnageReport = undefined;
+  }
 
   if (!carnageReport) {
-    return {
-      title: "Campaign Carnage Report - Blam Network",
-      description: "View Halo 3 campaign carnage report on Blam Network.",
-    };
+    return buildPageMetadata({
+      title: "Campaign Carnage Report",
+      description: "View Ares campaign carnage report on Blam Network.",
+      path: `/ares/campaign-carnage-report/${params.id}`,
+    });
   }
 
   const missionName = getMissionName(carnageReport.map_id);
   const difficultyName = getDifficultyName(carnageReport.campaign_difficulty);
-  const title = `${missionName} on ${difficultyName} - Blam Network`;
-  const description = `Campaign carnage report for ${missionName} on ${difficultyName} difficulty. View full stats on Blam Network.`;
 
-  const mapImageUrl = `${baseUrl}/img/largemaps/${carnageReport.map_id}.jpg`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `${baseUrl}/ares/campaign-carnage-report/${params.id}`,
-      siteName: "Blam Network",
-      images: [
-        {
-          url: mapImageUrl,
-          width: 512,
-          height: 512,
-          alt: `${missionName} map`,
-        },
-      ],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [mapImageUrl],
-    },
-  };
+  return buildPageMetadata({
+    title: `${missionName} on ${difficultyName}`,
+    description: `Campaign carnage report for ${missionName} on ${difficultyName} difficulty. View full stats on Blam Network.`,
+    path: `/ares/campaign-carnage-report/${params.id}`,
+    images: [buildMapOgImage(carnageReport.map_id, missionName)],
+    twitterCard: "summary_large_image",
+  });
 }
 
 const getMissionName = (mapId: number): string => {

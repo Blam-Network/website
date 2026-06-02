@@ -13,109 +13,33 @@ import { SectionHeader } from "@/src/components/SectionHeader";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
 import { PlayerStatistics } from "@/src/components/PlayerStatistics";
+import { generateHalo3PlayerMetadata } from "@/src/utils/playerPageMetadata";
 import { FileshareQuotaMeters } from "@/src/components/player/FileshareQuotaMeters";
 import { PlayerFileshareSlot } from "@/src/components/player/PlayerFileshareSlot";
 import { PlayerPageSectionsGrid } from "@/src/components/player/PlayerPageSection";
+import { PlayerServiceRecordMissingIntel } from "@/src/components/player/PlayerServiceRecordMissingIntel";
 
-const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "";
-  const vc = process.env.VERCEL_URL;
-  if (vc) return `https://${vc}`;
-  return process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:${env.PORT}`;
-};
-
-export async function generateMetadata({ 
+export async function generateMetadata({
   params,
-  searchParams 
-}: { 
+  searchParams,
+}: {
   params: { gamertag: string };
   searchParams: { viewScreenshot?: string };
 }): Promise<Metadata> {
   const gamertag = decodeURIComponent(params.gamertag);
-  const baseUrl = getBaseUrl();
-  
-  if (searchParams?.viewScreenshot) {
-    let screenshot: any | undefined = undefined;
-    try {
-      screenshot = await api.sunrise.screenshot.query({ id: searchParams.viewScreenshot });
-    } catch {}
-
-    if (screenshot) {
-      const title = screenshot.header.filename || "Screenshot";
-      const description = screenshot.header.description || `Halo 3 screenshot${screenshot.author ? ` by ${screenshot.author}` : ""}`;
-      const imageUrl = `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/screenshots/${screenshot.id}/view`;
-      const pageUrl = `${baseUrl}/halo3/player/${encodeURIComponent(gamertag)}?viewScreenshot=${screenshot.id}`;
-
-      return {
-        title: `${title} - Blam Network`,
-        description,
-        openGraph: {
-          title,
-          description,
-          url: pageUrl,
-          siteName: "Blam Network",
-          images: [
-            {
-              url: imageUrl,
-              width: 1280,
-              height: 720,
-              alt: title,
-            },
-          ],
-          type: "website",
-        },
-        twitter: {
-          card: "summary_large_image",
-          title,
-          description,
-          images: [imageUrl],
-        },
-      };
-    }
-  }
-  
-  let serviceRecord: any | undefined = undefined;
-  try {
-    serviceRecord = await api.sunrise.serviceRecord.query({ gamertag });
-  } catch {}
-
-  const title = serviceRecord 
-    ? `${serviceRecord.playerName} - Blam Network`
-    : `${gamertag} - Blam Network`;
-  
-  const description = serviceRecord
-    ? `View ${serviceRecord.playerName}'s Halo 3 service record, fileshare, screenshots, and game history on Blam Network.`
-    : `View ${gamertag}'s Halo 3 profile on Blam Network.`;
-
-  const emblemUrl = serviceRecord
-    ? `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/emblem?primary=${serviceRecord.foregroundEmblem}&secondary=${serviceRecord.emblemFlags === 0 ? 'true' : 'false'}&background=${serviceRecord.backgroundEmblem}&primary_color=${serviceRecord.emblemPrimaryColor}&secondary_color=${serviceRecord.emblemSecondaryColor}&background_color=${serviceRecord.emblemBackgroundColor}&armour_primary_color=${serviceRecord.primaryColor}&size=400`
-    : `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/halo3/emblem?primary=0&secondary=false&background=0&primary_color=0&secondary_color=0&background_color=0&size=400`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `${baseUrl}/halo3/player/${encodeURIComponent(gamertag)}`,
-      siteName: "Blam Network",
-      images: [
-        {
-          url: emblemUrl,
-          width: 200,
-          height: 200,
-          alt: `${serviceRecord?.playerName || gamertag}'s emblem`,
-        },
-      ],
-      type: "profile",
+  return generateHalo3PlayerMetadata(
+    {
+      gamertag,
+      playerPath: "/halo3/player",
+      gameLabel: "Halo 3",
+      emblemApiSegment: "halo3",
+      api: {
+        serviceRecord: (input) => api.sunrise.serviceRecord.query(input),
+        screenshot: (input) => api.sunrise.screenshot.query(input),
+      },
     },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      images: [emblemUrl],
-    },
-  };
+    searchParams,
+  );
 }
 
 export default async function Home({params}: {params: { gamertag: string }}) {
@@ -189,6 +113,10 @@ export default async function Home({params}: {params: { gamertag: string }}) {
         </Box>
       )}
 
+      {!serviceRecord && (
+        <PlayerServiceRecordMissingIntel gamertag={gamertag} game="halo3" />
+      )}
+
       {serviceRecord && (
         <Container maxWidth="lg" sx={{ pt: 2 }}>
           <RoadToRecon profileGamertag={gamertag} />
@@ -200,20 +128,6 @@ export default async function Home({params}: {params: { gamertag: string }}) {
           <Box sx={{ mb: 3 }}>
             <RoadToRecon profileGamertag={gamertag} />
           </Box>
-        )}
-
-        {!hasPlayed && (
-          <Paper
-            sx={{
-              p: { xs: 3, md: 4 },
-              textAlign: "center",
-              background: "linear-gradient(180deg, rgba(26, 32, 48, 0.5) 0%, rgba(15, 15, 15, 0.95) 100%)",
-            }}
-          >
-            <Typography variant="h4" sx={{ color: "text.secondary", fontWeight: 600 }}>
-              This player hasn&apos;t played in any Sunrise lobbies yet.
-            </Typography>
-          </Paper>
         )}
       
         {hasPlayed && (
