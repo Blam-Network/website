@@ -4,11 +4,15 @@ import { Stack, Box, Typography, Button, Link as MuiLink } from "@mui/material";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import { profileRedirectPath } from "@/src/components/Gamertag";
+import { usePreferReachRoutes } from "@/src/hooks/usePreferReachRoutes";
 import { PendingTransfersIcon } from "./PendingTransfersIcon";
 import { fixedsysSize, fixedsysStyle } from "@/src/theme/fonts";
 
 export const Header = ({ session }: { session: Session | null }) => {
     const loggedIn = !!session?.user?.xuid;
+    const preferReach = usePreferReachRoutes();
+    const profileHref = profileRedirectPath(preferReach);
     const logoSize = { xs: fixedsysSize(22), md: fixedsysSize(28) };
     const networkSize = { xs: fixedsysSize(17), md: fixedsysSize(20) };
 
@@ -109,7 +113,7 @@ export const Header = ({ session }: { session: Session | null }) => {
                                 Logged in as{' '}
                                 <MuiLink
                                     component={Link}
-                                    href="/halo3/profile"
+                                    href={profileHref}
                                     underline="always"
                                     sx={{ fontWeight: 600 }}
                                 >

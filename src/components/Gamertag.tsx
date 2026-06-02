@@ -50,6 +50,10 @@ export function playerProfilePathForGame(gamertag: string, game: FilesGame): str
   );
 }
 
+export function profileRedirectPath(preferReach: boolean): string {
+  return preferReach ? "/haloreach/profile" : "/halo3/profile";
+}
+
 function resolvePlayerPathBase(
   profileGame: FilesGame | undefined,
   playerPathBase: string,
