@@ -2,12 +2,14 @@ import path from "node:path";
 import sharp from "sharp";
 import type { ResolvedFileshareIconLayers } from "@/src/utils/fileshareIconLayers";
 
-/** OG output for file share previews (summary card). */
-export const FILESHARE_OG_ICON_WIDTH = 240;
-export const FILESHARE_OG_ICON_HEIGHT = 148;
+/** OG output for file share embeds (256×256, large image card). */
+export const FILESHARE_OG_ICON_WIDTH = 256;
+export const FILESHARE_OG_ICON_HEIGHT = 256;
 
-const FRAME_WIDTH = FILESHARE_OG_ICON_WIDTH;
-const FRAME_HEIGHT = FILESHARE_OG_ICON_HEIGHT;
+const OUTPUT_SIZE = FILESHARE_OG_ICON_WIDTH;
+/** 16:9 icon frame composited inside the square output. */
+const FRAME_WIDTH = OUTPUT_SIZE;
+const FRAME_HEIGHT = Math.round((FRAME_WIDTH * 9) / 16);
 
 const FRAME_BG = { r: 18, g: 22, b: 30, alpha: 1 } as const;
 
@@ -161,6 +163,21 @@ async function emptyMaskedFrame(maskPath: string): Promise<Buffer> {
   return applyMask(base, maskPath);
 }
 
+async function padIconToSquare(icon: Buffer): Promise<Buffer> {
+  const top = Math.round((OUTPUT_SIZE - FRAME_HEIGHT) / 2);
+  return sharp({
+    create: {
+      width: OUTPUT_SIZE,
+      height: OUTPUT_SIZE,
+      channels: 4,
+      background: FRAME_BG,
+    },
+  })
+    .composite([{ input: icon, left: 0, top }])
+    .png()
+    .toBuffer();
+}
+
 /** Renders the same layered file icon as the site UI (mask + content + overlay). */
 export async function compositeFileshareIconPng(
   layers: ResolvedFileshareIconLayers,
@@ -178,8 +195,10 @@ export async function compositeFileshareIconPng(
 
   const overlay = await resizeFrameAsset(overlayPath);
 
-  return sharp(framed)
+  const withOverlay = await sharp(framed)
     .composite([{ input: overlay }])
     .png()
     .toBuffer();
+
+  return padIconToSquare(withOverlay);
 }
