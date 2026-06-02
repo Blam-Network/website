@@ -9,17 +9,17 @@ import { env } from "@/src/env";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blam Network - Halo 3 Web Services",
+  title: "Blam Network - Halo Web Services",
   description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
   openGraph: {
-    title: "Blam Network - Halo 3 Web Services",
+    title: "Blam Network - Halo Web Services",
     description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
     siteName: "Blam Network",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blam Network - Halo 3 Web Services",
+    title: "Blam Network - Halo Web Services",
     description: "View Halo 3 service records, carnage reports, fileshare, screenshots, and more on Blam Network.",
   },
 };
