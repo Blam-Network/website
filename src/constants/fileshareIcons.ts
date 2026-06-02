@@ -80,7 +80,7 @@ export const HALO3_GAME_ENGINE_TO_REACH_ICON: Record<number, number> = {
   2: 1, // slayer
   3: 2, // oddball
   4: 3, // king (KOTH)
-  5: 25, // sandbox (Forge)
+  5: 38, // sandbox (Forge)
   6: 8, // vip
   7: 4, // juggernaut
   8: 5, // territories
