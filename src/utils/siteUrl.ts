@@ -32,7 +32,36 @@ export function getSiteUrl(): string {
     process.env.SITE_URL ?? process.env.NEXTAUTH_URL,
   );
   if (parsed) return parsed;
+  if (process.env.NODE_ENV !== "development") {
+    const vercelHost = process.env.VERCEL_URL?.replace(/^https?:\/\//i, "")
+      .split("/")[0]
+      ?.trim();
+    if (vercelHost) {
+      const fromVercel = parseEnvOrigin(`https://${vercelHost}`);
+      if (fromVercel) return fromVercel;
+    }
+  }
   return `http://localhost:${env.PORT}`;
+}
+
+/** Prefer the incoming request host so og:image and canonical URLs match the public site. */
+export async function getRequestSiteUrl(): Promise<string> {
+  if (typeof window !== "undefined") return getSiteUrl();
+  try {
+    const { headers } = await import("next/headers");
+    const headersList = await headers();
+    const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+    if (host) {
+      const proto =
+        headersList.get("x-forwarded-proto") ??
+        (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
+      const origin = parseEnvOrigin(`${proto}://${host}`);
+      if (origin) return origin;
+    }
+  } catch {
+    // Outside a request (e.g. build); fall back to env-based URL.
+  }
+  return getSiteUrl();
 }
 
 /**

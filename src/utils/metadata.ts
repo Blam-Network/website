@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getHalo3MapImageUrl } from "@/src/constants/fileshareIcons";
-import { getSiteUrl } from "@/src/utils/siteUrl";
+import { getRequestSiteUrl, getSiteUrl } from "@/src/utils/siteUrl";
 
 export const SITE_NAME = "Blam Network";
 export const DEFAULT_DESCRIPTION =
@@ -24,25 +24,32 @@ export type BuildPageMetadataInput = {
   twitterCard?: "summary" | "summary_large_image";
 };
 
-export function getMetadataBase(): URL {
-  return new URL(getSiteUrl());
+export function getMetadataBase(origin?: string): URL {
+  return new URL(origin ?? getSiteUrl());
+}
+
+export async function getRequestMetadataBase(): Promise<URL> {
+  return getMetadataBase(await getRequestSiteUrl());
 }
 
 /** Resolve a site path or leave external URLs unchanged. */
-export function resolveOgImageUrl(url: string): string {
+export function resolveOgImageUrl(url: string, base?: string | URL): string {
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url;
   }
-  return new URL(url.startsWith("/") ? url : `/${url}`, getMetadataBase()).toString();
+  const metadataBase = base instanceof URL ? base : getMetadataBase(base);
+  return new URL(url.startsWith("/") ? url : `/${url}`, metadataBase).toString();
 }
 
-function normalizeImages(images: OgImage[] | undefined) {
+function normalizeImages(images: OgImage[] | undefined, base?: string | URL) {
   if (!images?.length) return undefined;
   return images.map((image) => ({
-    url: resolveOgImageUrl(image.url),
+    url: resolveOgImageUrl(image.url, base),
+    secureUrl: resolveOgImageUrl(image.url, base),
     width: image.width,
     height: image.height,
     alt: image.alt,
+    type: "image/png",
   }));
 }
 
@@ -67,17 +74,23 @@ export function stripSiteNameFromTitle(title: string): string {
   return stripped || title;
 }
 
-export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
-  const images = normalizeImages(input.images);
+export function buildPageMetadata(
+  input: BuildPageMetadataInput,
+  options?: { metadataBase?: string | URL },
+): Metadata {
+  const base = options?.metadataBase;
+  const images = normalizeImages(input.images, base);
   const pageTitle = stripSiteNameFromTitle(input.title);
   const title =
     pageTitle === SITE_NAME
       ? { absolute: SITE_NAME }
       : pageTitle;
   const twitterCard = pickTwitterCard(images, input.twitterCard);
+  const metadataBase = base instanceof URL ? base : getMetadataBase(base);
   const canonicalUrl = input.path
-    ? new URL(input.path.startsWith("/") ? input.path : `/${input.path}`, getMetadataBase()).toString()
+    ? new URL(input.path.startsWith("/") ? input.path : `/${input.path}`, metadataBase).toString()
     : undefined;
+  const primaryImageUrl = images?.[0]?.url;
 
   return {
     title,
@@ -91,15 +104,23 @@ export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
       siteName: SITE_NAME,
       type: input.type ?? "website",
       ...(canonicalUrl && { url: canonicalUrl }),
-      ...(images?.length && { images }),
+      ...(images?.length ? { images } : {}),
     },
     twitter: {
       card: twitterCard,
       title: pageTitle,
       description: input.description,
-      ...(images?.length && { images: images.map((image) => image.url) }),
+      ...(primaryImageUrl ? { images: [primaryImageUrl] } : {}),
     },
   };
+}
+
+/** Async variant resolves absolute og:image URLs from the current request host. */
+export async function buildRequestPageMetadata(
+  input: BuildPageMetadataInput,
+): Promise<Metadata> {
+  const metadataBase = await getRequestMetadataBase();
+  return buildPageMetadata(input, { metadataBase });
 }
 
 export function buildMapOgImage(mapId: number, alt: string): OgImage {

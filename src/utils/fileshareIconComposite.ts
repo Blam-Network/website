@@ -11,7 +11,7 @@ const OUTPUT_SIZE = FILESHARE_OG_ICON_WIDTH;
 const FRAME_WIDTH = OUTPUT_SIZE;
 const FRAME_HEIGHT = Math.round((FRAME_WIDTH * 9) / 16);
 
-const FRAME_BG = { r: 18, g: 22, b: 30, alpha: 1 } as const;
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 } as const;
 
 function publicAssetPath(assetPath: string): string {
   const normalized = assetPath.startsWith("/") ? assetPath.slice(1) : assetPath;
@@ -39,7 +39,7 @@ function transparentFrame(): sharp.Sharp {
       width: FRAME_WIDTH,
       height: FRAME_HEIGHT,
       channels: 4,
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
+      background: TRANSPARENT,
     },
   });
 }
@@ -154,7 +154,7 @@ async function emptyMaskedFrame(maskPath: string): Promise<Buffer> {
       width: FRAME_WIDTH,
       height: FRAME_HEIGHT,
       channels: 4,
-      background: FRAME_BG,
+      background: TRANSPARENT,
     },
   })
     .png()
@@ -170,7 +170,7 @@ async function padIconToSquare(icon: Buffer): Promise<Buffer> {
       width: OUTPUT_SIZE,
       height: OUTPUT_SIZE,
       channels: 4,
-      background: FRAME_BG,
+      background: TRANSPARENT,
     },
   })
     .composite([{ input: icon, left: 0, top }])

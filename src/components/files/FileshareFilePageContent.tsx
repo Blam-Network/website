@@ -12,7 +12,7 @@ import {
   type FilesGame,
 } from "@/src/components/files/filesPageTypes";
 import { formatFileshareDescription } from "@/src/utils/formatFileshareDescription";
-import { buildPageMetadata } from "@/src/utils/metadata";
+import { buildRequestPageMetadata } from "@/src/utils/metadata";
 import { getFileshareOgImage } from "@/src/utils/fileshareOgImage";
 import { getFileshareScreenshotViewUrl } from "@/src/utils/fileshareScreenshotUrl";
 import { FileshareScreenshotPreview } from "@/src/components/files/FileshareScreenshotPreview";
@@ -62,7 +62,7 @@ export async function generateFileshareFileMetadata(
 ): Promise<Metadata> {
   const file = await loadFile(game, fileId);
   if (!file) {
-    return buildPageMetadata({
+    return buildRequestPageMetadata({
       title: "File Not Found",
       description: "This file share item could not be found on Blam Network.",
     });
@@ -75,7 +75,7 @@ export async function generateFileshareFileMetadata(
     formatFileshareDescription(file.header.description) ||
     `${filename} by ${author} on ${gameLabel} File Share`;
 
-  return buildPageMetadata({
+  return buildRequestPageMetadata({
     title: `${filename} · ${gameLabel}`,
     description,
     path: getFileshareFileHref(game, fileId),
