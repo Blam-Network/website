@@ -12,6 +12,23 @@ export async function middleware(req: NextRequest) {
   }
 
   const pathname = req.nextUrl.pathname;
+
+  if (pathname === "/halo3/players") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/players";
+    if (!url.searchParams.has("game")) {
+      url.searchParams.set("game", "halo3");
+    }
+    return NextResponse.redirect(url, 307);
+  }
+
+  if (pathname === "/haloreach/players") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/players";
+    url.searchParams.set("game", "haloreach");
+    return NextResponse.redirect(url, 307);
+  }
+
   const isReachAdminRoute =
     pathname.startsWith("/reach/lobbies") ||
     pathname.startsWith("/reach/admin") ||

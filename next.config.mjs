@@ -14,7 +14,6 @@ const nextConfig = {
     async redirects() {
         return [
             { source: "/player/:path*", destination: "/halo3/player/:path*", permanent: true },
-            { source: "/players", destination: "/halo3/players", permanent: true },
             { source: "/profile", destination: "/halo3/profile", permanent: true },
             { source: "/games", destination: "/halo3/games", permanent: true },
             { source: "/halo3/files", destination: "/files", permanent: true },
