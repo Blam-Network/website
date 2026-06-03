@@ -13,6 +13,12 @@ export const filesPageMetadata: Metadata = buildPageMetadata({
   path: "/files",
 });
 
+export const playersPageMetadata: Metadata = buildPageMetadata({
+  title: "Players",
+  description: "Browse Halo 3 and Halo: Reach player service records on Blam Network.",
+  path: "/players",
+});
+
 export const halo3GamesPageMetadata: Metadata = buildPageMetadata({
   title: "Recent Games",
   description: "Recent Halo 3 multiplayer matches on Blam Network.",

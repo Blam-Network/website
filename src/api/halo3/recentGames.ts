@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../trpc";
+import { assertAxiosOk } from "../http/axiosError";
 import { halo3Axios } from "./halo3Axios";
 
 const RecentGameSchema = z.object({
@@ -34,25 +35,29 @@ export type GamesResponse = z.infer<typeof GamesResponseSchema>;
 export const recentGames = publicProcedure
 	.output(z.array(RecentGameSchema))
 	.query(async () => {
-		const response = await halo3Axios.get(`/halo3/games?page=1&pageSize=22`);
-		
-		// Handle Axios response - data might be a string that needs parsing
-		let data = response.data;
-		if (typeof data === 'string') {
-			data = JSON.parse(data);
+		try {
+			const response = await halo3Axios.get(`/halo3/games?page=1&pageSize=22`);
+			assertAxiosOk(response);
+
+			let data = response.data;
+			if (typeof data === "string") {
+				data = JSON.parse(data);
+			}
+
+			const parsed = GamesResponseSchema.safeParse(data);
+			if (!parsed.success) {
+				console.error(
+					"[recentGames] Schema validation failed:",
+					JSON.stringify(parsed.error.errors, null, 2),
+				);
+				return [];
+			}
+
+			return parsed.data.data.map((game) => RecentGameSchema.parse(game));
+		} catch (err) {
+			console.error("[recentGames] fetch failed:", err);
+			return [];
 		}
-		
-		const parsed = GamesResponseSchema.safeParse(data);
-		if (!parsed.success) {
-			console.error('[recentGames] Schema validation failed:', JSON.stringify(parsed.error.errors, null, 2));
-			throw new Error(`recentGames: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
-		}
-		// Explicitly convert dates to ensure they're Date objects
-		// Parse each game through the schema to ensure dates are coerced
-		const games = parsed.data.data.map(game => {
-			return RecentGameSchema.parse(game);
-		}) satisfies z.infer<typeof RecentGameSchema>[];
-		return games;
 	});
 
 export const games = publicProcedure.input(
@@ -74,16 +79,16 @@ export const games = publicProcedure.input(
     }
     
     const response = await halo3Axios.get(`/halo3/games?${params.toString()}`);
-    
-    // Handle Axios response - data might be a string that needs parsing
+    assertAxiosOk(response);
+
     let data = response.data;
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
         data = JSON.parse(data);
     }
-    
+
     const parsed = GamesResponseSchema.safeParse(data);
     if (!parsed.success) {
-        console.error('[games] Schema validation failed:', JSON.stringify(parsed.error.errors, null, 2));
+        console.error("[games] Schema validation failed:", JSON.stringify(parsed.error.errors, null, 2));
         throw new Error(`games: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
     }
     return parsed.data;

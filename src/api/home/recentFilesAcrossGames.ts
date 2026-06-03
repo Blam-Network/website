@@ -1,4 +1,5 @@
 import { publicProcedure } from "../trpc";
+import { assertAxiosOk } from "../http/axiosError";
 import { halo3Axios } from "../halo3/halo3Axios";
 import { odstAxios } from "../odst/odstAxios";
 import { reachAxios } from "../reach/reachAxios";
@@ -27,6 +28,7 @@ async function fetchRecentFiles(
       pageSize: String(PER_GAME_FETCH),
     });
     const response = await axios.get(`${path}?${params.toString()}`);
+    assertAxiosOk(response);
     const parsed = FileshareFilesResponseSchema.safeParse(response.data);
     if (!parsed.success) {
       return [];
@@ -44,6 +46,7 @@ async function fetchReachRecentFiles(): Promise<HomeRecentFile[]> {
       pageSize: String(PER_GAME_FETCH),
     });
     const response = await reachAxios.get(`/haloreach/fileshare/files?${params.toString()}`);
+    assertAxiosOk(response);
     const parsed = ReachFileshareFilesResponseSchema.safeParse(response.data);
     if (!parsed.success) {
       return [];

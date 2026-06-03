@@ -17,11 +17,26 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function Home() {
-  const [recentGames, recentScreenshots, recentFiles] = await Promise.all([
+  const [gamesResult, screenshotsResult, filesResult] = await Promise.allSettled([
     api.sunrise2.recentGames.query(),
     api.home.recentScreenshotsAcrossGames.query(),
     api.home.recentFilesAcrossGames.query(),
   ]);
+
+  const recentGames = gamesResult.status === "fulfilled" ? gamesResult.value : [];
+  const recentScreenshots =
+    screenshotsResult.status === "fulfilled" ? screenshotsResult.value : [];
+  const recentFiles = filesResult.status === "fulfilled" ? filesResult.value : [];
+
+  if (gamesResult.status === "rejected") {
+    console.error("[home] recentGames failed:", gamesResult.reason);
+  }
+  if (screenshotsResult.status === "rejected") {
+    console.error("[home] recentScreenshots failed:", screenshotsResult.reason);
+  }
+  if (filesResult.status === "rejected") {
+    console.error("[home] recentFiles failed:", filesResult.reason);
+  }
 
   return (
     <>

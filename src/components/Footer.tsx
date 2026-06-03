@@ -4,7 +4,7 @@ import { fixedsysSize, fixedsysStyle } from "@/src/theme/fonts";
 
 const footerLinks = [
     { href: '/', label: 'Home' },
-    { href: '/halo3/players', label: 'Players' },
+    { href: '/players', label: 'Players' },
     { href: '/screenshots', label: 'Screenshots' },
     { href: '/files', label: 'Files' },
 ];

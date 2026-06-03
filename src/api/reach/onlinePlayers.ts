@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../trpc";
+import { assertAxiosOk } from "../http/axiosError";
 import { reachAxios } from "./reachAxios";
 import { jsonStringifySchema } from "@/src/zod";
 
@@ -11,6 +12,7 @@ const OnlinePlayersSchema = jsonStringifySchema(
 
 export const onlinePlayers = publicProcedure.query(async () => {
   const response = await reachAxios.get(`/haloreach/online-players`);
+  assertAxiosOk(response);
   const parsed = OnlinePlayersSchema.safeParse(response.data);
   if (!parsed.success) {
     throw new Error(

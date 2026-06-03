@@ -11,7 +11,7 @@ import { onlinePlayers } from "./onlinePlayers";
 import { onlinePlayers24h } from "./onlinePlayers24h";
 import { lobbies } from "./lobbies";
 import { hoppers } from "./hoppers";
-import { serviceRecord } from "./serviceRecord";
+import { serviceRecord, serviceRecords } from "./serviceRecord";
 import { fileShare } from "./fileShare";
 import { getNameplates } from "./getNameplates";
 import { setReachNameplate } from "./setReachNameplate";
@@ -79,6 +79,7 @@ export const reachRouter = createTRPCRouter({
   screenshots,
   fileshareFiles,
   serviceRecord,
+  serviceRecords,
   fileShare,
   pendingTransfers: reachPendingTransfers,
   createFileshareTransfer: reachCreateFileshareTransfer,

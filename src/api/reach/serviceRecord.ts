@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../trpc";
+import { assertAxiosOk } from "../http/axiosError";
 import { reachAxios } from "./reachAxios";
 import { jsonStringifySchema } from "@/src/zod";
 
@@ -62,5 +63,42 @@ export const serviceRecord = publicProcedure
       throw new Error(`reach.serviceRecord: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`);
     }
 
+    return parsed.data;
+  });
+
+const ReachServiceRecordsResponseSchema = jsonStringifySchema(
+  z.object({
+    players: z.array(ReachServiceRecordSchema),
+    total: z.number(),
+    page: z.number(),
+    pageSize: z.number(),
+    totalPages: z.number(),
+  }),
+);
+
+export const serviceRecords = publicProcedure
+  .input(
+    z.object({
+      pageSize: z.number().optional().default(20),
+      page: z.number().optional().default(1),
+      search: z.string().optional(),
+    }),
+  )
+  .query(async ({ input }) => {
+    const params = new URLSearchParams();
+    params.append("page", String(input.page || 1));
+    params.append("pageSize", String(input.pageSize || 20));
+    if (input.search) {
+      params.append("search", input.search);
+    }
+
+    const response = await reachAxios.get(`/haloreach/players?${params.toString()}`);
+    assertAxiosOk(response);
+    const parsed = ReachServiceRecordsResponseSchema.safeParse(response.data);
+    if (!parsed.success) {
+      throw new Error(
+        `reach.serviceRecords: schema mismatch. got=${JSON.stringify(response.data).slice(0, 500)}`,
+      );
+    }
     return parsed.data;
   });
