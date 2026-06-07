@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ override: true });
 
 const { createServer } = require("https");
 const { parse } = require("url");
@@ -8,9 +8,27 @@ const path = require("path");
 const http = require("http");
 
 const dev = process.env.NODE_ENV !== "production";
-const port = parseInt(process.env.PORT || "3000", 10);
-const bindHost = process.env.HOST || (dev ? "localhost" : "0.0.0.0");
-const hostname = process.env.HOSTNAME || bindHost;
+
+function resolveBindHost() {
+  // BIND_HOST avoids colliding with the shell's HOST variable (often unset or unrelated).
+  const configured = (process.env.BIND_HOST || process.env.HOST || "").trim();
+  if (configured) {
+    return configured;
+  }
+  return dev ? "localhost" : "0.0.0.0";
+}
+
+function resolveDisplayHostname(bindHost) {
+  const configured = (process.env.HOSTNAME || "").trim();
+  if (configured) {
+    return configured;
+  }
+  return bindHost === "0.0.0.0" ? "localhost" : bindHost;
+}
+
+function resolvePort() {
+  return parseInt(process.env.PORT || "3000", 10);
+}
 
 // SSL cert paths – set in .env or use defaults
 const certPath =
@@ -36,6 +54,10 @@ function loadSslOptions() {
   }
 }
 
+const port = resolvePort();
+const bindHost = resolveBindHost();
+const hostname = resolveDisplayHostname(bindHost);
+
 const app = next({ dev, hostname, port });
 
 const requestHandler = app.getRequestHandler();
@@ -59,14 +81,27 @@ app
           requestHandler(req, res, parsedUrl);
         });
 
+    const listenHost = resolveBindHost();
+    const listenPort = resolvePort();
+    const displayHost = resolveDisplayHostname(listenHost);
+    const protocol = sslOptions ? "https" : "http";
+
+    console.log(`> Binding ${protocol} server to ${listenHost}:${listenPort}`);
+
     server
       .once("error", (err) => {
-        console.error(err);
+        if (err && err.code === "EADDRINUSE") {
+          console.error(
+            `Port ${listenPort} is already in use on ${listenHost}. ` +
+              `Stop the other process, change PORT, or set BIND_HOST to a specific interface IP.`,
+          );
+        } else {
+          console.error(err);
+        }
         process.exit(1);
       })
-      .listen(port, bindHost, () => {
-        const protocol = sslOptions ? "https" : "http";
-        console.log(`> Ready on ${protocol}://${hostname}:${port}`);
+      .listen(listenPort, listenHost, () => {
+        console.log(`> Ready on ${protocol}://${displayHost}:${listenPort}`);
       });
   })
   .catch((err) => {
