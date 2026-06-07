@@ -9,6 +9,7 @@ import { ReachPlayerFileshareTables } from "@/src/components/reach/ReachPlayerFi
 import { ServiceRecordBannerGameSelector } from "@/src/components/ServiceRecordBannerGameSelector";
 import { SectionHeader } from "@/src/components/SectionHeader";
 import { ReachNameplates } from "@/src/components/reach/ReachNameplates";
+import { ReachArmourUnlocks } from "@/src/components/reach/ReachArmourUnlocks";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
 import { generateReachPlayerMetadata } from "@/src/utils/playerPageMetadata";
@@ -100,6 +101,7 @@ export default async function HaloReachPlayerPage({ params }: { params: { gamert
       {serviceRecord && (
         <Container maxWidth="lg" sx={{ pt: 2 }}>
           <ReachNameplates profileGamertag={gamertag} />
+          <ReachArmourUnlocks profileGamertag={gamertag} />
         </Container>
       )}
 

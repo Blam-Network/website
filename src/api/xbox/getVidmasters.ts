@@ -30,6 +30,7 @@ export const getVidmasters = protectedProcedure.query(async (opts) => {
     const halo3Response = await axios.get('https://achievements.xboxlive.com/users/xuid(' + opts.ctx.auth.user.xuid + ')/achievements?titleId=1297287142&unlockedOnly=true&maxItems=79', {
         headers: {
             'x-xbl-contract-version': '1',
+            'Accept-Language': 'en-US, en',
             'Authorization': 'XBL3.0 x=' + opts.ctx.auth.user.xboxUserHash + ';' + opts.ctx.auth.tokens.xsts,
         }
     });
@@ -38,6 +39,7 @@ export const getVidmasters = protectedProcedure.query(async (opts) => {
     const halo3ODSTResponse = await axios.get('https://achievements.xboxlive.com/users/xuid(' + opts.ctx.auth.user.xuid + ')/achievements?titleId=1297287287&unlockedOnly=true&maxItems=47', {
         headers: {
             'x-xbl-contract-version': '1',
+            'Accept-Language': 'en-US, en',
             'Authorization': 'XBL3.0 x=' + opts.ctx.auth.user.xboxUserHash + ';' + opts.ctx.auth.tokens.xsts,
         }
     });
@@ -51,6 +53,5 @@ export const getVidmasters = protectedProcedure.query(async (opts) => {
         endure: halo3ODSTAchievements.filter((a) => a.id == 108 && a.unlockedOnline).length > 0,
         dejaVu: halo3ODSTAchievements.filter((a) => a.id == 109 && a.unlockedOnline).length > 0,
         classic: halo3ODSTAchievements.filter((a) => a.id == 107 && a.unlockedOnline).length > 0,
-        halo3ODSTAchievements,
     }
 });

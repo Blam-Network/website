@@ -95,8 +95,9 @@ const REACH_NAMEPLATE_DEFINITIONS_BY_ID: Record<ReachNameplateId, ReachNameplate
     label: "Mark VI",
     shortLabel: "Helmet",
     imageSrc: `${NAMEPLATE_IMAGE_BASE}/nameplate_helmet.png`,
-    description: "Locked",
-    unlockHint: "Locked",
+    description:
+      "Unlock the Marathon, Halo 1, 2, 3 and ODST nameplates to receive this nameplate.",
+    unlockHint: "Unlock the Marathon, Halo CE, Halo 2, Halo 3, and ODST nameplates.",
   },
   star: {
     id: "star",
@@ -136,7 +137,6 @@ export const REACH_NAMEPLATE_ROW_LAYOUT: {
 /** Hidden in the picker until unlocked (omitted from the row until then). */
 export const REACH_NAMEPLATES_HIDDEN_WHEN_LOCKED: ReachNameplateId[] = [
   "dmr",
-  "helmet",
   "star",
   "bungie",
 ];

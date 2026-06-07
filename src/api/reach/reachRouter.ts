@@ -15,6 +15,8 @@ import { serviceRecord, serviceRecords } from "./serviceRecord";
 import { fileShare } from "./fileShare";
 import { getNameplates } from "./getNameplates";
 import { setReachNameplate } from "./setReachNameplate";
+import { getArmourUnlocks } from "./getArmourUnlocks";
+import { unlockReachArmour } from "./unlockReachArmour";
 
 const screenshots = publicProcedure
   .input(
@@ -86,4 +88,6 @@ export const reachRouter = createTRPCRouter({
   deleteFileshareTransfer: reachDeleteFileshareTransfer,
   getNameplates,
   setReachNameplate,
+  getArmourUnlocks,
+  unlockReachArmour,
 });
