@@ -79,12 +79,7 @@ function ArmourUnlockTile({
           width: "100%",
           minWidth: 0,
           border: "2px solid",
-          borderColor:
-            state === "unlocked"
-              ? "primary.main"
-              : state === "ready"
-                ? "warning.main"
-                : "transparent",
+          borderColor: state === "ready" ? "warning.main" : "transparent",
           background: "transparent",
           cursor: isInteractive ? "pointer" : "default",
           p: 0.5,
@@ -94,9 +89,6 @@ function ArmourUnlockTile({
           "&:hover": isInteractive
             ? {
                 transform: "translateY(-2px)",
-                "& img": {
-                  filter: "drop-shadow(0 0 8px rgba(255, 193, 7, 0.55)) saturate(1)",
-                },
               }
             : undefined,
         }}
@@ -117,12 +109,7 @@ function ArmourUnlockTile({
               maxWidth: 120,
               height: 72,
               objectFit: "contain",
-              filter:
-                state === "unlocked"
-                  ? "drop-shadow(0 0 6px rgba(124, 179, 66, 0.35))"
-                  : state === "ready"
-                    ? "drop-shadow(0 0 6px rgba(255, 193, 7, 0.35)) saturate(0.95)"
-                    : "saturate(0) brightness(0.7)",
+              filter: state === "locked" ? "saturate(0) brightness(0.7)" : "none",
               transition: "filter 0.25s ease",
             }}
           />
