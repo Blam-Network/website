@@ -7,6 +7,7 @@ export const ReachUnlockableHelmetIdSchema = z.enum([
   "cqb_base",
   "cqb_hurscnm",
   "cqb_uahul",
+  "chest_uabasesecurity",
 ]);
 
 export type ReachUnlockableHelmetId = z.infer<typeof ReachUnlockableHelmetIdSchema>;
@@ -18,6 +19,7 @@ const ReachArmourUnlocksSchema = z.object({
   cqb_base: z.boolean(),
   cqb_hurscnm: z.boolean(),
   cqb_uahul: z.boolean(),
+  chest_uabasesecurity: z.boolean(),
 });
 
 export const ReachArmourUnlocksResponseSchema = z.object({

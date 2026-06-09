@@ -76,6 +76,16 @@ export const REACH_ARMOUR_UNLOCK_DEFINITIONS_BY_ID: Record<
     unlockHint: "Unlock CQB - HU/RS/CNM and Campaign Complete: Legendary in Halo 3.",
     unlockPrompt: "Requirements met. Click to unlock this helmet.",
   },
+  chest_uabasesecurity: {
+    id: "chest_uabasesecurity",
+    label: "UA/Base Security [W]",
+    shortLabel: "UA/Base Security [W]",
+    imageSrc: `${ARMOUR_IMAGE_BASE}/reach_chest_piece_18_00.png`,
+    description:
+      "Unlock the Yes, Sensei achievement for Halo: Reach to make this chest piece purchasable in-game.",
+    unlockHint: "Unlock Yes, Sensei in Halo: Reach.",
+    unlockPrompt: "Requirements met. Click to unlock this chest piece.",
+  },
 };
 
 export const REACH_ARMOUR_UNLOCK_ROW_LAYOUT: ReachUnlockableHelmetId[] = [
@@ -85,6 +95,7 @@ export const REACH_ARMOUR_UNLOCK_ROW_LAYOUT: ReachUnlockableHelmetId[] = [
   "cqb_base",
   "cqb_hurscnm",
   "cqb_uahul",
+  "chest_uabasesecurity",
 ];
 
 export const REACH_ARMOUR_UNLOCK_GRID_COLUMN_COUNT = REACH_ARMOUR_UNLOCK_ROW_LAYOUT.length;

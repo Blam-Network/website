@@ -205,8 +205,8 @@ export function ReachArmourUnlocks({ profileGamertag }: ReachArmourUnlocksProps)
       });
       void queryClient.invalidateQueries({ queryKey: ["reachArmourUnlocks"] });
       showSuccess(
-        "This helmet will be purchasable the next time you play Halo: Reach on your Xbox 360.",
-        "Helmet unlocked",
+        "This armour piece will be purchasable the next time you play Halo: Reach on your Xbox 360.",
+        "Armour unlocked",
       );
     },
     onError: (err: unknown) => {
@@ -237,8 +237,8 @@ export function ReachArmourUnlocks({ profileGamertag }: ReachArmourUnlocksProps)
           variant="body2"
           sx={{ color: "text.secondary", textAlign: "center", maxWidth: 640, mb: 1 }}
         >
-          Meet the achievement requirements, then click a helmet to unlock it. Unlocked helmets
-          become purchasable the next time you play Halo: Reach on your Xbox 360.
+          Meet the achievement requirements, then click an armour piece to unlock it. Unlocked
+          armour becomes purchasable the next time you play Halo: Reach on your Xbox 360.
         </Typography>
 
         {isLoading ? (
