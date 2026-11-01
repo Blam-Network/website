@@ -13,6 +13,7 @@ import { ReachArmourUnlocks } from "@/src/components/reach/ReachArmourUnlocks";
 import { env } from "@/src/env";
 import type { Metadata } from "next";
 import { generateReachPlayerMetadata } from "@/src/utils/playerPageMetadata";
+import { ReachGamesTable } from "@/src/components/reach/games/ReachGamesTable";
 
 export async function generateMetadata({
   params,
@@ -28,6 +29,7 @@ export default async function HaloReachPlayerPage({ params }: { params: { gamert
   const gamertag = decodeURIComponent(params.gamertag);
   let serviceRecord: Awaited<ReturnType<typeof api.reach.serviceRecord.query>> | undefined;
   let fileShare: Awaited<ReturnType<typeof api.reach.fileShare.query>> | undefined;
+  let recentGames: Awaited<ReturnType<typeof api.reach.games.query>> | undefined;
 
   try {
     serviceRecord = await api.reach.serviceRecord.query({ gamertag });
@@ -39,6 +41,12 @@ export default async function HaloReachPlayerPage({ params }: { params: { gamert
     fileShare = await api.reach.fileShare.query({ gamertag });
   } catch {
     fileShare = undefined;
+  }
+
+  try {
+    recentGames = await api.reach.games.query({ gamertag, page: 1, pageSize: 10 });
+  } catch {
+    recentGames = undefined;
   }
 
   const darkPrimaryColor = serviceRecord
@@ -116,13 +124,19 @@ export default async function HaloReachPlayerPage({ params }: { params: { gamert
             }}
           >
             <Box>
-              <Typography variant="h4" sx={{ mb: 1, fontWeight: 700 }}>
-                Coming Soon
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                We are building out the full Halo: Reach player page with deeper stats, progression views,
-                and more profile details. This section will expand over time as additional Reach systems come online.
-              </Typography>
+              <SectionHeader
+                title="Recent Games"
+                href={`/games?game=reach&gamertag=${encodeURIComponent(gamertag)}`}
+                sx={{ mb: 2 }}
+              />
+              {recentGames && recentGames.data.length > 0 ? (
+                <ReachGamesTable games={recentGames.data} showPlayerResult dense />
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No games recorded yet.
+                </Typography>
+              )}
+              <Box sx={{ mt: 3 }} />
               <ReachSpartanRender src={spartanRenderUrl} alt={`${gamertag} spartan render`} />
             </Box>
 

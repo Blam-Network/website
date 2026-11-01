@@ -145,6 +145,7 @@ function NetworkStatusBadge({
 
 const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/games', label: 'Games' },
     { href: '/screenshots', label: 'Screenshots' },
     { href: '/files', label: 'Files' },
     { href: '/players', label: 'Players' },

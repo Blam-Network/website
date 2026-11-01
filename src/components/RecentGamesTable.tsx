@@ -1,6 +1,8 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Link as MuiLink } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import { DateTimeDisplay } from "@/src/components/DateTimeDisplay";
+import { GameIcon } from "@/src/components/GameIcon";
+import type { FilesGame } from "@/src/components/files/filesPageTypes";
 import {
   getHalo3DifficultyName,
   getHalo3MissionName,
@@ -17,6 +19,10 @@ export type RecentGamesTableRow = {
   map_variant_name?: string | null;
   hopper_name?: string | null;
   campaign_difficulty?: number;
+  game?: FilesGame;
+  href?: string;
+  title?: string;
+  type_label?: string;
 };
 
 interface RecentGamesTableProps {
@@ -50,14 +56,16 @@ export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/ha
                     {games.map((game) => {
                         const isCampaign = 'type' in game && game.type === 'campaign';
                         const gameId = game.id;
-                        const reportUrl = isCampaign ? `${routeBase}/campaign-carnage-report/${gameId}` : `${routeBase}/carnage-report/${gameId}`;
+                        const reportUrl = game.href ?? (isCampaign ? `${routeBase}/campaign-carnage-report/${gameId}` : `${routeBase}/carnage-report/${gameId}`);
                         const gameVariantName = 'game_variant_name' in game ? game.game_variant_name : null;
                         const mapVariantName = 'map_variant_name' in game ? game.map_variant_name : null;
                         const hopperName = 'hopper_name' in game ? game.hopper_name : null;
                         const campaignDifficulty = 'campaign_difficulty' in game ? game.campaign_difficulty : undefined;
                         
                         let gameType: string;
-                        if (isCampaign) {
+                        if (game.type_label) {
+                            gameType = game.type_label;
+                        } else if (isCampaign) {
                             gameType = 'Campaign';
                         } else if (hopperName) {
                             gameType = 'Matchmaking';
@@ -69,17 +77,22 @@ export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/ha
                         return (
                             <TableRow key={game.id}>
                                 <TableCell>
+                                    {game.game && (
+                                        <Box component="span" sx={{ display: 'inline-flex', verticalAlign: 'middle', mr: 1, color: 'text.secondary' }}>
+                                            <GameIcon game={game.game} size={16} aria-hidden />
+                                        </Box>
+                                    )}
                                     <MuiLink
                                         component={Link}
                                         href={reportUrl}
                                         underline="hover"
                                         sx={{ fontWeight: 600, fontSize: '0.8125rem' }}
                                     >
-                                        {isCampaign ? (
+                                        {game.title ?? (isCampaign ? (
                                             `${getHalo3MissionName(game.map_id)} on ${getHalo3DifficultyName(campaignDifficulty)}`
                                         ) : (
                                             `${gameVariantName ?? 'Gametype'} on ${mapVariantName ?? 'Unknown Map'}`
-                                        )}
+                                        ))}
                                     </MuiLink>
                                 </TableCell>
                                 <TableCell sx={{ color: 'text.secondary' }}>

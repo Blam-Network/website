@@ -2,6 +2,7 @@ import { Box, Paper, Stack, Typography } from "@mui/material";
 import { getCssColor } from "@/src/colors";
 import { BARLOW_FAMILY } from "@/src/theme/fonts";
 import { ReachRankBadge } from "./ReachRankBadge";
+import { ReachEmblem } from "./ReachEmblem";
 import type { ReachServiceRecord } from "@/src/api/reach/serviceRecord";
 
 interface ReachServiceRecordBannerProps {
@@ -67,44 +68,57 @@ export function ReachServiceRecordBanner({ serviceRecord }: ReachServiceRecordBa
           alignItems={{ xs: "flex-start", md: "center" }}
           justifyContent="space-between"
         >
-          <Stack spacing={1} minWidth={0}>
-            <Typography
-              variant="h3"
-              sx={{
-                color: primaryColor,
-                fontWeight: 700,
-                fontFamily: BARLOW_FAMILY,
-                lineHeight: 1.15,
-                wordBreak: "break-word",
+          <Stack direction="row" spacing={2} alignItems="center" minWidth={0}>
+            <ReachEmblem
+              emblem={{
+                foreground_emblem: serviceRecord.foregroundEmblem,
+                background_emblem: serviceRecord.backgroundEmblem,
+                emblem_flags: serviceRecord.emblemFlags,
+                emblem_primary_color: serviceRecord.emblemPrimaryColor,
+                emblem_secondary_color: serviceRecord.emblemSecondaryColor,
+                emblem_background_color: serviceRecord.emblemBackgroundColor,
               }}
-            >
-              {serviceRecord.playerName}
-              {serviceRecord.serviceTag && (
+              size={96}
+            />
+            <Stack spacing={1} minWidth={0}>
+              <Typography
+                variant="h3"
+                sx={{
+                  color: primaryColor,
+                  fontWeight: 700,
+                  fontFamily: BARLOW_FAMILY,
+                  lineHeight: 1.15,
+                  wordBreak: "break-word",
+                }}
+              >
+                {serviceRecord.playerName}
+                {serviceRecord.serviceTag && (
+                  <Typography
+                    component="span"
+                    variant="h5"
+                    sx={{ color: "text.secondary", ml: 1, fontFamily: BARLOW_FAMILY }}
+                  >
+                    {serviceRecord.serviceTag}
+                  </Typography>
+                )}
+              </Typography>
+
+              <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap">
                 <Typography
                   component="span"
-                  variant="h5"
-                  sx={{ color: "text.secondary", ml: 1, fontFamily: BARLOW_FAMILY }}
+                  variant="h6"
+                  sx={{ color: "#E8EDF4", fontWeight: 600, fontFamily: BARLOW_FAMILY }}
                 >
-                  {serviceRecord.serviceTag}
+                  {rankTitle}
                 </Typography>
-              )}
-            </Typography>
-
-            <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap">
-              <Typography
-                component="span"
-                variant="h6"
-                sx={{ color: "#E8EDF4", fontWeight: 600, fontFamily: BARLOW_FAMILY }}
-              >
-                {rankTitle}
-              </Typography>
-              <Typography
-                component="span"
-                variant="body2"
-                sx={{ color: "text.secondary", fontFamily: BARLOW_FAMILY }}
-              >
-                • {serviceRecord.model ? "ELITE" : "SPARTAN"}
-              </Typography>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  sx={{ color: "text.secondary", fontFamily: BARLOW_FAMILY }}
+                >
+                  • {serviceRecord.model ? "ELITE" : "SPARTAN"}
+                </Typography>
+              </Stack>
             </Stack>
           </Stack>
 

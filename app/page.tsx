@@ -2,7 +2,9 @@ import { Box, Container } from "@mui/material";
 import { api } from "@/src/trpc/server";
 import { ScreenshotCard } from "@/src/components/ScreenshotCard";
 import { Nightmap } from "@/src/components/Nightmap";
-import { RecentGamesTable } from "@/src/components/RecentGamesTable";
+import { RecentGamesTable, type RecentGamesTableRow } from "@/src/components/RecentGamesTable";
+import { reachGameTitle } from "@/src/components/reach/games/ReachGamesTable";
+import { getReachGameModeLabel } from "@/src/constants/reach/reachGameData";
 import { SectionHeader } from "@/src/components/SectionHeader";
 import { HomeRecentFiles } from "@/src/components/home/HomeRecentFiles";
 import { getScreenshotViewUrl } from "@/src/components/home/getScreenshotViewUrl";
@@ -16,20 +18,43 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/",
 });
 
+const RECENT_GAMES_COUNT = 22;
+
 export default async function Home() {
-  const [gamesResult, screenshotsResult, filesResult] = await Promise.allSettled([
+  const [gamesResult, reachGamesResult, screenshotsResult, filesResult] = await Promise.allSettled([
     api.sunrise2.recentGames.query(),
+    api.reach.games.query({ page: 1, pageSize: RECENT_GAMES_COUNT }),
     api.home.recentScreenshotsAcrossGames.query(),
     api.home.recentFilesAcrossGames.query(),
   ]);
 
-  const recentGames = gamesResult.status === "fulfilled" ? gamesResult.value : [];
+  const halo3Games: RecentGamesTableRow[] =
+    gamesResult.status === "fulfilled" ? gamesResult.value.map((game) => ({ ...game, game: "halo3" as const })) : [];
+  const reachGames: RecentGamesTableRow[] =
+    reachGamesResult.status === "fulfilled"
+      ? reachGamesResult.value.data.map((game) => ({
+          id: game.id,
+          map_id: game.map_id,
+          start_time: game.start_time,
+          finish_time: game.finish_time,
+          game: "reach" as const,
+          href: `/haloreach/carnage-report/${game.id}`,
+          title: reachGameTitle(game),
+          type_label: getReachGameModeLabel(game.gui_game_mode, game.game_engine),
+        }))
+      : [];
+  const recentGames = [...halo3Games, ...reachGames]
+    .sort((a, b) => new Date(b.finish_time).getTime() - new Date(a.finish_time).getTime())
+    .slice(0, RECENT_GAMES_COUNT);
   const recentScreenshots =
     screenshotsResult.status === "fulfilled" ? screenshotsResult.value : [];
   const recentFiles = filesResult.status === "fulfilled" ? filesResult.value : [];
 
   if (gamesResult.status === "rejected") {
     console.error("[home] recentGames failed:", gamesResult.reason);
+  }
+  if (reachGamesResult.status === "rejected") {
+    console.error("[home] reach games failed:", reachGamesResult.reason);
   }
   if (screenshotsResult.status === "rejected") {
     console.error("[home] recentScreenshots failed:", screenshotsResult.reason);
@@ -51,7 +76,7 @@ export default async function Home() {
           }}
         >
           <Box>
-            <SectionHeader title="Recent Games" href="/halo3/games" />
+            <SectionHeader title="Recent Games" href="/games" />
             <RecentGamesTable games={recentGames} />
           </Box>
           <Box>

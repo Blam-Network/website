@@ -17,6 +17,7 @@ import { getNameplates } from "./getNameplates";
 import { setReachNameplate } from "./setReachNameplate";
 import { getArmourUnlocks } from "./getArmourUnlocks";
 import { unlockReachArmour } from "./unlockReachArmour";
+import { game, games } from "./games";
 
 const screenshots = publicProcedure
   .input(
@@ -74,6 +75,8 @@ const fileshareFiles = publicProcedure
   });
 
 export const reachRouter = createTRPCRouter({
+  games,
+  game,
   onlinePlayers,
   onlinePlayers24h,
   hoppers,

@@ -135,7 +135,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             <Box sx={{ minHeight: { lg: 480 }, display: "flex", flexDirection: "column" }}>
               <SectionHeader
                 title="Recent Games"
-                href={`/halo3/games?gamertag=${encodeURIComponent(gamertag)}`}
+                href={`/games?gamertag=${encodeURIComponent(gamertag)}`}
                 sx={{ mb: 2 }}
               />
               {previousGames.length > 0 ? (
