@@ -14,7 +14,6 @@ import {
 } from "@blamnetwork/blf/haloreach/v12065_11_08_24_1738_tu1actual";
 import * as reach_mcc from "@blamnetwork/blf/haloreach_mcc/v_untracked_25_08_16_1352";
 import { s_blf_chunk_fileshare_metadata } from "@blamnetwork/blf/mcc/v2025_08_16_178512_1_release";
-import { convert_reach_gametype, e_reach_gametype_conversion_error } from "@blamnetwork/blf/helpers";
 import type { ReachAdminFileshareTarget } from "@/src/constants/reachAdminFileshare";
 
 const BLF_ENDIAN = "big" as const;
@@ -65,27 +64,6 @@ function isMccFileshareExport(data: Uint8Array): boolean {
     return find_chunk(data, fsm, BLF_ENDIAN);
 }
 
-function formatReachGametypeConversionError(
-    error: e_reach_gametype_conversion_error,
-): string {
-    switch (error) {
-        case e_reach_gametype_conversion_error.forge_variant:
-            return "Forge (sandbox) gametypes cannot be converted for Xbox 360 upload";
-        case e_reach_gametype_conversion_error.campaign_variant:
-            return "Campaign gametypes cannot be converted for Xbox 360 upload";
-        case e_reach_gametype_conversion_error.mcc_exclusive_action:
-            return "This gametype uses MCC-only megalo actions that Xbox 360 does not support";
-        case e_reach_gametype_conversion_error.mcc_exclusive_math_operator:
-            return "This gametype uses MCC-only math operators (<<=, >>=) that Xbox 360 does not support";
-        case e_reach_gametype_conversion_error.mcc_survival_additional_flags:
-            return "This Firefight gametype uses MCC-only options (e.g. Network Test 1) that Xbox 360 does not support";
-        case e_reach_gametype_conversion_error.insufficient_global_slots:
-            return "This gametype uses too many temporary object, player, or team references to map onto Xbox 360 global slots";
-        default:
-            return "This MCC gametype cannot be converted for Xbox 360 upload";
-    }
-}
-
 function extractReachGameVariant(
     data: Uint8Array,
     isMccFile: boolean,
@@ -96,35 +74,17 @@ function extractReachGameVariant(
     }
 
     if (isMccFile) {
+        // TODO: blf-ts's MCC to Xbox 360 gametype conversion is removed for now, so MCC
+        // gametypes are refused until it's back.
         const mcc_gvar = new reach_mcc.s_blf_chunk_packed_game_variant();
-        if (search_for_chunk(data, mcc_gvar, BLF_ENDIAN)) {
-            const converted = new c_game_variant();
-            const conversionError = convert_reach_gametype(
-                mcc_gvar.game_variant,
-                converted,
-            );
-            if (conversionError === e_reach_gametype_conversion_error.ok) {
-                return { ok: true, variant: converted, convertedFromMcc: true };
-            }
-            return {
-                ok: false,
-                error: formatReachGametypeConversionError(conversionError),
-            };
-        }
-
         const mcc_mpvr = new reach_mcc.s_blf_chunk_game_variant();
-        if (search_for_chunk(data, mcc_mpvr, BLF_ENDIAN)) {
-            const converted = new c_game_variant();
-            const conversionError = convert_reach_gametype(
-                mcc_mpvr.game_variant,
-                converted,
-            );
-            if (conversionError === e_reach_gametype_conversion_error.ok) {
-                return { ok: true, variant: converted, convertedFromMcc: true };
-            }
+        if (
+            search_for_chunk(data, mcc_gvar, BLF_ENDIAN) ||
+            search_for_chunk(data, mcc_mpvr, BLF_ENDIAN)
+        ) {
             return {
                 ok: false,
-                error: formatReachGametypeConversionError(conversionError),
+                error: "This MCC gametype cannot be converted for Xbox 360 upload",
             };
         }
     }
