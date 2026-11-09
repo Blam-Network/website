@@ -142,7 +142,7 @@ export const RoadToRecon = ({ profileGamertag }: { profileGamertag?: string }) =
                                                 !unlocked
                                                     ? { filter: 'saturate(0)', transition: 'filter 0.3s ease' }
                                                     : {
-                                                          filter: 'drop-shadow(0 0 8px rgba(124, 179, 66, 0.6))',
+                                                          filter: 'drop-shadow(0 0 8px rgba(130, 198, 3, 0.6))',
                                                           transition: 'filter 0.3s ease',
                                                       }
                                             }

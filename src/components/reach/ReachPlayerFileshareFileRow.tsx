@@ -43,7 +43,7 @@ export function ReachPlayerFileshareFileRow({ file }: ReachPlayerFileshareFileRo
         transition: "border-color 0.15s ease, box-shadow 0.15s ease",
         "&:hover": {
           borderColor: "primary.main",
-          boxShadow: "0 0 0 1px rgba(124, 179, 66, 0.15)",
+          boxShadow: "0 0 0 1px rgba(130, 198, 3, 0.15)",
         },
       }}
     >

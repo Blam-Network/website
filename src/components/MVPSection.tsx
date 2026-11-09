@@ -131,7 +131,7 @@ export function MVPSection({ player, playerRouteBase = "/halo3/player" }: MVPSec
                         px: 2,
                         py: 1.5,
                         background:
-                            'linear-gradient(90deg, rgba(124, 179, 66, 0.1) 0%, rgba(124, 179, 66, 0.02) 45%, transparent 100%)',
+                            'linear-gradient(90deg, rgba(130, 198, 3, 0.1) 0%, rgba(130, 198, 3, 0.02) 45%, transparent 100%)',
                     }}
                 >
                     <EmojiEventsOutlinedIcon

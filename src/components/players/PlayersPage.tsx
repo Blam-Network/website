@@ -218,7 +218,7 @@ export function PlayersPage({ defaultGame = "halo3" }: PlayersPageProps) {
                     transition: "all 0.2s ease",
                     "&:hover": {
                       transform: "translateY(-2px)",
-                      boxShadow: "0 0 10px rgba(124, 179, 66, 0.2)",
+                      boxShadow: "0 0 10px rgba(130, 198, 3, 0.2)",
                       borderColor: "primary.main",
                     },
                     border: "1px solid transparent",

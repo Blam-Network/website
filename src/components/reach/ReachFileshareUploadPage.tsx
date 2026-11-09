@@ -82,12 +82,12 @@ const tableStatusHeadCellSx = {
 };
 const modalTextFieldSx = {
     "& .MuiInputLabel-root": { color: "#888" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#7CB342" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#82C603" },
     "& .MuiOutlinedInput-root": {
         color: "#E0E0E0",
         "& fieldset": { borderColor: "#444" },
         "&:hover fieldset": { borderColor: "#666" },
-        "&.Mui-focused fieldset": { borderColor: "#7CB342" },
+        "&.Mui-focused fieldset": { borderColor: "#82C603" },
     },
 };
 
@@ -215,7 +215,7 @@ function UploadNameEditModal({
                         onClick={handleSave}
                         disabled={!nameDraft.trim()}
                         sx={{
-                            bgcolor: "#7CB342",
+                            bgcolor: "#82C603",
                             "&:hover": { bgcolor: "#689F38" },
                         }}
                     >
@@ -262,7 +262,7 @@ const UploadFileRow = memo(function UploadFileRow({
                     </Typography>
                 )}
                 {entry.status === "ready" && (
-                    <Typography sx={{ ...tableStatusTypographySx, color: "#7CB342" }}>
+                    <Typography sx={{ ...tableStatusTypographySx, color: "#82C603" }}>
                         Ready
                     </Typography>
                 )}
@@ -318,7 +318,7 @@ const UploadFileRow = memo(function UploadFileRow({
                             sx={{
                                 p: 0.25,
                                 color: "#888",
-                                "&:hover": { color: "#7CB342" },
+                                "&:hover": { color: "#82C603" },
                             }}
                         >
                             <EditIcon fontSize="small" />
@@ -614,7 +614,7 @@ export function ReachFileshareUploadPage({
                     component={Link}
                     href="/admin"
                     startIcon={<ArrowBackIcon />}
-                    sx={{ mb: 2, color: "#B0B0B0", "&:hover": { color: "#7CB342" } }}
+                    sx={{ mb: 2, color: "#B0B0B0", "&:hover": { color: "#82C603" } }}
                 >
                     Admin
                 </Button>
@@ -648,7 +648,7 @@ export function ReachFileshareUploadPage({
                     sx={{
                         color: "#E0E0E0",
                         borderColor: "#555",
-                        "&:hover": { borderColor: "#7CB342", color: "#7CB342" },
+                        "&:hover": { borderColor: "#82C603", color: "#82C603" },
                     }}
                 >
                     Choose files
@@ -661,7 +661,7 @@ export function ReachFileshareUploadPage({
                         sx={{
                             color: "#E0E0E0",
                             borderColor: "#555",
-                            "&:hover": { borderColor: "#7CB342", color: "#7CB342" },
+                            "&:hover": { borderColor: "#82C603", color: "#82C603" },
                         }}
                     >
                         Remove duplicates
@@ -728,7 +728,7 @@ export function ReachFileshareUploadPage({
                             )
                         }
                         sx={{
-                            bgcolor: "#7CB342",
+                            bgcolor: "#82C603",
                             "&:hover": { bgcolor: "#689F38" },
                         }}
                     >

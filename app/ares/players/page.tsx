@@ -126,7 +126,7 @@ export default function PlayersPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1, borderBottom: "2px solid #7CB342" }}>
+      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1, borderBottom: "2px solid #82C603" }}>
         <Typography variant="h4">
           Players
         </Typography>
@@ -143,17 +143,17 @@ export default function PlayersPage() {
               width: 250,
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "#7CB342",
+                  borderColor: "#82C603",
                 },
                 "&:hover fieldset": {
                   borderColor: "#9CCC65",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#7CB342",
+                  borderColor: "#82C603",
                 },
               },
               "& .MuiInputLabel-root.Mui-focused": {
-                color: "#7CB342",
+                color: "#82C603",
               },
             }}
           />
@@ -162,9 +162,9 @@ export default function PlayersPage() {
             onClick={handleSearch}
             size="small"
             sx={{
-              backgroundColor: "#7CB342",
+              backgroundColor: "#82C603",
               "&:hover": {
-                backgroundColor: "#558B2F",
+                backgroundColor: "#5B8B02",
               },
             }}
           >
@@ -179,11 +179,11 @@ export default function PlayersPage() {
                 updateURL(1, "");
               }}
               sx={{
-                borderColor: "#7CB342",
-                color: "#7CB342",
+                borderColor: "#82C603",
+                color: "#82C603",
                 "&:hover": {
                   borderColor: "#9CCC65",
-                  backgroundColor: "rgba(124, 179, 66, 0.1)",
+                  backgroundColor: "rgba(130, 198, 3, 0.1)",
                 },
               }}
             >
@@ -216,8 +216,8 @@ export default function PlayersPage() {
                     transition: "all 0.2s ease",
                     "&:hover": {
                       transform: "translateY(-2px)",
-                      boxShadow: "0 0 10px rgba(124, 179, 66, 0.2)",
-                      borderColor: "#7CB342",
+                      boxShadow: "0 0 10px rgba(130, 198, 3, 0.2)",
+                      borderColor: "#82C603",
                     },
                     border: "1px solid transparent",
                   }}
@@ -238,14 +238,14 @@ export default function PlayersPage() {
                   "& .MuiPaginationItem-root": {
                     color: "#E0E0E0",
                     "&.Mui-selected": {
-                      backgroundColor: "#7CB342",
+                      backgroundColor: "#82C603",
                       color: "#000",
                       "&:hover": {
                         backgroundColor: "#9CCC65",
                       },
                     },
                     "&:hover": {
-                      backgroundColor: "rgba(124, 179, 66, 0.2)",
+                      backgroundColor: "rgba(130, 198, 3, 0.2)",
                     },
                   },
                 }}

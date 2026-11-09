@@ -95,7 +95,7 @@ export default function ScreenshotsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3, pb: 1, borderBottom: "2px solid #7CB342" }}>
+      <Typography variant="h4" sx={{ mb: 3, pb: 1, borderBottom: "2px solid #82C603" }}>
         Screenshots
       </Typography>
 
@@ -129,14 +129,14 @@ export default function ScreenshotsPage() {
                   '& .MuiPaginationItem-root': {
                     color: '#B0B0B0',
                     '&.Mui-selected': {
-                      backgroundColor: '#7CB342',
+                      backgroundColor: '#82C603',
                       color: '#fff',
                       '&:hover': {
-                        backgroundColor: '#558B2F',
+                        backgroundColor: '#5B8B02',
                       },
                     },
                     '&:hover': {
-                      backgroundColor: 'rgba(124, 179, 66, 0.1)',
+                      backgroundColor: 'rgba(130, 198, 3, 0.1)',
                     },
                   },
                 }}

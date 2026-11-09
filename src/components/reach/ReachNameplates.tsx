@@ -70,7 +70,7 @@ function NameplateTile({
             ? {
                 ...(!selected && { transform: "translateY(-2px)" }),
                 "& img": {
-                  filter: "drop-shadow(0 0 8px rgba(124, 179, 66, 0.55)) saturate(1)",
+                  filter: "drop-shadow(0 0 8px rgba(130, 198, 3, 0.55)) saturate(1)",
                 },
               }
             : {
@@ -95,7 +95,7 @@ function NameplateTile({
               height: 32,
               objectFit: "contain",
               filter: unlocked
-                ? "drop-shadow(0 0 6px rgba(124, 179, 66, 0.35))"
+                ? "drop-shadow(0 0 6px rgba(130, 198, 3, 0.35))"
                 : "saturate(0) brightness(0.7)",
               transition: "filter 0.25s ease",
             }}

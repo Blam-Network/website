@@ -63,7 +63,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
   } catch {}
   const hasPlayed = previousGames.length > 0 || !!serviceRecord?.playerName;
 
-  const armorColor = serviceRecord ? getCssColor(serviceRecord.primaryColor) : "#7CB342";
+  const armorColor = serviceRecord ? getCssColor(serviceRecord.primaryColor) : "#82C603";
   const darkPrimaryColor = serviceRecord ? (() => {
     const color = getColor(getColorName(serviceRecord.primaryColor));
     const r = Math.round(color.r * 0.12);

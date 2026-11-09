@@ -103,7 +103,7 @@ export default function FilesPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3, pb: 1, borderBottom: "2px solid #7CB342" }}>
+      <Typography variant="h4" sx={{ mb: 3, pb: 1, borderBottom: "2px solid #82C603" }}>
         Files
       </Typography>
 
@@ -114,11 +114,11 @@ export default function FilesPage() {
           variant={fileType === "" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("")}
           sx={{
-            backgroundColor: fileType === "" ? '#7CB342' : 'transparent',
-            color: fileType === "" ? '#fff' : '#7CB342',
-            borderColor: '#7CB342',
+            backgroundColor: fileType === "" ? '#82C603' : 'transparent',
+            color: fileType === "" ? '#fff' : '#82C603',
+            borderColor: '#82C603',
             '&:hover': {
-              backgroundColor: fileType === "" ? '#558B2F' : 'rgba(124, 179, 66, 0.1)',
+              backgroundColor: fileType === "" ? '#5B8B02' : 'rgba(130, 198, 3, 0.1)',
             },
           }}
         >
@@ -128,11 +128,11 @@ export default function FilesPage() {
           variant={fileType === "maps" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("maps")}
           sx={{
-            backgroundColor: fileType === "maps" ? '#7CB342' : 'transparent',
-            color: fileType === "maps" ? '#fff' : '#7CB342',
-            borderColor: '#7CB342',
+            backgroundColor: fileType === "maps" ? '#82C603' : 'transparent',
+            color: fileType === "maps" ? '#fff' : '#82C603',
+            borderColor: '#82C603',
             '&:hover': {
-              backgroundColor: fileType === "maps" ? '#558B2F' : 'rgba(124, 179, 66, 0.1)',
+              backgroundColor: fileType === "maps" ? '#5B8B02' : 'rgba(130, 198, 3, 0.1)',
             },
           }}
         >
@@ -142,11 +142,11 @@ export default function FilesPage() {
           variant={fileType === "gametypes" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("gametypes")}
           sx={{
-            backgroundColor: fileType === "gametypes" ? '#7CB342' : 'transparent',
-            color: fileType === "gametypes" ? '#fff' : '#7CB342',
-            borderColor: '#7CB342',
+            backgroundColor: fileType === "gametypes" ? '#82C603' : 'transparent',
+            color: fileType === "gametypes" ? '#fff' : '#82C603',
+            borderColor: '#82C603',
             '&:hover': {
-              backgroundColor: fileType === "gametypes" ? '#558B2F' : 'rgba(124, 179, 66, 0.1)',
+              backgroundColor: fileType === "gametypes" ? '#5B8B02' : 'rgba(130, 198, 3, 0.1)',
             },
           }}
         >
@@ -156,11 +156,11 @@ export default function FilesPage() {
           variant={fileType === "films" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("films")}
           sx={{
-            backgroundColor: fileType === "films" ? '#7CB342' : 'transparent',
-            color: fileType === "films" ? '#fff' : '#7CB342',
-            borderColor: '#7CB342',
+            backgroundColor: fileType === "films" ? '#82C603' : 'transparent',
+            color: fileType === "films" ? '#fff' : '#82C603',
+            borderColor: '#82C603',
             '&:hover': {
-              backgroundColor: fileType === "films" ? '#558B2F' : 'rgba(124, 179, 66, 0.1)',
+              backgroundColor: fileType === "films" ? '#5B8B02' : 'rgba(130, 198, 3, 0.1)',
             },
           }}
         >
@@ -170,11 +170,11 @@ export default function FilesPage() {
           variant={fileType === "screenshots" ? "contained" : "outlined"}
           onClick={() => handleFilterChange("screenshots")}
           sx={{
-            backgroundColor: fileType === "screenshots" ? '#7CB342' : 'transparent',
-            color: fileType === "screenshots" ? '#fff' : '#7CB342',
-            borderColor: '#7CB342',
+            backgroundColor: fileType === "screenshots" ? '#82C603' : 'transparent',
+            color: fileType === "screenshots" ? '#fff' : '#82C603',
+            borderColor: '#82C603',
             '&:hover': {
-              backgroundColor: fileType === "screenshots" ? '#558B2F' : 'rgba(124, 179, 66, 0.1)',
+              backgroundColor: fileType === "screenshots" ? '#5B8B02' : 'rgba(130, 198, 3, 0.1)',
             },
           }}
         >
@@ -201,8 +201,8 @@ export default function FilesPage() {
                   background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)',
                   border: '1px solid #333',
                   '&:hover': {
-                    borderColor: '#7CB342',
-                    backgroundColor: 'rgba(124, 179, 66, 0.05)',
+                    borderColor: '#82C603',
+                    backgroundColor: 'rgba(130, 198, 3, 0.05)',
                   },
                   transition: 'all 0.2s ease-in-out',
                 }}
@@ -274,14 +274,14 @@ export default function FilesPage() {
                   '& .MuiPaginationItem-root': {
                     color: '#B0B0B0',
                     '&.Mui-selected': {
-                      backgroundColor: '#7CB342',
+                      backgroundColor: '#82C603',
                       color: '#fff',
                       '&:hover': {
-                        backgroundColor: '#558B2F',
+                        backgroundColor: '#5B8B02',
                       },
                     },
                     '&:hover': {
-                      backgroundColor: 'rgba(124, 179, 66, 0.1)',
+                      backgroundColor: 'rgba(130, 198, 3, 0.1)',
                     },
                   },
                 }}

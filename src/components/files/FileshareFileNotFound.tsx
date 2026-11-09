@@ -51,7 +51,7 @@ export function FileshareFileNotFound() {
             py: { xs: 4, sm: 5 },
             textAlign: "center",
             background:
-              "radial-gradient(ellipse at top, rgba(124, 179, 66, 0.12) 0%, transparent 55%)",
+              "radial-gradient(ellipse at top, rgba(130, 198, 3, 0.12) 0%, transparent 55%)",
           }}
         >
           <Box
@@ -80,7 +80,7 @@ export function FileshareFileNotFound() {
               lineHeight: 1,
               letterSpacing: "-0.04em",
               mb: 1,
-              background: "linear-gradient(180deg, #A5D65C 0%, #7CB342 45%, #558B2F 100%)",
+              background: "linear-gradient(180deg, #A1D442 0%, #82C603 45%, #5B8B02 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",

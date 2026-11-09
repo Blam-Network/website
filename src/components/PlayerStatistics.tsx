@@ -62,7 +62,7 @@ function StatisticsCard({
 }
 
 const COLORS: Record<string, string> = {
-  Campaign: "#7CB342",
+  Campaign: "#82C603",
   Matchmaking: "#4A90E2",
   "Custom Games": "#9C27B0",
   Forge: "#FF9800",
@@ -586,7 +586,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                           key={index} 
                           sx={{ 
                             backgroundColor: backgroundColor,
-                            "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(124, 179, 66, 0.1)" }
+                            "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(130, 198, 3, 0.1)" }
                           }}
                         >
                           <TableCell sx={{ borderColor: "divider", width: "1px", py: 0.5, px: 1 }}>
@@ -653,7 +653,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                           key={index} 
                           sx={{ 
                             backgroundColor: backgroundColor,
-                            "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(124, 179, 66, 0.1)" }
+                            "&:hover": { backgroundColor: backgroundColor && bgColor ? `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.5)` : "rgba(130, 198, 3, 0.1)" }
                           }}
                         >
                           <TableCell sx={{ borderColor: "divider", width: "1px", py: 0.5, px: 1 }}>
@@ -889,7 +889,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                         overflow: "hidden",
                         transition: "border-color 0.2s ease",
                         "&:hover": {
-                          borderColor: isWeaponOfChoice ? "primary.light" : "rgba(124, 179, 66, 0.35)",
+                          borderColor: isWeaponOfChoice ? "primary.light" : "rgba(130, 198, 3, 0.35)",
                         },
                         "&::before": {
                           content: '""',
@@ -899,8 +899,8 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
                           bottom: 0,
                           width: `${percentage}%`,
                           backgroundColor: isWeaponOfChoice
-                            ? "rgba(124, 179, 66, 0.22)"
-                            : "rgba(124, 179, 66, 0.1)",
+                            ? "rgba(130, 198, 3, 0.22)"
+                            : "rgba(130, 198, 3, 0.1)",
                           zIndex: 0,
                           transition: "width 0.3s ease",
                         },

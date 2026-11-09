@@ -81,7 +81,7 @@ export function CarnageReportHeader({ game, report }: CarnageReportHeaderProps) 
                 fontWeight: 800,
                 lineHeight: 1.15,
                 mb: 0.75,
-                background: "linear-gradient(180deg, #A5D65C 0%, #7CB342 100%)",
+                background: "linear-gradient(180deg, #A1D442 0%, #82C603 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",

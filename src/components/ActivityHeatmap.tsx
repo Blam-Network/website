@@ -12,10 +12,10 @@ interface ActivityHeatmapProps {
 
 const HEAT_COLORS = {
   empty: "rgba(255, 255, 255, 0.05)",
-  scale1: "rgba(124, 179, 66, 0.22)",
-  scale2: "rgba(124, 179, 66, 0.42)",
-  scale3: "rgba(124, 179, 66, 0.68)",
-  scale4: "#7CB342",
+  scale1: "rgba(130, 198, 3, 0.22)",
+  scale2: "rgba(130, 198, 3, 0.42)",
+  scale3: "rgba(130, 198, 3, 0.68)",
+  scale4: "#82C603",
 } as const;
 
 export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
@@ -105,7 +105,7 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
           transition: "stroke 0.15s ease, filter 0.15s ease",
         },
         "& .react-calendar-heatmap rect:hover": {
-          stroke: "#7CB342",
+          stroke: "#82C603",
           filter: "brightness(1.12)",
         },
       }}

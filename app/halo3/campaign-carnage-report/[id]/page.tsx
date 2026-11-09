@@ -112,7 +112,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
             {/* Header */}
             <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
-                    <Typography variant="h2" sx={{ color: '#7CB342', fontWeight: 700, mb: 1, fontFamily: 'sans-serif' }}>
+                    <Typography variant="h2" sx={{ color: '#82C603', fontWeight: 700, mb: 1, fontFamily: 'sans-serif' }}>
                     {getMissionName(carnageReport.map_id)} on {getDifficultyName(carnageReport.campaign_difficulty)}
                     </Typography>
                     <Typography variant="body1" sx={{ color: '#B0B0B0' }}>
@@ -140,7 +140,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
             {/* General Stats - Only show if scoring is enabled */}
             {carnageReport.campaign_metagame_enabled && (
                 <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
-                    <Typography variant="h5" sx={{ mb: 3, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
+                    <Typography variant="h5" sx={{ mb: 3, color: '#82C603', fontWeight: 600, fontFamily: 'sans-serif' }}>
                         Game Statistics
                     </Typography>
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3 }}>
@@ -148,7 +148,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
                             <Typography variant="caption" sx={{ color: '#888', display: 'block', mb: 0.5 }}>
                                 Total Score
                             </Typography>
-                            <Typography variant="h6" sx={{ color: '#7CB342', fontWeight: 700 }}>
+                            <Typography variant="h6" sx={{ color: '#82C603', fontWeight: 700 }}>
                                 {carnageReport.final_total_score.toLocaleString()}
                             </Typography>
                         </Box>
@@ -203,7 +203,7 @@ export default async function CampaignCarnageReportPage({ params }: { params: { 
 
             {/* Player Breakdown */}
             <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%)', border: '1px solid #333' }}>
-                <Typography variant="h5" sx={{ mb: 2, color: '#7CB342', fontWeight: 600, fontFamily: 'sans-serif' }}>
+                <Typography variant="h5" sx={{ mb: 2, color: '#82C603', fontWeight: 600, fontFamily: 'sans-serif' }}>
                     Player Breakdown
                 </Typography>
                 <CampaignPlayerBreakdown 

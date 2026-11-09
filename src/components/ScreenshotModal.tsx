@@ -81,7 +81,7 @@ export const ScreenshotModal = ({
                 width: 40,
                 height: 40,
                 "&:hover": {
-                  color: "#7CB342",
+                  color: "#82C603",
                   backgroundColor: "rgba(255, 255, 255, 0.1)",
                 },
               }}

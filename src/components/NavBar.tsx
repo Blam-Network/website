@@ -27,7 +27,7 @@ function PopulationStatusDot({
     > = {
         online: {
             backgroundColor: "primary.main",
-            boxShadow: "0 0 6px rgba(124, 179, 66, 0.8)",
+            boxShadow: "0 0 6px rgba(130, 198, 3, 0.8)",
             pulseOpacity: 0.4,
         },
         degraded: {
@@ -284,7 +284,7 @@ export const NavBar = ({ session }: { session: Session | null }) => {
                                 sx={{
                                     color: isActive(href) ? 'primary.light' : 'text.secondary',
                                     fontWeight: isActive(href) ? 700 : 500,
-                                    backgroundColor: isActive(href) ? 'rgba(124, 179, 66, 0.1)' : 'transparent',
+                                    backgroundColor: isActive(href) ? 'rgba(130, 198, 3, 0.1)' : 'transparent',
                                     border: isActive(href) ? '1px solid' : '1px solid transparent',
                                     borderColor: isActive(href) ? 'primary.main' : 'transparent',
                                     borderRadius: 0,
@@ -292,7 +292,7 @@ export const NavBar = ({ session }: { session: Session | null }) => {
                                     whiteSpace: 'nowrap',
                                     '&:hover': {
                                         color: 'primary.light',
-                                        backgroundColor: 'rgba(124, 179, 66, 0.08)',
+                                        backgroundColor: 'rgba(130, 198, 3, 0.08)',
                                     },
                                 }}
                             >

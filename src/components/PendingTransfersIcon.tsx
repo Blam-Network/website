@@ -309,7 +309,7 @@ export const PendingTransfersIcon = () => {
                       px: 2,
                       py: 1.25,
                       transition: "background-color 0.15s ease",
-                      "&:hover": { backgroundColor: "rgba(124, 179, 66, 0.06)" },
+                      "&:hover": { backgroundColor: "rgba(130, 198, 3, 0.06)" },
                     }}
                   >
                     <GameIcon game={fileShareGame} size={18} />

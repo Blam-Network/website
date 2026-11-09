@@ -87,7 +87,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             alignItems: 'center',
             pt: 2,
             pb: 2,
-            borderBottom: `2px solid ${serviceRecord ? getCssColor(serviceRecord.primaryColor) : '#7CB342'}`,
+            borderBottom: `2px solid ${serviceRecord ? getCssColor(serviceRecord.primaryColor) : '#82C603'}`,
             position: 'relative',
             '&::before': {
               content: '""',
@@ -128,7 +128,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
       {hasPlayed && (
         <Box sx={{ width: '100%', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4, alignItems: 'stretch' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2, pb: 1, borderBottom: '2px solid #7CB342' }}>
+            <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2, pb: 1, borderBottom: '2px solid #82C603' }}>
               <Typography variant='h4'>Recent Games</Typography>
               <Link href={`/ares/games?gamertag=${encodeURIComponent(gamertag)}`} style={{ textDecoration: 'none' }}>
                 <Typography 
@@ -150,7 +150,7 @@ export default async function Home({params}: {params: { gamertag: string }}) {
             )}
           </Box>
           <Box>
-            <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2, pb: 1, borderBottom: '2px solid #7CB342' }}>
+            <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ mb: 2, pb: 1, borderBottom: '2px solid #82C603' }}>
               <Typography variant='h4'>File Share</Typography>
               {fileShare && (
                 <Stack direction='row' gap={2} alignItems='center'>
@@ -299,8 +299,8 @@ export default async function Home({params}: {params: { gamertag: string }}) {
                           display: 'flex',
                           flexDirection: 'column',
                           '&:hover': {
-                            borderColor: '#7CB342',
-                            boxShadow: '0 0 10px rgba(124, 179, 66, 0.2)',
+                            borderColor: '#82C603',
+                            boxShadow: '0 0 10px rgba(130, 198, 3, 0.2)',
                           },
                           transition: 'all 0.3s ease',
                         }}

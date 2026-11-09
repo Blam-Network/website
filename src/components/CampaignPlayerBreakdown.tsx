@@ -97,7 +97,7 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342' }}>Player</TableCell>
+                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603' }}>Player</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -205,11 +205,11 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     '& .MuiTab-root': {
                         color: '#B0B0B0',
                         '&.Mui-selected': {
-                            color: '#7CB342',
+                            color: '#82C603',
                         },
                     },
                     '& .MuiTabs-indicator': {
-                        backgroundColor: '#7CB342',
+                        backgroundColor: '#82C603',
                     },
                 }}
             >
@@ -224,11 +224,11 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Score</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Kills</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Deaths</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Assists</TableCell>
+                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Score</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Kills</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Deaths</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Assists</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -256,12 +256,12 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Headshots</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Assass.</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Splatters</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Multi-kills</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Sticky</TableCell>
+                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Headshots</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Assass.</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Splatters</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Multi-kills</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Sticky</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -292,11 +292,11 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Infantry</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Leader</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Hero</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Specialist</TableCell>
+                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Infantry</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Leader</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Hero</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Specialist</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -324,11 +324,11 @@ export function CampaignPlayerBreakdown({ players, metagameEnabled, playerRouteB
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Light Veh.</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Heavy Veh.</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Giant Veh.</TableCell>
-                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#7CB342', fontWeight: 700, borderBottom: '2px solid #7CB342', whiteSpace: 'nowrap' }}>Std. Veh.</TableCell>
+                                <TableCell sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', position: 'sticky', left: 0, zIndex: 10 }}>Player</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Light Veh.</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Heavy Veh.</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Giant Veh.</TableCell>
+                                <TableCell align="right" sx={{ backgroundColor: '#1A1A1A', color: '#82C603', fontWeight: 700, borderBottom: '2px solid #82C603', whiteSpace: 'nowrap' }}>Std. Veh.</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

@@ -4,17 +4,17 @@ import { Stack, Box, Typography, Button, Link as MuiLink } from "@mui/material";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { profileRedirectPath } from "@/src/components/Gamertag";
 import { usePreferReachRoutes } from "@/src/hooks/usePreferReachRoutes";
 import { PendingTransfersIcon } from "./PendingTransfersIcon";
-import { fixedsysSize, fixedsysStyle } from "@/src/theme/fonts";
+import { BARLOW_FAMILY } from "@/src/theme/fonts";
 
 export const Header = ({ session }: { session: Session | null }) => {
     const loggedIn = !!session?.user?.xuid;
     const preferReach = usePreferReachRoutes();
     const profileHref = profileRedirectPath(preferReach);
-    const logoSize = { xs: fixedsysSize(22), md: fixedsysSize(28) };
-    const networkSize = { xs: fixedsysSize(17), md: fixedsysSize(20) };
+    const logoSize = { xs: 26, md: 32 };
 
     return (
         <Box
@@ -30,7 +30,7 @@ export const Header = ({ session }: { session: Session | null }) => {
                 backgroundColor: 'rgba(11, 14, 20, 0.85)',
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                boxShadow: '0 1px 0 rgba(124, 179, 66, 0.15)',
+                boxShadow: '0 1px 0 rgba(130, 198, 3, 0.15)',
             }}
         >
             <Stack
@@ -44,65 +44,34 @@ export const Header = ({ session }: { session: Session | null }) => {
                     py: 1.5,
                 }}
             >
-                <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link href="/" aria-label="blam.network" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <Box
                         sx={{
                             display: 'inline-flex',
                             alignItems: 'baseline',
-                            gap: 0,
                             cursor: 'pointer',
+                            fontFamily: BARLOW_FAMILY,
+                            fontWeight: 600,
+                            fontSize: logoSize,
+                            letterSpacing: '-0.02em',
                             lineHeight: 1,
-                            transition: 'transform 0.2s ease',
-                            '&:hover': {
-                                transform: 'translateY(-1px)',
-                                '& .blam-text': {
-                                    filter: 'drop-shadow(0 0 14px rgba(124, 179, 66, 0.55))',
-                                },
-                                '& .exclamation': {
-                                    transform: 'scale(1.1)',
-                                },
-                            },
+                            color: '#FFFFFF',
                         }}
                     >
-                        <Typography
-                            className="blam-text"
+                        blam
+                        <Box
                             component="span"
                             sx={{
-                                ...fixedsysStyle,
-                                fontSize: logoSize,
-                                background: `linear-gradient(100deg, ${'#A5D65C'} 0%, ${'#7CB342'} 50%, ${'#558B2F'} 100%)`,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
-                                transition: 'filter 0.2s ease',
+                                position: 'relative',
+                                display: 'inline-block',
+                                width: '0.72em',
+                                height: '0.72em',
+                                mx: '0.03em',
                             }}
                         >
-                            BLAM
-                        </Typography>
-                        <Typography
-                            className="exclamation"
-                            component="span"
-                            sx={{
-                                ...fixedsysStyle,
-                                fontSize: logoSize,
-                                color: 'primary.main',
-                                transition: 'transform 0.2s ease',
-                            }}
-                        >
-                            !
-                        </Typography>
-                        <Typography
-                            component="span"
-                            sx={{
-                                ...fixedsysStyle,
-                                fontSize: networkSize,
-                                ml: 0.75,
-                                color: 'text.secondary',
-                                textTransform: 'lowercase',
-                            }}
-                        >
-                            network
-                        </Typography>
+                            <Image src="/img/blam_logo_icon.png" alt="" fill sizes="24px" priority />
+                        </Box>
+                        network
                     </Box>
                 </Link>
                 <Stack direction="row" spacing={2} alignItems="center">

@@ -135,7 +135,7 @@ function ReportHeader({ report }: { report: ReachGame }) {
                 fontWeight: 800,
                 lineHeight: 1.15,
                 mb: 0.75,
-                background: "linear-gradient(180deg, #A5D65C 0%, #7CB342 100%)",
+                background: "linear-gradient(180deg, #A1D442 0%, #82C603 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -448,7 +448,7 @@ function Versus({ report }: { report: ReachGame }) {
                     sx={{
                       fontVariantNumeric: "tabular-nums",
                       color: count ? "text.primary" : "text.disabled",
-                      backgroundColor: count ? `rgba(124, 179, 66, ${0.08 + (0.45 * count) / max})` : undefined,
+                      backgroundColor: count ? `rgba(130, 198, 3, ${0.08 + (0.45 * count) / max})` : undefined,
                     }}
                   >
                     {killer.player_index === victim.player_index ? "—" : count}

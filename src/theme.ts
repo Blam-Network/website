@@ -9,9 +9,9 @@ const headingBase = {
 };
 
 const green = {
-    main: '#7CB342',
-    light: '#A5D65C',
-    dark: '#558B2F',
+    main: '#82C603',
+    light: '#A1D442',
+    dark: '#5B8B02',
 };
 
 const blue = {
