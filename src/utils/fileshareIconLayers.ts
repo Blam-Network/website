@@ -53,12 +53,12 @@ export type ResolvedFileshareIconLayers = {
 };
 
 function getHalo3ScreenshotUrl(
-  fileShareGame: "halo3" | "odst" | "ares",
+  fileShareGame: "halo3" | "odst",
   hexShareId: string,
   slot: number,
 ): string {
   const apiPath =
-    fileShareGame === "odst" ? "halo3odst" : fileShareGame === "ares" ? "ares" : "halo3";
+    fileShareGame === "odst" ? "halo3odst" : "halo3";
   return `${env.NEXT_PUBLIC_HALO3_API_BASE_URL}/${apiPath}/fileshare/${hexShareId}/${slot}/view`;
 }
 

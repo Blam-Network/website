@@ -64,12 +64,6 @@ export async function getRequestSiteUrl(): Promise<string> {
   return getSiteUrl();
 }
 
-/**
- * Base URL for server-side tRPC HTTP calls (RSC, route handlers).
- * In development this always targets this Next process, even when NEXTAUTH_URL
- * points at production (OAuth). Using getSiteUrl() there would call remote
- * /api/trpc and yield missing procedures like ares.* on an older deploy.
- */
 export function getTrpcOrigin(): string {
   if (typeof window !== "undefined") return "";
   const override = parseEnvOrigin(process.env.TRPC_ORIGIN);

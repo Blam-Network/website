@@ -7,12 +7,10 @@ import { CarnageReportMapImage } from "./CarnageReportMapImage";
 import { BARLOW_FAMILY } from "@/src/theme/fonts";
 import type { RouterOutputs } from "@/src/api/router";
 
-type CarnageReport =
-  | RouterOutputs["sunrise2"]["getCarnageReport"]
-  | RouterOutputs["ares"]["getCarnageReport"];
+type CarnageReport = RouterOutputs["sunrise2"]["getCarnageReport"]
 
 interface CarnageReportHeaderProps {
-  game: "halo3" | "ares";
+  game: "halo3";
   report: CarnageReport;
 }
 
@@ -40,7 +38,7 @@ export function CarnageReportHeader({ game, report }: CarnageReportHeaderProps) 
     ? `${getTeamName(winningTeam.team_index)} Team Wins`
     : `${winner.player_name} Wins`;
 
-  const gameLabel = game === "ares" ? "Ares" : "Halo 3";
+  const gameLabel = "Halo 3";
   const hopperLabel = report.matchmaking_options?.hopper_name ?? getGameModeLabel(report);
 
   return (

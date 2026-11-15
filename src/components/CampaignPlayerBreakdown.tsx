@@ -42,7 +42,7 @@ type Player = {
 type CampaignPlayerBreakdownProps = {
     players: Player[];
     metagameEnabled: boolean;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 };
 
 type TabPanelProps = {

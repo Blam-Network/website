@@ -21,7 +21,7 @@ import type { SxProps, Theme } from "@mui/material/styles";
 
 interface PlayerStatisticsProps {
   gamertag: string;
-  source?: "sunrise2" | "ares";
+  source?: "sunrise2";
 }
 
 function StatisticsCard({
@@ -280,9 +280,7 @@ function renderRivalPlayerName(entry: { player_name: string; player_xuid?: strin
 export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatisticsProps) {
   const { data, isLoading } = useQuery({
     queryKey: ['playerStatistics', gamertag],
-    queryFn: () => source === "ares"
-      ? api.ares.playerStatistics.query({ gamertag })
-      : api.sunrise2.playerStatistics.query({ gamertag }),
+    queryFn: () => api.sunrise2.playerStatistics.query({ gamertag }),
   });
 
   const gameTypeData = data?.gameTypes ?? [];
@@ -311,9 +309,7 @@ export function PlayerStatistics({ gamertag, source = "sunrise2" }: PlayerStatis
 
   const { data: heatmapData } = useQuery({
     queryKey: ['activityHeatmap', gamertag],
-    queryFn: () => source === "ares"
-      ? api.ares.activityHeatmap.query({ gamertag })
-      : api.sunrise2.activityHeatmap.query({ gamertag }),
+    queryFn: () => api.sunrise2.activityHeatmap.query({ gamertag }),
   });
 
   // Filter medals that have a count > 0 and are valid medal types

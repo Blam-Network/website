@@ -29,7 +29,7 @@ export async function generateHalo3PlayerMetadata(
     gamertag: string;
     playerPath: string;
     gameLabel: string;
-    emblemApiSegment: "halo3" | "ares";
+    emblemApiSegment: "halo3";
     api: Halo3PlayerMetadataApi;
   },
   searchParams?: { viewScreenshot?: string },

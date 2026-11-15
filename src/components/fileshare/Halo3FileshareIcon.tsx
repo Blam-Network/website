@@ -29,7 +29,7 @@ interface Halo3FileshareIconProps {
   shareId?: string;
   slot?: number;
   mapId?: number;
-  fileShareGame?: "halo3" | "ares" | "odst";
+  fileShareGame?: "halo3" | "odst";
 }
 
 export function Halo3FileshareIcon({
@@ -55,9 +55,7 @@ export function Halo3FileshareIcon({
   const apiPath =
     fileShareGame === "odst"
       ? "halo3odst"
-      : fileShareGame === "ares"
-        ? "ares"
-        : "halo3";
+      : "halo3";
 
   const screenshotUrl =
     filetype === 13 && hexShareId && slot != null

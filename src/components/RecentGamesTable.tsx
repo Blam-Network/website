@@ -8,7 +8,7 @@ import {
   getHalo3MissionName,
 } from "@/src/utils/halo3CampaignDisplay";
 
-/** Row shape for recent/previous games (Halo 3 or Ares); avoids coupling this UI to a specific API package. */
+/** Row shape for recent/previous games, avoids coupling this UI to a specific API package. */
 export type RecentGamesTableRow = {
   id: string;
   map_id: number;
@@ -28,7 +28,7 @@ export type RecentGamesTableRow = {
 interface RecentGamesTableProps {
     games: RecentGamesTableRow[];
     stickyHeader?: boolean;
-    routeBase?: "/halo3" | "/ares";
+    routeBase?: "/halo3";
 }
 
 export function RecentGamesTable({ games, stickyHeader = false, routeBase = "/halo3" }: RecentGamesTableProps) {

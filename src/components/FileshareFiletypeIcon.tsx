@@ -13,7 +13,7 @@ interface FileshareFiletypeIconProps {
   fileId?: string;
   mapId?: number;
   /** Reach fileshare uses different `filetype` values than Halo 3 (see HaloReachController). */
-  fileShareGame?: "halo3" | "ares" | "odst" | "reach";
+  fileShareGame?: "halo3" | "odst" | "reach";
 }
 
 export const FileshareFiletypeIcon = (props: FileshareFiletypeIconProps) => {

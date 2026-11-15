@@ -1,29 +1,36 @@
 'use client';
 
 import React, { ChangeEvent, useMemo, useState } from "react";
-import { Box, Button, Input, Stack, Typography } from "@mui/material";
-import initBlfWasm, {FilmVariants, get_film_variants, get_screenshot_data, ScreenshotData} from "blf_wasm/blf_wasm.js"
+import { Box, Button, Input, Typography } from "@mui/material";
+import { search_for_chunk, write_blffile } from "@blamnetwork/blf";
+import {
+    e_game_engine,
+    s_blf_chunk_content_header,
+    s_blf_chunk_end_of_file,
+    s_blf_chunk_game_variant,
+    s_blf_chunk_map_variant,
+    s_blf_chunk_saved_film_header,
+    s_blf_chunk_start_of_file,
+    type s_content_item_metadata,
+} from "@blamnetwork/blf/halo3/v12070_08_09_05_2031_halo3_ship";
 
-export const Screenshot = ({screenshotData}: {screenshotData: ScreenshotData}) => {
-    const screenshotUrl = useMemo(() => {
-        // jpeg_data is a Uint8Array, turn it into a Blob
-        const jpegBlob = new Blob([screenshotData.jpeg_data], { type: "image/jpeg" });
+type FilmVariants = {
+    film_name: string;
+    map_name: string;
+    map_author: string;
+    map_variant: Uint8Array;
+    game_name: string;
+    game_author: string;
+    game_engine: e_game_engine;
+    game_variant: Uint8Array;
+}
 
-        // Create an object URL for the blob
-        return URL.createObjectURL(jpegBlob);
-    }, [screenshotData])
-
-    return (
-        <Box>
-            <Box>
-                <img width="100%" src={screenshotUrl} />
-            </Box>
-            <Stack>
-                <Typography>{screenshotData.name} by {screenshotData.author}</Typography>
-                <Typography variant="subtitle1">{screenshotData.description}</Typography>
-            </Stack>
-        </Box>
-    )
+// _blf, chdr, variant chunk, _eof: the file the console saves a variant as.
+const writeVariantFile = (metadata: s_content_item_metadata, variantChunk: s_blf_chunk_map_variant | s_blf_chunk_game_variant) => {
+    const chdr = new s_blf_chunk_content_header();
+    chdr.build_number = 12070;
+    chdr.metadata = metadata;
+    return write_blffile("big", [new s_blf_chunk_start_of_file(), chdr, variantChunk, new s_blf_chunk_end_of_file()]);
 }
 
 export const FilmUnpacker = () => {
@@ -39,15 +46,16 @@ export const FilmUnpacker = () => {
 
     const gameFileName = useMemo(() => {
         switch(filmVariants?.game_engine) {
-            case 1: return 'ctf.variant';
-            case 2: return 'slayer.variant';
-            case 3: return 'oddball.variant';
-            case 4: return 'koth.variant';
-            case 5: return 'jugg.variant';
-            case 6: return 'terries.variant';
-            case 7: return 'assault.variant';
-            case 8: return 'zombiez.variant';
-            case 9: return 'vip.variant';
+            case e_game_engine.ctf: return 'ctf.variant';
+            case e_game_engine.slayer: return 'slayer.variant';
+            case e_game_engine.oddball: return 'oddball.variant';
+            case e_game_engine.king: return 'koth.variant';
+            case e_game_engine.sandbox: return 'sandbox.variant';
+            case e_game_engine.vip: return 'vip.variant';
+            case e_game_engine.juggernaut: return 'jugg.variant';
+            case e_game_engine.territories: return 'terries.variant';
+            case e_game_engine.assault: return 'assault.variant';
+            case e_game_engine.infection: return 'zombiez.variant';
         }
         return undefined;
     }, [filmVariants])
@@ -57,8 +65,25 @@ export const FilmUnpacker = () => {
         if (file) {
             const arrayBuffer = await file.arrayBuffer(); // read blob as ArrayBuffer
             const fileData = new Uint8Array(arrayBuffer);
-            await initBlfWasm();
-            const variants = get_film_variants(fileData);
+            const chdr = new s_blf_chunk_content_header();
+            const flmh = new s_blf_chunk_saved_film_header();
+            if (!search_for_chunk(fileData, chdr, "big") || !search_for_chunk(fileData, flmh, "big")) {
+                setFilmVariants(undefined);
+                return;
+            }
+            const { map_variant, multiplayer_variant } = flmh.options;
+            const mpvr = new s_blf_chunk_game_variant();
+            mpvr.game_variant = multiplayer_variant;
+            const variants: FilmVariants = {
+                film_name: chdr.metadata.name,
+                map_name: map_variant.m_metadata.name,
+                map_author: map_variant.m_metadata.author,
+                map_variant: writeVariantFile(map_variant.m_metadata, s_blf_chunk_map_variant.create(map_variant)),
+                game_name: multiplayer_variant.m_base_variant.m_metadata.name,
+                game_author: multiplayer_variant.m_base_variant.m_metadata.author,
+                game_engine: multiplayer_variant.m_game_engine,
+                game_variant: writeVariantFile(multiplayer_variant.m_base_variant.m_metadata, mpvr),
+            };
             console.log({variants})
             setFilmVariants(variants);
         }
@@ -73,13 +98,13 @@ export const FilmUnpacker = () => {
                     <br />
                     <Box>
                     <Typography>{filmVariants.game_name} by {filmVariants.game_author}</Typography>
-                        <a href={gameUrl} download="sandbox.map" target='_blank'>
+                        <a href={gameUrl} download={gameFileName} target='_blank'>
                             <Button>Save Game Variant</Button>
                         </a>
                     </Box>
                     <Box>
                     <Typography>{filmVariants.map_name} by {filmVariants.map_author}</Typography>
-                        <a href={mapUrl} download={gameFileName} target='_blank'>
+                        <a href={mapUrl} download="sandbox.map" target='_blank'>
                             <Button>Save Map Variant</Button>
                         </a>
                     </Box>

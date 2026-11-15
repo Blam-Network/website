@@ -1,4 +1,3 @@
-import { aresRouter } from "./ares/aresRouter";
 import { filesRouter } from "./files/filesRouter";
 import { homeRouter } from "./home/homeRouter";
 import { odstRouter } from "./odst/odstRouter";
@@ -13,7 +12,6 @@ export const apiRouter = createTRPCRouter({
   sunrise: sunriseRouter,
   sunrise2: sunrise2Router,
   reach: reachRouter,
-  ares: aresRouter,
   odst: odstRouter,
   files: filesRouter,
   home: homeRouter,

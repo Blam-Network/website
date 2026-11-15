@@ -7,9 +7,7 @@ import { CarnageReportSection } from "./CarnageReportSection";
 import type { RouterOutputs } from "@/src/api/router";
 import type { FileshareFile } from "@/src/api/halo3/fileshareFilesSchema";
 
-type CarnageReport =
-  | RouterOutputs["sunrise2"]["getCarnageReport"]
-  | RouterOutputs["ares"]["getCarnageReport"];
+type CarnageReport = RouterOutputs["sunrise2"]["getCarnageReport"];
 
 type RelatedFiles = {
   fileshare: FileshareFile[];
@@ -22,7 +20,7 @@ type RelatedFiles = {
 };
 
 interface CarnageReportViewProps {
-  game: "halo3" | "ares";
+  game: "halo3";
   report: CarnageReport;
   relatedFiles?: RelatedFiles;
 }
@@ -30,7 +28,7 @@ interface CarnageReportViewProps {
 export function CarnageReportView({ game, report, relatedFiles }: CarnageReportViewProps) {
   const players = [...report.players].sort((a, b) => a.standing - b.standing);
   const winner = players[0];
-  const playerRouteBase = game === "ares" ? "/ares/player" : "/halo3/player";
+  const playerRouteBase = "/halo3/player";
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>

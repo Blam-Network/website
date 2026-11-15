@@ -14,9 +14,7 @@ import { Medal } from "./Medal";
 import { formatGamertag, isLinkableGamertag } from "./Gamertag";
 import { BARLOW_FAMILY } from "@/src/theme/fonts";
 
-type CarnageReport =
-  | RouterOutputs["sunrise2"]["getCarnageReport"]
-  | RouterOutputs["ares"]["getCarnageReport"];
+type CarnageReport = RouterOutputs["sunrise2"]["getCarnageReport"];
 
 type CarnageReportPlayer = CarnageReport["players"][number];
 
@@ -50,7 +48,7 @@ export const PGCRBreakdown = ({
     playerRouteBase = "/halo3/player",
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     const [value, setValue] = useState("CARNAGE");
 
@@ -108,7 +106,7 @@ const BreakdownTable = ({
     report: CarnageReport;
     headings: string[];
     players: Record<number, (string | number | ReactNode)[]>;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     const getPlayerRowColor = (player: CarnageReport['players'][0]) => {
         const color = report.team_game
@@ -299,7 +297,7 @@ const Carnage = ({
     playerRouteBase,
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     return (
         <BreakdownTable 
@@ -334,7 +332,7 @@ const KillBreakdown = ({
     playerRouteBase,
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     return (
         <BreakdownTable 
@@ -375,7 +373,7 @@ const FieldStats = ({
     playerRouteBase,
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     return (
         <BreakdownTable 
@@ -423,7 +421,7 @@ const KOTH = ({
     playerRouteBase,
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     return (
         <BreakdownTable 
@@ -478,7 +476,7 @@ const Medals = ({
     playerRouteBase,
 }: {
     report: CarnageReport;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 }) => {
     return (
         <BreakdownTable 

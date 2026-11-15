@@ -37,7 +37,7 @@ type MVPPlayer = {
 
 type MVPSectionProps = {
     player: MVPPlayer;
-    playerRouteBase?: "/halo3/player" | "/ares/player";
+    playerRouteBase?: "/halo3/player";
 };
 
 function StatBlock({ label, value, highlight }: { label: string; value: string | number; highlight?: boolean }) {

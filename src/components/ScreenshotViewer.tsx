@@ -2,7 +2,18 @@
 
 import React, { ChangeEvent, useMemo, useState } from "react";
 import { Box, Input, Stack, Typography } from "@mui/material";
-import initBlfWasm, {get_screenshot_data, ScreenshotData} from "blf_wasm/blf_wasm.js"
+import { search_for_chunk } from "@blamnetwork/blf";
+import {
+    s_blf_chunk_content_header,
+    s_blf_chunk_screenshot_data,
+} from "@blamnetwork/blf/halo3/v12070_08_09_05_2031_halo3_ship";
+
+type ScreenshotData = {
+    name: string;
+    author: string;
+    description: string;
+    jpeg_data: Uint8Array;
+}
 
 export const Screenshot = ({screenshotData}: {screenshotData: ScreenshotData}) => {
     const screenshotUrl = useMemo(() => {
@@ -34,8 +45,14 @@ export const ScreenshotViewer = () => {
         if (file) {
             const arrayBuffer = await file.arrayBuffer(); // read blob as ArrayBuffer
             const fileData = new Uint8Array(arrayBuffer);
-            await initBlfWasm();
-            const screenshot = get_screenshot_data(fileData);
+            const chdr = new s_blf_chunk_content_header();
+            const scnd = new s_blf_chunk_screenshot_data();
+            if (!search_for_chunk(fileData, chdr, "big") || !search_for_chunk(fileData, scnd, "big")) {
+                setScreenshotData(undefined);
+                return;
+            }
+            const { name, author, description } = chdr.metadata;
+            const screenshot: ScreenshotData = { name, author, description, jpeg_data: scnd.jpeg_data };
             console.log({screenshot})
             setScreenshotData(screenshot);
         }
