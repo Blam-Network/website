@@ -16,6 +16,8 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "Halo 3, ODST, and Reach service records, carnage reports, file share, screenshots, and more on Blam Network.",
   path: "/",
+  images: [{ url: "/img/blam_icon.png", width: 1254, height: 1254, alt: "Blam Network" }],
+  twitterCard: "summary",
 });
 
 const RECENT_GAMES_COUNT = 22;
